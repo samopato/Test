@@ -34,12 +34,9 @@ end
 -----------------------------------
 
 local function updateApp()
-	local success, response = pcall(game.HttpGet, game, CONFIG.APP_URL)
-	if not success then 
-		return false 
-	end
-
-	local remoteFiles = HttpService:JSONDecode(response)
+	print(`[VEX]: Loading...`)
+	
+	local remoteFiles = HttpService:JSONDecode(game:HttpGet(CONFIG.APP_URL))
 	local localManifest = loadManifest()
 	local updatedCount = 0
 	local hasChanges = false
