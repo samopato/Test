@@ -92,7 +92,7 @@ end
 -----------------------------------
 local dataUpdated = updateData()
 local isUpdated = updateApp()
-local initPath = "vex/assets/init.lua"
+local initPath = "vex/assets/Test.lua"
 
 if isfile(initPath) then
 	local initScript = readfile(initPath)
