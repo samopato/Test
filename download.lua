@@ -91,11 +91,12 @@ end
 -- Execution
 -----------------------------------
 local dataUpdated = updateData()
+local isUpdated = updateApp()
 local initPath = "vex/assets/init.lua"
 
 if isfile(initPath) then
 	local initScript = readfile(initPath)
-	loadstring(initScript)(updateApp)
+	loadstring(initScript)(isUpdated)
 else
 	error("VEX Critical Error: 'init.lua' not found in assets. Update failed.")
 end
