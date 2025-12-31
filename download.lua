@@ -36,7 +36,7 @@ end
 local function updateApp()
 	print("Checking for App updates...")
 	
-	local response = safeHttpGet(CONFIG.APP_URL)
+	local response = game:HttpGet(CONFIG.APP_URL)
 	if not response then return false end
 
 	local remoteFiles = HttpService:JSONDecode(response)
@@ -53,7 +53,7 @@ local function updateApp()
 
 			if not isfile(localPath) or storedHash ~= file.sha then
 				print(`Updating: {file.name}`)
-				local content = safeHttpGet(file.download_url)
+				local content = game:HttpGet(file.download_url)
 				if content then
 					writefile(localPath, content)
 					localManifest[file.name] = file.sha
@@ -67,7 +67,7 @@ local function updateApp()
 	for fileName, _ in pairs(localManifest) do
 		if not remoteFileNames[fileName] then
 			print(`Removing deprecated file: {fileName}`)
-			local localPath = `{CONFIG.FOLDERS.ASSETS}/{fileName}`
+			local localPath = `vex/assets/{fileName}`
 			
 			if isfile(localPath) then
 				delfile(localPath)
@@ -79,7 +79,7 @@ local function updateApp()
 	end
 
 	if filesChanged > 0 then
-		saveManifest(CONFIG.FILES.MANIFEST, localManifest)
+		saveManifest(localManifest)
 		print(`App sync complete ({filesChanged} changes).`)
 		return true
 	else
