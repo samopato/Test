@@ -1,5 +1,4 @@
-<p align="center" width="100%">
-   [![banner|690x215](assets/banner.gif)](https://github.com/samopato/Test)
+<p< align="center" width="100%"> [![banner|690x215](assets/banner.gif)](https://github.com/samopato/Test)
 </p>
 
 <div align="center">
