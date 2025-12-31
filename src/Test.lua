@@ -1,1 +1,1 @@
-warn("Download and execution was successful")
+warn("Download and execution was successful", ...)
