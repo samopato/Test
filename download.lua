@@ -34,35 +34,58 @@ end
 -----------------------------------
 
 local function updateApp()
-	print(`[VEX]: Loading...`)
+	print("Checking for App updates...")
 	
-	local remoteFiles = HttpService:JSONDecode(game:HttpGet(CONFIG.APP_URL))
-	local localManifest = loadManifest()
-	local updatedCount = 0
-	local hasChanges = false
+	local response = safeHttpGet(CONFIG.URLS.GITHUB_API)
+	if not response then return false end
+
+	local remoteFiles = HttpService:JSONDecode(response)
+	local localManifest = loadJson(CONFIG.FILES.MANIFEST)
+	local filesChanged = 0
+	
+	local remoteFileNames = {}
 
 	for _, file in ipairs(remoteFiles) do
 		if file.type == "file" and file.download_url then
-			local filePath = `vex/assets/{file.name}`
+			remoteFileNames[file.name] = true -- Track what exists on GitHub
+			local localPath = `{CONFIG.FOLDERS.ASSETS}/{file.name}`
+			local storedHash = localManifest[file.name]
 
-			if not isfile(filePath) or localManifest[file.name] ~= file.sha then
-				print(`[VEX]: Updating {file.name}...`)
-
-				local content = game:HttpGet(file.download_url)
-				writefile(filePath, content)
-
-				localManifest[file.name] = file.sha
-				updatedCount = updatedCount + 1
-				hasChanges = true
+			if not isfile(localPath) or storedHash ~= file.sha then
+				print(`Updating: {file.name}`)
+				local content = safeHttpGet(file.download_url)
+				if content then
+					writefile(localPath, content)
+					localManifest[file.name] = file.sha
+					filesChanged = filesChanged + 1
+				end
 			end
 		end
 	end
 
-	if hasChanges then
-		saveManifest(localManifest)
+	-- Cleanup: Delete local files that are no longer on GitHub
+	for fileName, _ in pairs(localManifest) do
+		if not remoteFileNames[fileName] then
+			print(`Removing deprecated file: {fileName}`)
+			local localPath = `{CONFIG.FOLDERS.ASSETS}/{fileName}`
+			
+			if isfile(localPath) then
+				delfile(localPath)
+			end
+			
+			localManifest[fileName] = nil
+			filesChanged = filesChanged + 1
+		end
 	end
 
-	return hasChanges
+	if filesChanged > 0 then
+		saveManifest(CONFIG.FILES.MANIFEST, localManifest)
+		print(`App sync complete ({filesChanged} changes).`)
+		return true
+	else
+		print("App is up to date.")
+		return false
+	end
 end
 
 local function updateData()
@@ -82,8 +105,6 @@ local function updateData()
 		writefile("vex/assets/rbx_rmd.dat", game:HttpGet(CONFIG.RMD_URL))
 
 		return true
-	else
-		return false
 	end
 end
 
