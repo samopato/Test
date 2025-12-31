@@ -40,7 +40,7 @@ local function updateApp()
 	if not response then return false end
 
 	local remoteFiles = HttpService:JSONDecode(response)
-	local localManifest = loadJson(CONFIG.FILES.MANIFEST)
+	local localManifest = loadManifest(CONFIG.FILES.MANIFEST)
 	local filesChanged = 0
 	
 	local remoteFileNames = {}
