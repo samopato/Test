@@ -36,7 +36,7 @@ end
 local function updateApp()
 	print("Checking for App updates...")
 	
-	local response = safeHttpGet(CONFIG.URLS.GITHUB_API)
+	local response = safeHttpGet(CONFIG.APP_URL)
 	if not response then return false end
 
 	local remoteFiles = HttpService:JSONDecode(response)
