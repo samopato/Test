@@ -1,4 +1,5 @@
-<p< align="center" width="100%"> [![banner|690x215](assets/banner.gif)](https://github.com/samopato/Test)
+<p align="center" width="100%">
+    <img width="100%" src="assets/banner.png"> 
 </p>
 
 <div align="center">
@@ -10,3 +11,4 @@
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/samopato/Test/refs/heads/main/download.lua"))()
 ```
+
