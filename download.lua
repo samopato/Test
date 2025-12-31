@@ -1,17 +1,104 @@
-local url = "https://api.github.com/repos/samopato/Test/contents/src"
+local HttpService = game:GetService("HttpService")
+local CONFIG = {
+	PATHS = {"vex", "vex/plugins", "vex/assets", "vex/saved"},
+	APP_URL = "https://api.github.com/repos/samopato/Test/contents/src",
+	VER_URL = "https://clientsettings.roblox.com/v2/client-version/WindowsStudio64/channel/LIVE",
+	RMD_URL = "https://raw.githubusercontent.com/CloneTrooper1019/Roblox-Client-Tracker/roblox/ReflectionMetadata.xml",
+	MANIFEST_PATH = "vex/manifest.json"
+}
 
-local src = game:HttpGet(url)
-local json = game:GetService("HttpService"):JSONDecode(src)
+for _, path in ipairs(CONFIG.PATHS) do
+	if not isfolder(path) then makefolder(path) end
+end
 
-makefolder("vex")
+-----------------------------------
+-- Helpers
+-----------------------------------
+local function loadManifest()
+	if isfile(CONFIG.MANIFEST_PATH) then
+		local success, result = pcall(function()
+			return HttpService:JSONDecode(readfile(CONFIG.MANIFEST_PATH))
+		end)
+		if success then return result end
+	end
+	
+	return {}
+end
 
-for i = 1, #json do
-	local file = json[i]
-	local content = game:HttpGet(file.download_url)
-	if (file.type == "file") then
-		writefile(`vex/{file.name}`, content)
+local function saveManifest(data)
+	writefile(CONFIG.MANIFEST_PATH, HttpService:JSONEncode(data))
+end
+
+-----------------------------------
+-- Auto-update Logic
+-----------------------------------
+
+local function updateApp()
+	local success, response = pcall(game.HttpGet, game, CONFIG.APP_URL)
+	if not success then 
+		return false 
+	end
+
+	local remoteFiles = HttpService:JSONDecode(response)
+	local localManifest = loadManifest()
+	local updatedCount = 0
+	local hasChanges = false
+
+	for _, file in ipairs(remoteFiles) do
+		if file.type == "file" and file.download_url then
+			local filePath = `vex/assets/{file.name}`
+
+			if not isfile(filePath) or localManifest[file.name] ~= file.sha then
+				print(`[VEX]: Updating {file.name}...`)
+
+				local content = game:HttpGet(file.download_url)
+				writefile(filePath, content)
+
+				localManifest[file.name] = file.sha
+				updatedCount = updatedCount + 1
+				hasChanges = true
+			end
+		end
+	end
+
+	if hasChanges then
+		saveManifest(localManifest)
+	end
+
+	return hasChanges
+end
+
+local function updateData()
+	local verData = game:HttpGet(CONFIG.VER_URL)
+	local remoteVersion = verData:match("(version%-[%w]+)")
+	
+	local localVersion = nil
+	if isfile("vex/assets/rbx_cli.dat") then
+		localVersion = readfile("vex/assets/rbx_cli.dat")
+	end
+
+	if localVersion ~= remoteVersion then
+		local apiDumpUrl = `http://setup.roblox.com/{remoteVersion}-API-Dump.json`
+
+		writefile("vex/assets/rbx_cli.dat", remoteVersion)
+		writefile("vex/assets/rbx_api.dat", game:HttpGet(apiDumpUrl))
+		writefile("vex/assets/rbx_rmd.dat", game:HttpGet(CONFIG.RMD_URL))
+
+		return true
+	else
+		return false
 	end
 end
 
-local init = readfile("vex/Test.lua")
-if init then loadstring(init)() else error("VEX is missing init file") end
+-----------------------------------
+-- Execution
+-----------------------------------
+local dataUpdated = updateData()
+local initPath = "vex/assets/init.lua"
+
+if isfile(initPath) then
+	local initScript = readfile(initPath)
+	loadstring(initScript)(updateApp)
+else
+	error("VEX Critical Error: 'init.lua' not found in assets. Update failed.")
+end
