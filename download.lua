@@ -1,4 +1,4 @@
-local url = "https://api.github.com/repos/xa1on/rblxguilib/contents/src"
+local url = "https://api.github.com/repos/samopato/Test/contents/src"
 
 local src = game:HttpGet(url)
 local json = game:GetService("HttpService"):JSONDecode(req)
