@@ -4,9 +4,11 @@ local CONFIG = {
 	APP_URL = "https://api.github.com/repos/samopato/Test/contents/src",
 	VER_URL = "https://clientsettings.roblox.com/v2/client-version/WindowsStudio64/channel/LIVE",
 	RMD_URL = "https://raw.githubusercontent.com/CloneTrooper1019/Roblox-Client-Tracker/roblox/ReflectionMetadata.xml",
-	MANIFEST_PATH = "vex/manifest.json"
+	MANIFEST_PATH = "vex/manifest.json",
+	ASSET_ROOT = "vex/assets"
 }
 
+-- Initialize base folders
 for _, path in ipairs(CONFIG.PATHS) do
 	if not isfolder(path) then makefolder(path) end
 end
@@ -21,7 +23,6 @@ local function loadManifest()
 		end)
 		if success then return result end
 	end
-	
 	return {}
 end
 
@@ -30,50 +31,67 @@ local function saveManifest(data)
 end
 
 -----------------------------------
--- Auto-update Logic
+-- Recursive Sync Logic
 -----------------------------------
 
-local function updateApp()
-	print("Checking for App updates...")
-	
-	local response = game:HttpGet(CONFIG.APP_URL)
-	if not response then return false end
+local function syncFolder(url, localPath, manifest, seenPaths)
+	local response = game:HttpGet(url)
+	if not response then return 0 end
 
-	local remoteFiles = HttpService:JSONDecode(response)
-	local localManifest = loadManifest(CONFIG.FILES.MANIFEST)
-	local filesChanged = 0
-	
-	local remoteFileNames = {}
+	local remoteItems = HttpService:JSONDecode(response)
+	local changes = 0
 
-	for _, file in ipairs(remoteFiles) do
-		if file.type == "file" and file.download_url then
-			remoteFileNames[file.name] = true -- Track what exists on GitHub
-			local localPath = `{CONFIG.FOLDERS.ASSETS}/{file.name}`
-			local storedHash = localManifest[file.name]
+	for _, item in ipairs(remoteItems) do
+		local itemLocalPath = `{localPath}/{item.name}`
+		seenPaths[itemLocalPath] = true -- Mark as existing on GitHub
 
-			if not isfile(localPath) or storedHash ~= file.sha then
-				print(`Updating: {file.name}`)
-				local content = game:HttpGet(file.download_url)
+		if item.type == "dir" then
+			-- Ensure subfolder exists
+			if not isfolder(itemLocalPath) then
+				makefolder(itemLocalPath)
+			end
+			-- Recurse into subfolder
+			changes = changes + syncFolder(item.url, itemLocalPath, manifest, seenPaths)
+		elseif item.type == "file" and item.download_url then
+			-- Handle file update
+			local storedHash = manifest[itemLocalPath]
+			if not isfile(itemLocalPath) or storedHash ~= item.sha then
+				print(`Updating: {itemLocalPath}`)
+				local content = game:HttpGet(item.download_url)
 				if content then
-					writefile(localPath, content)
-					localManifest[file.name] = file.sha
-					filesChanged = filesChanged + 1
+					writefile(itemLocalPath, content)
+					manifest[itemLocalPath] = item.sha
+					changes = changes + 1
 				end
 			end
 		end
 	end
+	return changes
+end
 
-	-- Cleanup: Delete local files that are no longer on GitHub
-	for fileName, _ in pairs(localManifest) do
-		if not remoteFileNames[fileName] then
-			print(`Removing deprecated file: {fileName}`)
-			local localPath = `vex/assets/{fileName}`
-			
-			if isfile(localPath) then
-				delfile(localPath)
+local function updateApp()
+	print("Checking for App updates...")
+	
+	local localManifest = loadManifest()
+	local seenPaths = {} -- Track what is currently on GitHub
+	
+	-- Start recursive sync from the root APP_URL into vex/assets
+	local filesChanged = syncFolder(CONFIG.APP_URL, CONFIG.ASSET_ROOT, localManifest, seenPaths)
+
+	-- Cleanup: Delete local files/folders in manifest that aren't on GitHub anymore
+	-- We process this in reverse to ensure files are deleted before their parent folders
+	local manifestKeys = {}
+	for path in pairs(localManifest) do table.insert(manifestKeys, path) end
+	
+	for _, path in ipairs(manifestKeys) do
+		if not seenPaths[path] then
+			print(`Removing deprecated: {path}`)
+			if isfile(path) then
+				delfile(path)
+			elseif isfolder(path) then
+				delfolder(path)
 			end
-			
-			localManifest[fileName] = nil
+			localManifest[path] = nil
 			filesChanged = filesChanged + 1
 		end
 	end
@@ -88,22 +106,26 @@ local function updateApp()
 	end
 end
 
+-----------------------------------
+-- Data & Versioning
+-----------------------------------
+
 local function updateData()
-	local verData = game:HttpGet(CONFIG.VER_URL)
-	local remoteVersion = verData:match("(version%-[%w]+)")
+	local success, verData = pcall(function() return game:HttpGet(CONFIG.VER_URL) end)
+	if not success then return end
 	
-	local localVersion = nil
-	if isfile("vex/assets/rbx_cli.dat") then
-		localVersion = readfile("vex/assets/rbx_cli.dat")
-	end
+	local remoteVersion = verData:match("(version%-[%w]+)")
+	local versionFile = `{CONFIG.ASSET_ROOT}/rbx_cli.dat`
+	
+	local localVersion = isfile(versionFile) and readfile(versionFile) or nil
 
 	if localVersion ~= remoteVersion then
+		print("Updating Roblox API Data...")
 		local apiDumpUrl = `http://setup.roblox.com/{remoteVersion}-API-Dump.json`
 
-		writefile("vex/assets/rbx_cli.dat", remoteVersion)
-		writefile("vex/assets/rbx_api.dat", game:HttpGet(apiDumpUrl))
-		writefile("vex/assets/rbx_rmd.dat", game:HttpGet(CONFIG.RMD_URL))
-
+		writefile(versionFile, remoteVersion)
+		writefile(`{CONFIG.ASSET_ROOT}/rbx_api.dat`, game:HttpGet(apiDumpUrl))
+		writefile(`{CONFIG.ASSET_ROOT}/rbx_rmd.dat`, game:HttpGet(CONFIG.RMD_URL))
 		return true
 	end
 end
@@ -113,11 +135,12 @@ end
 -----------------------------------
 local dataUpdated = updateData()
 local isUpdated = updateApp()
-local initPath = "vex/assets/Test.lua"
+local initPath = `{CONFIG.ASSET_ROOT}/init.lua`
 
 if isfile(initPath) then
 	local initScript = readfile(initPath)
-	loadstring(initScript)(isUpdated)
+	-- Pass the update status to the init script
+	task.spawn(loadstring(initScript), isUpdated)
 else
 	error("VEX Critical Error: 'init.lua' not found in assets. Update failed.")
 end
