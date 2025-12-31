@@ -12,3 +12,6 @@ for i = 1, #json do
 		writefile(`vex/{file.name}`, content)
 	end
 end
+
+local init = readfile("vex/Test.lua")
+if init then loadstring(init)() else error("VEX is missing init file") end
