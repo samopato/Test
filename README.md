@@ -1,6 +1,6 @@
-[![banner|690x215](assets/banner.gif)](https://github.com/samopato/Test)
+</div>[![banner|690x215](assets/banner.gif)](https://github.com/samopato/Test)<div align="center">
 
 <div align="center">
 	Just a test for a future ROBLOX project
-
 </div>
+
