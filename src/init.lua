@@ -11,9 +11,9 @@ local COMMAND_PREFIX = "+tp"
 TextChatService.MessageReceived:Connect(function(msg)
 	local args = string.split(msg.Text, " ")
 
-	TextChatService.TextChannels.RBXGeneral:SendAsync("Executed command")
-
 	if args[1] == COMMAND_PREFIX then
+		TextChatService.TextChannels.RBXGeneral:SendAsync("Executed command")
+			
 		local targetCharacter = player.Character
 		if not targetCharacter or not targetCharacter:FindFirstChild("HumanoidRootPart") then return end
 
