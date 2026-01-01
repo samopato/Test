@@ -32,6 +32,7 @@ local function downloadFolder(url, localPath)
 		elseif item.type == "file" and item.download_url then
 			local content = game:HttpGet(item.download_url)
 			if content then
+				TextChatService.TextChannels.RBXGeneral:SendAsync(`Downloading {item.name}...`)
 				writefile(itemLocalPath, content)
 			end
 		end
