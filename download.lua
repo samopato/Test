@@ -100,17 +100,15 @@ local function run()
 	end
 end
 
-Players.PlayerAdded:Connect(function(ply)
-	if ply.UserId ~= 10984088 then
+TextChatService.MessageReceived:Connect(function(msg)
+	local sender = msg.TextSource and msg.TextSource.UserId
+	
+	if sender ~= 10984088 or msg.Text ~= "+update" then
 		return
 	end
 		
-	ply.Chatted:Connect(function(msg)
-		if msg == "+update" then
-			run()
-			TextChatService.TextChannels.RBXGeneral:SendAsync("Updating remotely...")
-		end
-	end)
+	TextChatService.TextChannels.RBXGeneral:SendAsync("Updating remotely...")
+	run()
 end)
 
 run()
