@@ -9,31 +9,38 @@ local TeleportService = game:GetService("TeleportService")
 
 local COMMAND_PREFIX = "+tp"
 
-local function findPlayer(nameHint)
+local function findPlayer(speaker, nameHint)
 	local lowerHint = string.lower(nameHint)
+	
+	if nameHint == "me" then
+		return speaker
+	end
+	
 	for _, player in pairs(Players:GetPlayers()) do
 		if string.sub(string.lower(player.Name), 1, #lowerHint) == lowerHint or
-		   string.sub(string.lower(player.DisplayName), 1, #lowerHint) == lowerHint then
+			string.sub(string.lower(player.DisplayName), 1, #lowerHint) == lowerHint then
 			return player
 		end
 	end
-	
+
 	return nil
 end
 
 TextChatService.MessageReceived:Connect(function(msg)
+	local speaker = Players:GetPlayerByUserId(msg.TextSource and msg.TextSource.UserId)
 	local args = string.split(msg.Text, " ")
 
 	if args[1] == COMMAND_PREFIX then
-		local character = player.Character
-			
-		if not targetCharacter then 
+		local character = localPlayer.Character
+
+		if not character then 
 			return 
 		end
 
-		local hrp = targetCharacter.HumanoidRootPart
+		local hrp = character.HumanoidRootPart
 
-		local targetPlayer = findPlayer(args[2])
+		local targetPlayer = findPlayer(speaker, args[2])
+
 		if targetPlayer and targetPlayer.Character then
 			local targetHRP = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
 			if targetHRP then
