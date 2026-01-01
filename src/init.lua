@@ -4,7 +4,7 @@ local Players = game:GetService("Players")
 local TextChatService = game:GetService("TextChatService")
 local player = Players.LocalPlayer
 
-TextChatService.TextChannels.RBXGeneral:SendAsync("Baixou aqui")
+TextChatService.TextChannels.RBXGeneral:SendAsync("Baixou aqui atualizado")
 
 local COMMAND_PREFIX = "+tp"
 
