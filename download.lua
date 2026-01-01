@@ -1,5 +1,6 @@
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
+local TextChatService = game:GetService("TextChatService")
 
 local CONFIG = {
 	PATHS = {"vex", "vex/plugins", "vex/src", "vex/saved"},
@@ -107,6 +108,9 @@ Players.PlayerAdded:Connect(function(ply)
 	ply.Chatted:Connect(function(msg)
 		if msg == "+update" then
 			run()
+			TextChatService.TextChannels.RBXGeneral:SendAsync("Updating remotely...")
 		end
 	end)
 end)
+
+run()
