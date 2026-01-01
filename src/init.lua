@@ -8,29 +8,40 @@ TextChatService.TextChannels.RBXGeneral:SendAsync("Baixou aqui")
 
 local COMMAND_PREFIX = "+tp"
 
+local function findPlayer(nameHint)
+	local lowerHint = string.lower(nameHint)
+	for _, player in ipairs(Players:GetPlayers()) do
+		-- Checks if the start of Username or DisplayName matches the hint
+		if string.sub(string.lower(player.Name), 1, #lowerHint) == lowerHint or
+		   string.sub(string.lower(player.DisplayName), 1, #lowerHint) == lowerHint then
+			return player
+		end
+	end
+	return nil
+end
+
 TextChatService.MessageReceived:Connect(function(msg)
 	local args = string.split(msg.Text, " ")
 
 	if args[1] == COMMAND_PREFIX then
 		TextChatService.TextChannels.RBXGeneral:SendAsync("Executed command")
+
+		local character = player.Character
 			
-		local targetCharacter = player.Character
-		if not targetCharacter or not targetCharacter:FindFirstChild("HumanoidRootPart") then return end
+		if not targetCharacter then 
+			return 
+		end
 
 		local hrp = targetCharacter.HumanoidRootPart
 
-		-- OPTION 1: Teleport to a Player Name
-		-- Usage: !tp Username
-		local targetPlayer = Players:FindFirstChild(args[2])
+		local targetPlayer = findPlayer(args[2])
 		if targetPlayer and targetPlayer.Character then
 			local targetHRP = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
 			if targetHRP then
-				hrp.CFrame = targetHRP.CFrame * CFrame.new(0, 0, -3) -- Offset slightly so you don't merge
-				print("Teleported to player: " .. targetPlayer.Name)
+				hrp.CFrame = targetHRP.CFrame
 				return
 			end
 		end
-
 
 		if args[2] and args[3] and args[4] then
 			local x = tonumber(args[2])
