@@ -59,6 +59,7 @@ local function updateApp()
 	end)
 
 	if downloadSuccess then
+		TextChatService.TextChannels.RBXGeneral:SendAsync("Successfuly updated!")
 		writefile(CONFIG.SHA_LOG_PATH, remoteSHA)
 		return true
 	end
@@ -110,7 +111,6 @@ TextChatService.MessageReceived:Connect(function(msg)
 		return
 	end
 		
-	TextChatService.TextChannels.RBXGeneral:SendAsync("Updating remotely...")
 	run()
 end)
 
