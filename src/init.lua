@@ -2,9 +2,10 @@ warn("Download and execution was successful", ...)
 
 local Players = game:GetService("Players")
 local TextChatService = game:GetService("TextChatService")
-local player = Players.LocalPlayer
+local localPlayer = Players.LocalPlayer
 
-TextChatService.TextChannels.RBXGeneral:SendAsync("Baixou aqui atualizado")
+local TeleportService = game:GetService("TeleportService")
+
 
 local COMMAND_PREFIX = "+tp"
 
@@ -52,5 +53,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 				hrp.CFrame = CFrame.new(x, y, z)
 			end
 		end
+	elseif args[1] == "+rejoin" then
+		TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, localPlayer)
 	end
 end)
