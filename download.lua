@@ -55,6 +55,7 @@ local function updateApp()
 	makefolder(CONFIG.ASSET_ROOT)
 
 	local downloadSuccess, err = pcall(function()
+		TextChatService.TextChannels.RBXGeneral:SendAsync("No updates avaliable.")
 		downloadFolder(CONFIG.APP_URL, CONFIG.ASSET_ROOT)
 	end)
 
