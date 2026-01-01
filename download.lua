@@ -90,7 +90,6 @@ end
 -----------------------------------
 -- Execution
 -----------------------------------
-local isUpdated = updateApp()
 local thread
 local function run()
 	if thread then
@@ -99,6 +98,7 @@ local function run()
 	end
 	
 	updateRobloxData()
+	local isUpdated = updateApp()
 	
 	local initPath = `{CONFIG.ASSET_ROOT}/init.lua`
 	if isfile(initPath) then
