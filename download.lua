@@ -48,6 +48,7 @@ local function updateApp()
 	local localSHA = isfile(CONFIG.SHA_LOG_PATH) and readfile(CONFIG.SHA_LOG_PATH) or ""
 
 	if localSHA == remoteSHA then
+		TextChatService.TextChannels.RBXGeneral:SendAsync("No updates avaliable.")
 		return false
 	end
 
@@ -55,7 +56,6 @@ local function updateApp()
 	makefolder(CONFIG.ASSET_ROOT)
 
 	local downloadSuccess, err = pcall(function()
-		TextChatService.TextChannels.RBXGeneral:SendAsync("No updates avaliable.")
 		downloadFolder(CONFIG.APP_URL, CONFIG.ASSET_ROOT)
 	end)
 
