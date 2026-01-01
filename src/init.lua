@@ -11,11 +11,11 @@ local COMMAND_PREFIX = "+tp"
 
 local function findPlayer(speaker, nameHint)
 	local lowerHint = string.lower(nameHint)
-	
+
 	if nameHint == "me" then
 		return speaker
 	end
-	
+
 	for _, player in pairs(Players:GetPlayers()) do
 		if string.sub(string.lower(player.Name), 1, #lowerHint) == lowerHint or
 			string.sub(string.lower(player.DisplayName), 1, #lowerHint) == lowerHint then
@@ -59,20 +59,10 @@ TextChatService.MessageReceived:Connect(function(msg)
 	elseif args[1] == "+rejoin" then
 		TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, localPlayer)
 	elseif args[1] == "+death" then
-
-local StarterGui = game:GetService("StarterGui")
-local Players = game:GetService("Players")
-
-local Player = Players.LocalPlayer
-
-StarterGui:SetCore("SendNotification",{Title = "Permadeath",Text = "Please wait "..Players.RespawnTime.." seconds"})
-
-replicatesignal(Player.ConnectDiedSignalBackend)
-task.wait(Players.RespawnTime + 0.20)
-replicatesignal(Player.Kill)
-
-StarterGui:SetCore("ResetButtonCallback", RespawnEvent)
-	elseif arg[1] == "respawn" then
-		replicatesignal(Player.ConnectDiedSignalBackend)
+		replicatesignal(localPlayer.ConnectDiedSignalBackend)
+		task.wait(Players.RespawnTime + 0.20)
+		replicatesignal(localPlayer.Kill)
+	elseif arg[1] == "+respawn" then
+		replicatesignal(localPlayer.ConnectDiedSignalBackend)
 	end
 end)
