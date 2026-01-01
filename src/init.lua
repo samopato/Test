@@ -37,14 +37,12 @@ TextChatService.MessageReceived:Connect(function(msg)
 			return 
 		end
 
-		local hrp = character.HumanoidRootPart
-
 		local targetPlayer = findPlayer(speaker, args[2])
 
 		if targetPlayer and targetPlayer.Character then
 			local targetHRP = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
 			if targetHRP then
-				hrp.CFrame = targetHRP.CFrame
+				character:PivotTo(targetHRP.CFrame)
 				return
 			end
 		end
@@ -55,7 +53,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 			local z = tonumber(args[4])
 
 			if x and y and z then
-				hrp.CFrame = CFrame.new(x, y, z)
+				character:PivotTo(CFrame.new(x, y, z))
 			end
 		end
 	elseif args[1] == "+rejoin" then
@@ -73,15 +71,8 @@ replicatesignal(Player.ConnectDiedSignalBackend)
 task.wait(Players.RespawnTime + 0.20)
 replicatesignal(Player.Kill)
 
-local RespawnEvent = Instance.new("BindableEvent")
-
-RespawnEvent.Event:Once(function()
-    StarterGui:SetCore("SendNotification",{Title = "Respawning",Text = "Please wait "..Players.RespawnTime.." seconds"})
-    StarterGui:SetCore("ResetButtonCallback", true)    
-
-    replicatesignal(Player.ConnectDiedSignalBackend)
-end)
-
 StarterGui:SetCore("ResetButtonCallback", RespawnEvent)
+	elseif arg[1] == "respawn" then
+		replicatesignal(Player.ConnectDiedSignalBackend)
 	end
 end)
