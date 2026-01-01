@@ -60,5 +60,28 @@ TextChatService.MessageReceived:Connect(function(msg)
 		end
 	elseif args[1] == "+rejoin" then
 		TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, localPlayer)
+	elseif args[1] == "+death" then
+
+local StarterGui = game:GetService("StarterGui")
+local Players = game:GetService("Players")
+
+local Player = Players.LocalPlayer
+
+StarterGui:SetCore("SendNotification",{Title = "Permadeath",Text = "Please wait "..Players.RespawnTime.." seconds"})
+
+replicatesignal(Player.ConnectDiedSignalBackend)
+task.wait(Players.RespawnTime + 0.20)
+replicatesignal(Player.Kill)
+
+local RespawnEvent = Instance.new("BindableEvent")
+
+RespawnEvent.Event:Once(function()
+    StarterGui:SetCore("SendNotification",{Title = "Respawning",Text = "Please wait "..Players.RespawnTime.." seconds"})
+    StarterGui:SetCore("ResetButtonCallback", true)    
+
+    replicatesignal(Player.ConnectDiedSignalBackend)
+end)
+
+StarterGui:SetCore("ResetButtonCallback", RespawnEvent)
 	end
 end)
