@@ -52,7 +52,10 @@ local function updateApp()
 		return false
 	end
 
-	if isfolder(CONFIG.ASSET_ROOT) then delfolder(CONFIG.ASSET_ROOT) end
+	if isfolder(CONFIG.ASSET_ROOT) then 
+		delfolder(CONFIG.ASSET_ROOT) 
+	end
+	
 	makefolder(CONFIG.ASSET_ROOT)
 
 	local downloadSuccess, err = pcall(function()
