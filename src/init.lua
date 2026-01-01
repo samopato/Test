@@ -11,13 +11,13 @@ local COMMAND_PREFIX = "+tp"
 
 local function findPlayer(nameHint)
 	local lowerHint = string.lower(nameHint)
-	for _, player in ipairs(Players:GetPlayers()) do
-		-- Checks if the start of Username or DisplayName matches the hint
+	for _, player in pairs(Players:GetPlayers()) do
 		if string.sub(string.lower(player.Name), 1, #lowerHint) == lowerHint or
 		   string.sub(string.lower(player.DisplayName), 1, #lowerHint) == lowerHint then
 			return player
 		end
 	end
+	
 	return nil
 end
 
@@ -25,8 +25,6 @@ TextChatService.MessageReceived:Connect(function(msg)
 	local args = string.split(msg.Text, " ")
 
 	if args[1] == COMMAND_PREFIX then
-		TextChatService.TextChannels.RBXGeneral:SendAsync("Executed command")
-
 		local character = player.Character
 			
 		if not targetCharacter then 
