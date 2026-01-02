@@ -196,6 +196,15 @@ local targetPlayer = findPlayer(speaker, args[2])
             return 
         end
 
+		  for _, v in pairs(char:GetChildren()) do
+       		 if v:IsA("BasePart") then 
+				v.CanCollide = false 
+				v.Massless = true
+				v.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+				v.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+			end
+   		 end
+
         local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
         if targetRoot and root then
             hum.Sit = false
