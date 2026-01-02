@@ -12,7 +12,14 @@ local CONFIG = {
 	SHA_LOG_PATH = "vex/src/last_sha.dat"
 }
 
--- Initialize base folders
+local function request(url)
+	local sep = url:find("?") and "&" or "?"
+
+	local freshUrl = url .. sep .. "nocache=" .. os.time()
+	local success, result = pcall(game.HttpGet, game, freshUrl)
+	return success and result or nil
+end
+
 for _, path in ipairs(CONFIG.PATHS) do
 	if not isfolder(path) then makefolder(path) end
 end
@@ -33,7 +40,7 @@ local function downloadFolder(url, localPath)
 			downloadFolder(item.url, itemLocalPath)
 		elseif item.type == "file" and item.download_url then
 			TextChatService.TextChannels.RBXGeneral:SendAsync(`Downloading {item.name}...`)
-			local content = game:HttpGet(item.download_url)
+			local content = request(item.download_url)
 			if content then
 				writefile(itemLocalPath, content)
 			end
@@ -48,19 +55,21 @@ local function updateApp()
 	local localSHA = isfile(CONFIG.SHA_LOG_PATH) and readfile(CONFIG.SHA_LOG_PATH) or ""
 
 	if localSHA == remoteSHA then
-		TextChatService.TextChannels.RBXGeneral:SendAsync("No updates avaliable.")
+		TextChatService.TextChannels.RBXGeneral:SendAsync("VEX: Already up to date.")
 		return false
 	end
 
+	local downloadUrl = CONFIG.APP_URL .. "?ref=" .. remoteSHA
+	
 	delfolder(CONFIG.ASSET_ROOT)
 	makefolder(CONFIG.ASSET_ROOT)
 
 	local downloadSuccess, err = pcall(function()
-		downloadFolder(CONFIG.APP_URL, CONFIG.ASSET_ROOT)
+		downloadFolder(downloadUrl, CONFIG.ASSET_ROOT)
 	end)
 
 	if downloadSuccess then
-		TextChatService.TextChannels.RBXGeneral:SendAsync("Successfuly updated!")
+		TextChatService.TextChannels.RBXGeneral:SendAsync("VEX: Successfully updated!")
 		writefile(CONFIG.SHA_LOG_PATH, remoteSHA)
 		return true
 	end
@@ -107,13 +116,9 @@ end
 
 TextChatService.MessageReceived:Connect(function(msg)
 	local sender = msg.TextSource and msg.TextSource.UserId
-	
-	if sender ~= 10984088 or msg.Text ~= "+update" then
-		return
+	if sender == 10984088 and msg.Text == "+update" then
+		run()
 	end
-
-	TextChatService.TextChannels.RBXGeneral:SendAsync("Update attempt...")
-	run()
 end)
 
 run()
