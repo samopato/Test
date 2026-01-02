@@ -54,10 +54,10 @@ TextChatService.MessageReceived:Connect(function(msg)
 					if v:IsA("BasePart") then
 						v.AssemblyLinearVelocity = Vector3.zero
 						v.AssemblyAngularVelocity = Vector3.zero
-						v.HumanoidRootPart.CanCollide = true
 					end
 				end
 				
+				character.Torso.CanCollide = true
 				character:PivotTo(targetHRP.CFrame)
 				return
 			end
@@ -263,5 +263,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 			flingConn:Disconnect()
 			flingConn = nil
 		end
+
+		localPlayer.Character.Torso.CanCollide = true
 	end
 end)
