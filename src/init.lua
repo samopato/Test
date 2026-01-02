@@ -9,6 +9,10 @@ local TeleportService = game:GetService("TeleportService")
 
 local COMMAND_PREFIX = "+tp"
 
+local function chat(...)
+	TextChatService.TextChannels.RBXGeneral:SendAsync(...)
+end
+
 local function findPlayer(speaker, nameHint)
 	local lowerHint = string.lower(nameHint)
 
@@ -60,6 +64,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 			end
 		end
 	elseif args[1] == "+rejoin" then
+		chat("Rejoining...")
 		TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, localPlayer)
 	elseif args[1] == "+death" then
 		replicatesignal(localPlayer.ConnectDiedSignalBackend)
@@ -68,6 +73,15 @@ TextChatService.MessageReceived:Connect(function(msg)
 	elseif args[1] == "+respawn" then
 		replicatesignal(localPlayer.ConnectDiedSignalBackend)
 	elseif args[1] == "+bang" then
+		if conn then
+			conn:Disconnect()
+			conn = nil
+		end
+
+		if track then
+			track:Stop()
+		end
+			
 		local humanoid = localPlayer.Character:FindFirstChildOfClass("Humanoid")
 		
 		humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
@@ -77,13 +91,14 @@ TextChatService.MessageReceived:Connect(function(msg)
 
 		local speed = tonumber(args[3]) or 10
 
+		chat(speed)
+
 		track = humanoid:LoadAnimation(animation)
 		track:Play()
 
 		local targetPlayer = findPlayer(speaker, args[2])
 		
 		if targetPlayer and targetPlayer.Character then
-			TextChatService.TextChannels.RBXGeneral:SendAsync("Test4")
 			conn = RunService.Heartbeat:Connect(function()
 				local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
 				
@@ -101,7 +116,6 @@ TextChatService.MessageReceived:Connect(function(msg)
 
 		if track then
 			track:Stop()
-			track:Destroy()
 		end
 	end
 end)
