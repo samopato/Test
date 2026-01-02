@@ -75,26 +75,12 @@ TextChatService.MessageReceived:Connect(function(msg)
 
 	local rcdEnabled, wasHidden
 			
-	if gethidden then
-		rcdEnabled, wasHidden = gethidden(workspace, "RejectCharacterDeletions") ~= Enum.RejectCharacterDeletions.Disabled
-	end
-
 	if rcdEnabled and replicatesignal then
 		replicatesignal(localPlayer.ConnectDiedSignalBackend)
 		task.wait(Players.RespawnTime - 0.1)
 		replicatesignal(localPlayer.Kill)
-	else
-		local char = localPlayer.Character
-		local hum = char:FindFirstChildWhichIsA("Humanoid")
-		if hum then hum:ChangeState(Enum.HumanoidStateType.Dead) end
-		char:ClearAllChildren()
-		local newChar = Instance.new("Model")
-		newChar.Parent = workspace
-		localPlayer.Character = newChar
-		task.wait()
-		localPlayer.Character = char
-		newChar:Destroy()
 	end
+			
 	elseif args[1] == "+bang" then
 		if conn then
 			conn:Disconnect()
