@@ -288,7 +288,14 @@ TextChatService.MessageReceived:Connect(function(msg)
 		localPlayer.Character.HumanoidRootPart.Anchored = false
 	elseif args[1] == "+ai" then
 		local HttpService = game:GetService("HttpService")
-		local KEY = isfile("vex/plugins/key.lua") and readfile("vex/plugins/key.lua")
+		local rawKey = isfile("vex/plugins/key.lua") and readfile("vex/plugins/key.lua")
+local KEY = rawKey and string.gsub(rawKey, "%s+", "") 
+
+if not KEY or KEY == "" then
+    chat("VEX: API key is missing or empty in vex/plugins/key.lua")
+    return
+end
+			
 		local URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" ..tostring(KEY)
 
 		if not KEY then
@@ -304,6 +311,9 @@ TextChatService.MessageReceived:Connect(function(msg)
 			local response = request({
 				Url = URL,
 				Method = "POST",
+				Headers = {
+          			["Content-Type"] = "application/json"
+      			 },
 				Body = game:GetService("HttpService"):JSONEncode({
 					contents = {{
 						parts = {{ text = prompt }}
