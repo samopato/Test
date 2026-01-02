@@ -104,7 +104,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 				
 				if targetRoot then
 					track:AdjustSpeed(speed)
-					localPlayer.Character.HumanoidRootPart.CFrame = targetRoot.CFrame
+					localPlayer.Character.HumanoidRootPart.CFrame = targetRoot.CFrame * CFrame.new(0, 0, -1)
 				end
 			end)
 		end
