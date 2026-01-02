@@ -32,9 +32,9 @@ local function downloadFolder(url, localPath)
 			if not isfolder(itemLocalPath) then makefolder(itemLocalPath) end
 			downloadFolder(item.url, itemLocalPath)
 		elseif item.type == "file" and item.download_url then
+			TextChatService.TextChannels.RBXGeneral:SendAsync(`Downloading {item.name}...`)
 			local content = game:HttpGet(item.download_url)
 			if content then
-				TextChatService.TextChannels.RBXGeneral:SendAsync(`Downloading {item.name}...`)
 				writefile(itemLocalPath, content)
 			end
 		end
@@ -52,10 +52,7 @@ local function updateApp()
 		return false
 	end
 
-	if isfolder(CONFIG.ASSET_ROOT) then 
-		delfolder(CONFIG.ASSET_ROOT) 
-	end
-	
+	delfolder(CONFIG.ASSET_ROOT)
 	makefolder(CONFIG.ASSET_ROOT)
 
 	local downloadSuccess, err = pcall(function()
