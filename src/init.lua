@@ -288,7 +288,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 		localPlayer.Character.HumanoidRootPart.Anchored = false
 	elseif args[1] == "+ai" then
 		local HttpService = game:GetService("HttpService")
-		local KEY = isfile("vex/key.lua") and readfile("vex/key.lua")
+		local KEY = isfile("vex/plugins/key.lua") and readfile("vex/plugins/key.lua")
 		local URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" .. tostring(KEY)
 
 		if not KEY then
