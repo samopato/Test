@@ -295,8 +295,11 @@ TextChatService.MessageReceived:Connect(function(msg)
 			chat("VEX: API key is missing from vex/plugins/")
 			return
 		end
-		
+
 		local function askGemini(prompt)
+			
+			chat("Asking gemini...")
+			
 			-- Using the global 'request' instead of HttpService
 			local response = request({
 				Url = URL,
@@ -321,7 +324,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 			end
 			return "Error: Could not reach Gemini."
 		end
-		
+
 		chat(askGemini("Hello"))
 	end
 end)
