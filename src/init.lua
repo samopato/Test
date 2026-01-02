@@ -90,11 +90,11 @@ TextChatService.MessageReceived:Connect(function(msg)
 		local speed = tonumber(args[3]) or 1
 
 		track = humanoid:LoadAnimation(animation)
-		track:Play()
  
 		local targetPlayer = findPlayer(speaker, args[2])
 		
 		if targetPlayer and targetPlayer.Character then
+			track:Play()
 			conn = RunService.Heartbeat:Connect(function()
 				local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
 				
