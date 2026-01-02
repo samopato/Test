@@ -139,7 +139,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 			
 		local unicode = "ê"
 
-		chat(string.gsub("nigga", "%w", "%1\xD8\x8B"))
+		chat(string.gsub("nigga", "%w", "%1\xD8\x8B\xD9\xAF"))
 			
 		--local text = translate(args[2]):lower()
 		--chat(args[2], args[3], args[4])
