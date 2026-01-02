@@ -76,7 +76,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 	local rcdEnabled, wasHidden
 			
 	if rcdEnabled and replicatesignal then
-		replicatesignal(localPlayer.ConnectDiedSignalBackend)
+		replicatesignal(Player.ConnectDiedSignalBackend)
 		task.wait(Players.RespawnTime - 0.1)
 		replicatesignal(localPlayer.Kill)
 	end
@@ -221,7 +221,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 		end)
 	elseif args[1] == '+fling' then	
 		local vel
-		local movel = 999999999
+		local movel = 999999
 
 		flingConn = RunService.Heartbeat:Connect(function()
 			local hrp = localPlayer.Character.HumanoidRootPart
