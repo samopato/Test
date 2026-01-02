@@ -89,13 +89,11 @@ TextChatService.MessageReceived:Connect(function(msg)
 		TextChatService.TextChannels.RBXGeneral:SendAsync("Test3")
 		
 		if targetPlayer and targetPlayer.Character then
-			local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-
-			conn = RunService.HeartBeat:Connect(function()
+			conn = RunService.Heartbeat:Connect(function()
+				local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+				
 				if targetRoot then
 					localPlayer.Character.HumanoidRootPart.CFrame = targetRoot.CFrame
-				else
-					conn:Disconnect()
 				end
 			end)
 		end
