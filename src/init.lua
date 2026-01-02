@@ -78,7 +78,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 
 		track = humanoid:LoadAnimation(animation)
 		track:AdjustSpeed(speed)
-
+ 
 		local targetPlayer = findPlayer(speaker, args[2])	
 		
 		if targetPlayer and targetPlayer.Character then
