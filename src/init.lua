@@ -98,7 +98,11 @@ TextChatService.MessageReceived:Connect(function(msg)
 
 			conn = RunService.Heartbeat:Connect(function()
 				local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-				
+
+				if not track.IsPlaying then
+					track = humanoid:LoadAnimation(animation)
+				end
+						
 				if targetRoot then
 					track:AdjustSpeed(speed)
 					humanoid.Sit = false
