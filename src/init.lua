@@ -198,10 +198,16 @@ local function joinFriend(userId)
         local data = HttpService:JSONDecode(response.Body)
         local presence = data.userPresences[1]
 
+		print(table.unpack(data))
+
+		print(response.Body)
+
         if presence and presence.userPresenceType == 2 then -- Type 2 means "In Game"
             local placeId = presence.placeId
             local jobId = presence.gameId -- In the API, 'gameId' is actually the Server JobId
-            
+			
+			print(placeId, jobId)
+						
             if placeId and jobId then
                 print(`VEX: Found friend in Game: {placeId}, Server: {jobId}`)
                 print("VEX: Teleporting...")
