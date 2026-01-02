@@ -168,7 +168,15 @@ coroutine.resume(NetworkAccess)
 		loadstring(game:HttpGet("https://scriptblox.com/raw/Universal-Script-Fe-Silly-animation-V4-16636"))()
 	elseif args[1] == "+follow" then
 		local SocialService = game:GetService("SocialService")
-			
+
+		SocialService.PromptIrisInviteRequested:Connect(function()
+			chat("AAAAAAAA")
+		end
+
+		SocialService.PromptInviteRequested:Connect(function()
+			chat("BBBBBBBB")
+		end
+		
 		print(SocialService:GetPartyAsync())
 	end
 end)
