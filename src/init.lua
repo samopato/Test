@@ -32,6 +32,7 @@ end
 
 local conn
 local track
+local flingConn
 
 TextChatService.MessageReceived:Connect(function(msg)
 	local speaker = Players:GetPlayerByUserId(msg.TextSource and msg.TextSource.UserId)
@@ -152,10 +153,11 @@ TextChatService.MessageReceived:Connect(function(msg)
 
 		local NetworkAccess = coroutine.create(function()
 			settings().Physics.AllowSleep = false
-			while true do game:GetService("RunService").RenderStepped:Wait()
-				local TBL = game:GetService("Players"):GetChildren() 
+			while true do 
+				RunService.RenderStepped:Wait()
+				local TBL = Players:GetChildren()
 
-				for _ = 1,#TBL do local Players = TBL[_]
+				for i = 1,#TBL do local Players = TBL[i]
 					if Players ~= game:GetService("Players").LocalPlayer then
 						Players.MaximumSimulationRadius = 0.1 Players.SimulationRadius = 0
 					end
@@ -176,39 +178,58 @@ TextChatService.MessageReceived:Connect(function(msg)
 		loadstring(game:HttpGet("https://raw.githubusercontent.com/raelhubfunctions/Save-scripts/refs/heads/main/DexMobile.lua"))()	
 	elseif args[1] == "+test3" then
 		localPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(0, -69000, 0)
-	elseif args[1] == "+carpet" then
-local SETTINGS = {
-    OFFSET = Vector3.new(0, -4, 0),
-    PREDICTION_TIME = 0.12, -- Adjust based on your ping (0.1 to 0.2 is sweet spot)
-}
+	elseif args[1] == "+carpet" then		
+		local targetPlayer = findPlayer(speaker, args[2])
+		local char = localPlayer.Character
+		local hum = char.Humanoid
+		local root = char.HumanoidRootPart
+		
+		local SETTINGS = {
+			OFFSET = Vector3.new(0, -4, 0),
+			PREDICTION_TIME = 0.12, -- Adjust based on your ping (0.1 to 0.2 is sweet spot)
+		}
 
--- Inside your +carpet elseif:
-local connection
-connection = RunService.Heartbeat:Connect(function()
-    local targetChar = targetPlayer.Character
-    local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
-    
-    if targetRoot and root then
-        hum.Sit = false
-        
-        -- PREDICTION CALCULATION
-        -- We take their current position and add their velocity multiplied by time
-        local predictedPos = targetRoot.Position + (targetRoot.AssemblyLinearVelocity * SETTINGS.PREDICTION_TIME)
-        local finalPos = predictedPos + SETTINGS.OFFSET
+		-- Inside your +carpet elseif:
+		local connection
+		connection = RunService.Heartbeat:Connect(function()
+			local targetChar = targetPlayer.Character
+			local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
 
-        -- DIRECTION CALCULATION (Same as before, staying level)
-        local rawLook = targetRoot.CFrame.LookVector
-        local flattenedLook = Vector3.new(rawLook.X, 0, rawLook.Z).Unit
+			if targetRoot and root then
+				hum.Sit = false
 
-        -- Apply the CFrame
-        root.CFrame = CFrame.lookAt(finalPos, finalPos + flattenedLook) 
-                      * CFrame.Angles(math.rad(90), 0, 0)
-        
-        -- VELOCITY MATCHING
-        -- This is the secret: setting your velocity to match theirs 
-        -- stops the "dragging" effect that causes the bouncing loop.
-        root.AssemblyLinearVelocity = targetRoot.AssemblyLinearVelocity
-    end
-end)
+				local predictedPos = targetRoot.Position + (targetRoot.AssemblyLinearVelocity * SETTINGS.PREDICTION_TIME)
+				local finalPos = predictedPos + SETTINGS.OFFSET
+
+				local rawLook = targetRoot.CFrame.LookVector
+				local flattenedLook = Vector3.new(rawLook.X, 0, rawLook.Z).Unit
+
+
+				root.CFrame = CFrame.lookAt(finalPos, finalPos + flattenedLook) 
+					* CFrame.Angles(math.rad(90), 0, 0)
+
+				root.AssemblyLinearVelocity = targetRoot.AssemblyLinearVelocity
+			end
+		end)
+	elseif args[1] == '+fling' then	
+		local vel
+		local movel = 999999999
+
+		flingConn = RunService.Heartbeat:Connect(function()
+			local hrp = localPlayer.Character.HumanoidRootPart
+			
+			vel = hrp.Velocity
+			hrp.Velocity = vel * 10000 + Vector3.new(0, 10000, 0)
+			RunService.RenderStepped:Wait()
+			hrp.Velocity = vel
+			RunService.Stepped:Wait()
+			hrp.Velocity = vel + Vector3.new(0, movel, 0)
+			movel = -movel
+		end)
+	elseif args[1] == "+unfling" then
+		if flingConn then
+			flingConn:Disconnect()
+			flingConn = nil
+		end
 	end
 end)
