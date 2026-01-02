@@ -76,9 +76,9 @@ TextChatService.MessageReceived:Connect(function(msg)
 
 		track = humanoid:LoadAnimation(animation)
 		track:Play()
-		track:AdjustSpeed(args[3])
+		track:AdjustSpeed(args[2] or 10)
 
-		local targetPlayer = findPlayer(args[2] or 10)
+		local targetPlayer = findPlayer(args[1])
 
 		if targetPlayer and targetPlayer.Character then
 			local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
