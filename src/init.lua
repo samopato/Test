@@ -1,11 +1,11 @@
 warn("Download and execution was successful", ...)
 
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 local TextChatService = game:GetService("TextChatService")
 local localPlayer = Players.LocalPlayer
 
 local TeleportService = game:GetService("TeleportService")
-
 
 local COMMAND_PREFIX = "+tp"
 
@@ -68,26 +68,32 @@ TextChatService.MessageReceived:Connect(function(msg)
 	elseif args[1] == "+respawn" then
 		replicatesignal(localPlayer.ConnectDiedSignalBackend)
 	elseif args[1] == "+bang" then
-		local RunService = game:GetService("RunService")
+		TextChatService.TextChannels.RBXGeneral:SendAsync("Test1")
+		
 		local humanoid = localPlayer.Character:FindFirstChildOfClass("Humanoid")
 
 		local animation = Instance.new("Animation")
 		animation.AnimationId = "rbxassetid://1488408371"
 
-		local speed = args[3] or 10
+		local speed = tonumber(args[3]) or 10
 
 		track = humanoid:LoadAnimation(animation)
 		track:Play()
 		track:AdjustSpeed(speed)
 
-		local targetPlayer = findPlayer(speaker, args[2])
+		
+		TextChatService.TextChannels.RBXGeneral:SendAsync("Test2")
 
+		local targetPlayer = findPlayer(speaker, args[2])
+		
+		TextChatService.TextChannels.RBXGeneral:SendAsync("Test3")
+		
 		if targetPlayer and targetPlayer.Character then
 			local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
 
 			conn = RunService.HeartBeat:Connect(function()
 				if targetRoot then
-					humanoid.Parent.HumanoidRootPart.CFrame = targetRoot.CFrame
+					localPlayer.Character.HumanoidRootPart.CFrame = targetRoot.CFrame
 				else
 					conn:Disconnect()
 				end
