@@ -105,14 +105,5 @@ TextChatService.MessageReceived:Connect(function(msg)
 				end
 			end)
 		end
-	elseif args[1] == "+unbang" then
-		if conn then
-			conn:Disconnect()
-			conn = nil
-		end
-
-		if track then
-			track:Stop()
-		end
 	end
 end)
