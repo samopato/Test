@@ -266,7 +266,8 @@ TextChatService.MessageReceived:Connect(function(msg)
 
 		localPlayer.Character.Humanoid.Sit = false
 		localPlayer.Character.Torso.CanCollide = true
-
+		localPlayer.Character.HumanoidRootPart.Anchored = true
+			
 		for i = 1, 10 do
 			for _,v in pairs(localPlayer.Character:GetDescendants()) do
 				if v:IsA("BasePart") then
@@ -274,7 +275,8 @@ TextChatService.MessageReceived:Connect(function(msg)
 					v.AssemblyAngularVelocity = Vector3.zero
 				end
 			end
-			task.wait(0.01)
 		end
+
+		localPlayer.Character.HumanoidRootPart.Anchored = false
 	end
 end)
