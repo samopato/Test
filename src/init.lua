@@ -84,14 +84,10 @@ TextChatService.MessageReceived:Connect(function(msg)
 			
 		local humanoid = localPlayer.Character:FindFirstChildOfClass("Humanoid")
 		
-		humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
-		
 		local animation = Instance.new("Animation")
 		animation.AnimationId = "rbxassetid://148840371"
 
 		local speed = tonumber(args[3]) or 10
-
-		chat(speed)
 
 		track = humanoid:LoadAnimation(animation)
 		track:Play()
@@ -104,6 +100,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 				
 				if targetRoot then
 					track:AdjustSpeed(speed)
+					humanoid.Sit = false
 					localPlayer.Character.HumanoidRootPart.CFrame = targetRoot.CFrame * CFrame.new(0, 0, -2)
 				end
 			end)
