@@ -68,8 +68,6 @@ TextChatService.MessageReceived:Connect(function(msg)
 	elseif args[1] == "+respawn" then
 		replicatesignal(localPlayer.ConnectDiedSignalBackend)
 	elseif args[1] == "+bang" then
-		TextChatService.TextChannels.RBXGeneral:SendAsync("Test1")
-		
 		local humanoid = localPlayer.Character:FindFirstChildOfClass("Humanoid")
 
 		local animation = Instance.new("Animation")
@@ -81,14 +79,10 @@ TextChatService.MessageReceived:Connect(function(msg)
 		track:Play()
 		track:AdjustSpeed(speed)
 
-		
-		TextChatService.TextChannels.RBXGeneral:SendAsync("Test2")
-
-		local targetPlayer = findPlayer(speaker, args[2])
-		
-		TextChatService.TextChannels.RBXGeneral:SendAsync("Test3")
+		local targetPlayer = findPlayer(speaker, args[2])	
 		
 		if targetPlayer and targetPlayer.Character then
+			TextChatService.TextChannels.RBXGeneral:SendAsync("Test4")
 			conn = RunService.Heartbeat:Connect(function()
 				local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
 				
