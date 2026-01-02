@@ -50,7 +50,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 		if targetPlayer and targetPlayer.Character then
 			local targetHRP = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
 			if targetHRP then
-				for _,v in pairs(hrp.Parent:GetDescendants()) do
+				for _,v in pairs(character:GetDescendants()) do
 					if v:IsA("BasePart") then
 						v.AssemblyLinearVelocity = Vector3.zero
 						v.AssemblyAngularVelocity = Vector3.zero
