@@ -264,6 +264,13 @@ TextChatService.MessageReceived:Connect(function(msg)
 			flingConn = nil
 		end
 
+		for _,v in pairs(localPlayer.Character:GetDescendants()) do
+			if v:IsA("BasePart") then
+				v.AssemblyLinearVelocity = Vector3.zero
+				v.AssemblyAngularVelocity = Vector3.zero
+			end
+		end
+			
 		localPlayer.Character.Torso.CanCollide = true
 	end
 end)
