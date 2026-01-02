@@ -259,6 +259,8 @@ TextChatService.MessageReceived:Connect(function(msg)
 			movel = -movel
 		end)
 	elseif args[1] == "+unfling" then		
+		localPlayer.Character.HumanoidRootPart.Anchored = true
+			
 		if flingConn then
 			flingConn:Disconnect()
 			flingConn = nil
@@ -266,7 +268,6 @@ TextChatService.MessageReceived:Connect(function(msg)
 
 		localPlayer.Character.Humanoid.Sit = false
 		localPlayer.Character.Torso.CanCollide = true
-		localPlayer.Character.HumanoidRootPart.Anchored = true
 			
 		for i = 1, 10 do
 			for _,v in pairs(localPlayer.Character:GetDescendants()) do
