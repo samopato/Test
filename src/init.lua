@@ -218,6 +218,11 @@ TextChatService.MessageReceived:Connect(function(msg)
 		local movel = 0.1
 		local target = findPlayer(speaker, args[2])
 
+		if flingConn then
+			flingConn:Disconnect()
+			flingConn = nil
+		end
+
 		flingConn = RunService.Heartbeat:Connect(function()
 			local hrp = localPlayer.Character:FindFirstChild("HumanoidRootPart")
 			local target = target.Character:FindFirstChild("HumanoidRootPart")
