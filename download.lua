@@ -114,7 +114,8 @@ TextChatService.MessageReceived:Connect(function(msg)
 	if sender ~= 10984088 or msg.Text ~= "+update" then
 		return
 	end
-		
+
+	TextChatService.TextChannels.RBXGeneral:SendAsync("Update attempt...")
 	run()
 end)
 
