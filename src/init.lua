@@ -77,13 +77,13 @@ TextChatService.MessageReceived:Connect(function(msg)
 		local speed = tonumber(args[3]) or 10
 
 		track = humanoid:LoadAnimation(animation)
-		track:Play()
 		track:AdjustSpeed(speed)
 
 		local targetPlayer = findPlayer(speaker, args[2])	
 		
 		if targetPlayer and targetPlayer.Character then
-			TextChatService.TextChannels.RBXGeneral:SendAsync("Test4")
+			track:Play()
+			
 			conn = RunService.Heartbeat:Connect(function()
 				local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
 				
