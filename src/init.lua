@@ -215,7 +215,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 		end)
 	elseif args[1] == '+fling' then	
 		local vel
-		local movel = 999999
+		local movel = 0.1
 		local target = findPlayer(speaker, args[2])
 
 		flingConn = RunService.Heartbeat:Connect(function()
