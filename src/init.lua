@@ -69,6 +69,16 @@ TextChatService.MessageReceived:Connect(function(msg)
 	elseif args[1] == "+respawn" then
 		replicatesignal(localPlayer.ConnectDiedSignalBackend)
 	elseif args[1] == "+bang" then
+
+		if conn then
+			conn:Disconnect()
+			conn = nil
+		end
+
+		if track then
+			track:Stop()
+		end
+			
 		local humanoid = localPlayer.Character:FindFirstChildOfClass("Humanoid")
 
 		local animation = Instance.new("Animation")
@@ -80,11 +90,6 @@ TextChatService.MessageReceived:Connect(function(msg)
 		track:AdjustSpeed(speed)
  
 		local targetPlayer = findPlayer(speaker, args[2])	
-
-		if conn then
-			conn:Disconnect()
-			conn = nil
-		end
 			
 		if targetPlayer and targetPlayer.Character then
 			track:Play()
