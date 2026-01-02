@@ -299,7 +299,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 		local function askGemini(prompt)
 			-- Using the global 'request' instead of HttpService
 			local response = request({
-				Url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" .. API_KEY,
+				Url = URL,
 				Method = "POST",
 				Headers = {
 					["Content-Type"] = "application/json"
