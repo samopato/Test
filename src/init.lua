@@ -300,14 +300,21 @@ TextChatService.MessageReceived:Connect(function(msg)
 			
 			chat("Asking gemini...")
 			
-			-- Using the global 'request' instead of HttpService
 			local response = request({
 				Url = URL,
 				Method = "POST",
-				Body = game:GetService("HttpService"):JSONEncode({
-					contents = {{
-						parts = {{ text = prompt }}
-					}}
+				Headers = {
+					["Content-Type"] = "application/json"
+				},
+				Body = HttpService:JSONEncode({
+					contents = {
+						{
+							role = "user",
+							parts = {
+								{ text = prompt }
+							}
+						}
+					}
 				})
 			})
 
@@ -317,7 +324,11 @@ TextChatService.MessageReceived:Connect(function(msg)
 					return data.candidates[1].content.parts[1].text
 				end
 			else
-				warn("Request Failed! Status: " .. response.StatusMessage)
+				for _,v in pairs(response) do
+					print(v)
+				end
+				
+				warn(KEY)
 			end
 			
 			return "Error: Could not reach Gemini. "..response.StatusMessage
