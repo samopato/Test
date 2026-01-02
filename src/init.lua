@@ -288,15 +288,8 @@ TextChatService.MessageReceived:Connect(function(msg)
 		localPlayer.Character.HumanoidRootPart.Anchored = false
 	elseif args[1] == "+ai" then
 		local HttpService = game:GetService("HttpService")
-		local rawKey = isfile("vex/plugins/key.lua") and readfile("vex/plugins/key.lua")
-local KEY = rawKey and string.gsub(rawKey, "%s+", "") 
-
-if not KEY or KEY == "" then
-    chat("VEX: API key is missing or empty in vex/plugins/key.lua")
-    return
-end
-			
-		local URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" ..tostring(KEY)
+		local KEY = isfile("vex/plugins/key.lua") and readfile("vex/plugins/key.lua")
+		local URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=" ..tostring(KEY)
 
 		if not KEY then
 			chat("VEX: API key is missing from vex/plugins/")
@@ -311,9 +304,6 @@ end
 			local response = request({
 				Url = URL,
 				Method = "POST",
-				Headers = {
-          			["Content-Type"] = "application/json"
-      			 },
 				Body = game:GetService("HttpService"):JSONEncode({
 					contents = {{
 						parts = {{ text = prompt }}
@@ -327,10 +317,7 @@ end
 					return data.candidates[1].content.parts[1].text
 				end
 			else
-				warn(KEY)
-				for _,v in pairs(response) do
-					warn(v)
-				end
+				warn("Request Failed! Status: " .. response.StatusMessage)
 			end
 			
 			return "Error: Could not reach Gemini. "..response.StatusMessage
