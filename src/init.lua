@@ -226,7 +226,13 @@ TextChatService.MessageReceived:Connect(function(msg)
 				return
 			end
 
-
+			for _,v in pairs(hrp.Parent:GetDescendants()) do
+				if v:IsA("BasePart") then
+					v.CanCollide = false
+					v.Massless = true
+				end
+			end
+	
 			hrp.CFrame = target.CFrame * CFrame.new(0, 0, 1)
 			vel = hrp.Velocity
 			hrp.Velocity = vel * 10000 + Vector3.new(0, 10000, 0)
