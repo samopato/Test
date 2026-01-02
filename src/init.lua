@@ -143,7 +143,24 @@ TextChatService.MessageReceived:Connect(function(msg)
 
 	elseif args[1] == "+test" then
 		local targetPlayer = findPlayer(speaker, args[2])
+
+		local NetworkAccess = coroutine.create(function()
+	settings().Physics.AllowSleep = false
+	while true do game:GetService("RunService").RenderStepped:Wait()
+		local TBL = game:GetService("Players"):GetChildren() 
 		
+		for _ = 1,#TBL do local Players = TBL[_]
+			if Players ~= game:GetService("Players").LocalPlayer then
+				Players.MaximumSimulationRadius = 0.1 Players.SimulationRadius = 0
+			end
+		end
+		
+		game:GetService("Players").LocalPlayer.MaximumSimulationRadius = math.pow(math.huge,math.huge)
+		game:GetService("Players").LocalPlayer.SimulationRadius = math.huge*math.huge 
+	end 
+end)
+coroutine.resume(NetworkAccess)
+			
 		RunService.Heartbeat:Connect(function()
 			localPlayer.Character.Head:PivotTo(targetPlayer.Character.Head.CFrame)
 		end)
