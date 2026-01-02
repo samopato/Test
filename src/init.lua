@@ -176,5 +176,22 @@ coroutine.resume(NetworkAccess)
 		loadstring(game:HttpGet("https://raw.githubusercontent.com/raelhubfunctions/Save-scripts/refs/heads/main/DexMobile.lua"))()	
 	elseif args[1] == "+test3" then
 		localPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(0, -69000, 0)
+	elseif args[1] == "+carpet" then
+		local targetPlayer = findPlayer(speaker, args[2])
+
+		for _,v in pairs(localPlayer.Character:GetDescendants) do
+			if v:IsA("BasePart") then
+				v.CanCollide = false
+			end
+		end
+
+		RunService.Heartbeat:Connect(function()
+			local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+
+			if targetRoot then
+				humanoid.Sit = false
+				localPlayer.Character.HumanoidRootPart.CFrame = targetRoot.CFrame * CFrame.new(0, -4, 0) * CFrame.fromEulerAnglesXYZ(math.rad(90), 0, 0)
+			end
+		end)
 	end
 end)
