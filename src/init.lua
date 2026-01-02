@@ -277,6 +277,8 @@ TextChatService.MessageReceived:Connect(function(msg)
 			end
 		end
 
+		task.wait(5)
+
 		localPlayer.Character.HumanoidRootPart.Anchored = false
 	end
 end)
