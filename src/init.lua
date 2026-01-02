@@ -80,7 +80,17 @@ TextChatService.MessageReceived:Connect(function(msg)
 		track:AdjustSpeed(speed)
  
 		local targetPlayer = findPlayer(speaker, args[2])	
-		
+
+		if conn then
+			conn:Disconnect()
+			conn = nil
+		end
+
+		if track then
+			track:Stop()
+			track:Destroy()
+			end
+			
 		if targetPlayer and targetPlayer.Character then
 			track:Play()
 			
