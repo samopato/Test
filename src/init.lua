@@ -166,7 +166,7 @@ coroutine.resume(NetworkAccess)
 		end)
 	elseif args[1] == "+test2" then
 		loadstring(game:HttpGet("https://scriptblox.com/raw/Universal-Script-Fe-Silly-animation-V4-16636"))()
-	elseif args[1] == "+follow" then
-
+	elseif args[1] == "+dex" then
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/realredz/DEX-Explorer/refs/heads/main/Mobile.lua"))()
 	end
 end)
