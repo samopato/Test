@@ -177,21 +177,41 @@ TextChatService.MessageReceived:Connect(function(msg)
 	elseif args[1] == "+test3" then
 		localPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(0, -69000, 0)
 	elseif args[1] == "+carpet" then
-		local targetPlayer = findPlayer(speaker, args[2])
+local targetPlayer = findPlayer(speaker, args[2])
+    if not targetPlayer or not targetPlayer.Character then return end
 
-		for _,v in pairs(localPlayer.Character:GetDescendants()) do
-			if v:IsA("BasePart") then
-				v.CanCollide = false
-			end
-		end
+    local char = localPlayer.Character
+    local root = char:FindFirstChild("HumanoidRootPart")
+    local hum = char:FindFirstChildOfClass("Humanoid")
 
-		RunService.Heartbeat:Connect(function()
-			local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+    -- Disable collisions
+    for _, v in pairs(char:GetChildren()) do
+        if v:IsA("BasePart") then v.CanCollide = false end
+    end
 
-			if targetRoot then
-				localPlayer.Character.Humanoid.Sit = false
-				localPlayer.Character.HumanoidRootPart.CFrame = targetRoot.CFrame * CFrame.new(0, -4, 0) * CFrame.fromEulerAnglesXYZ(math.rad(90), 0, 0)
-			end
-		end)
+    local connection
+    connection = RunService.Heartbeat:Connect(function()
+        if not targetPlayer.Character or not char.Parent then 
+            connection:Disconnect() 
+            return 
+        end
+
+        local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if targetRoot and root then
+            hum.Sit = false
+
+            -- 1. Get the target's Position
+            local pos = targetRoot.Position - Vector3.new(0, 4, 0)
+
+            -- 2. Extract ONLY the Y-axis rotation (LookVector)
+            -- We create a LookVector that ignores the target's tilting up or down
+            local rawLook = targetRoot.CFrame.LookVector
+            local flattenedLook = Vector3.new(rawLook.X, 0, rawLook.Z).Unit
+
+            -- 3. Combine them: Position + Flattened Direction + Fixed 90 deg tilt
+            root.CFrame = CFrame.lookAt(pos, pos + flattenedLook) 
+                          * CFrame.Angles(math.rad(90), 0, 0)
+        end
+    end)
 	end
 end)
