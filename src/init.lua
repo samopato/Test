@@ -72,6 +72,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 		task.wait(Players.RespawnTime + 0.20)
 		replicatesignal(localPlayer.Kill)
 	elseif args[1] == "+respawn" then
+		replicatesignal(localPlayer.Kill)
 		replicatesignal(localPlayer.ConnectDiedSignalBackend)
 		task.wait(Players.RespawnTime - 0.1)
 		replicatesignal(localPlayer.Kill)		
