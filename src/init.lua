@@ -199,7 +199,8 @@ local targetPlayer = findPlayer(speaker, args[2])
         local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
         if targetRoot and root then
             hum.Sit = false
-
+			hum.PlatformStand = true
+						
             -- 1. Get the target's Position
             local pos = targetRoot.Position - Vector3.new(0, 4, 0)
 
