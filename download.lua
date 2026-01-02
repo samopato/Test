@@ -49,7 +49,7 @@ local function downloadFolder(url, localPath)
 end
 
 local function updateApp()
-	local data = HttpService:JSONDecode(game:HttpGet(CONFIG.COMMITS_URL) )
+	local data = HttpService:JSONDecode(request(CONFIG.COMMITS_URL))
 	local remoteSHA = data.sha
 
 	local localSHA = isfile(CONFIG.SHA_LOG_PATH) and readfile(CONFIG.SHA_LOG_PATH) or ""
