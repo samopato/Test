@@ -102,6 +102,8 @@ local function run()
 		task.cancel(thread)
 		thread = nil
 	end
+
+	TextChatService.TextChannels.RBXGeneral:SendAsync("VEX: Loading...")
 	
 	updateRobloxData()
 	local isUpdated = updateApp()
@@ -117,7 +119,6 @@ end
 TextChatService.MessageReceived:Connect(function(msg)
 	local sender = msg.TextSource and msg.TextSource.UserId
 	if sender == 10984088 and msg.Text == "+update" then
-		TextChatService.TextChannels.RBXGeneral:SendAsync("VEX: Updating...")
 		run()
 	end
 end)
