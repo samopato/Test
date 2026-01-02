@@ -87,7 +87,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 		local animation = Instance.new("Animation")
 		animation.AnimationId = "rbxassetid://148840371"
 
-		local speed = tonumber(args[3]) or 10
+		local speed = tonumber(args[3]) or 1
 
 		track = humanoid:LoadAnimation(animation)
 		track:Play()
