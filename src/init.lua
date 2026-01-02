@@ -259,20 +259,19 @@ TextChatService.MessageReceived:Connect(function(msg)
 			movel = -movel
 		end)
 	elseif args[1] == "+unfling" then
-				for _,v in pairs(localPlayer.Character:GetDescendants()) do
-			if v:IsA("BasePart") then
-				v.AssemblyLinearVelocity = Vector3.zero
-				v.AssemblyAngularVelocity = Vector3.zero
-			end
-		end
-			
 		if flingConn then
 			flingConn:Disconnect()
 			flingConn = nil
 		end
 
 		localPlayer.Character.Humanoid.Sit = false
-			
 		localPlayer.Character.Torso.CanCollide = true
+			
+		for _,v in pairs(localPlayer.Character:GetDescendants()) do
+			if v:IsA("BasePart") then
+				v.AssemblyLinearVelocity = Vector3.zero
+				v.AssemblyAngularVelocity = Vector3.zero
+			end
+		end
 	end
 end)
