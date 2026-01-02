@@ -72,15 +72,9 @@ TextChatService.MessageReceived:Connect(function(msg)
 		task.wait(Players.RespawnTime + 0.20)
 		replicatesignal(localPlayer.Kill)
 	elseif args[1] == "+respawn" then
-
-	local rcdEnabled, wasHidden
-			
-	if rcdEnabled and replicatesignal then
 		replicatesignal(Player.ConnectDiedSignalBackend)
 		task.wait(Players.RespawnTime - 0.1)
-		replicatesignal(localPlayer.Kill)
-	end
-			
+		replicatesignal(localPlayer.Kill)		
 	elseif args[1] == "+bang" then
 		if conn then
 			conn:Disconnect()
