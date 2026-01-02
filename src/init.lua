@@ -216,14 +216,18 @@ TextChatService.MessageReceived:Connect(function(msg)
 	elseif args[1] == '+fling' then	
 		local vel
 		local movel = 999999
+		local target = findPlayer(speaker, args[2])
 
 		flingConn = RunService.Heartbeat:Connect(function()
-			local hrp = localPlayer.Character.HumanoidRootPart
+			local hrp = localPlayer.Character:FindFirstChild("HumanoidRootPart")
+			local target = target.Chararacter:FindFirstChild("HumanoidRootPart")
 
-			if not hrp then
+			if not hrp or not target then
 				return
 			end
-			
+
+
+			hrp.CFrame = target.CFrame * CFrame.new(0, 0, 1)
 			vel = hrp.Velocity
 			hrp.Velocity = vel * 10000 + Vector3.new(0, 10000, 0)
 			RunService.RenderStepped:Wait()
