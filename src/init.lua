@@ -79,9 +79,8 @@ TextChatService.MessageReceived:Connect(function(msg)
 
 		track = humanoid:LoadAnimation(animation)
 		track:Play()
-		track:AdjustSpeed(speed)
 
-		local targetPlayer = findPlayer(speaker, args[2])	
+		local targetPlayer = findPlayer(speaker, args[2])
 		
 		if targetPlayer and targetPlayer.Character then
 			TextChatService.TextChannels.RBXGeneral:SendAsync("Test4")
@@ -89,6 +88,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 				local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
 				
 				if targetRoot then
+					track:AdjustSpeed(speed)
 					localPlayer.Character.HumanoidRootPart.CFrame = targetRoot.CFrame
 				end
 			end)
