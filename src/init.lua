@@ -78,7 +78,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 		track:Play()
 		track:AdjustSpeed(args[3] or 10)
 
-		local targetPlayer = findPlayer(args[2])
+		local targetPlayer = findPlayer(speaker, args[2])
 
 		if targetPlayer and targetPlayer.Character then
 			local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
