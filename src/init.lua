@@ -85,11 +85,6 @@ TextChatService.MessageReceived:Connect(function(msg)
 			conn:Disconnect()
 			conn = nil
 		end
-
-		if track then
-			track:Stop()
-			track:Destroy()
-			end
 			
 		if targetPlayer and targetPlayer.Character then
 			track:Play()
@@ -110,7 +105,6 @@ TextChatService.MessageReceived:Connect(function(msg)
 
 		if track then
 			track:Stop()
-			track:Destroy()
 		end
 	end
 end)
