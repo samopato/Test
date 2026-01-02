@@ -38,13 +38,14 @@ local function findPlayer(speaker, nameHint)
 end
 
 local function parseCommand(message)	
-	local content = string.sub(message, 2) 
+	local undo = string.sub(message, 2, 3)
+	local content = string.sub(message, undo and 4 or 2)
 	local args = string.split(content, " ")
 	local command = string.lower(args[1])
 
 	table.remove(args, 1) 
 
-	return command, args
+	return command, args, undo
 end
 
 -----------------------------
@@ -332,10 +333,9 @@ local function onMessageReceived(message)
 		return
 	end
 	
-	local undo = message.Text:sub(1, 2) == "un"
-	
+
 	local speaker = Players:GetPlayerByUserId(message.TextSource and message.TextSource.UserId)
-	local command, args = parseCommand(message.Text)
+	local command, args, undo = parseCommand(message.Text)
 	
 	local callback = undo and commands[command][2] or commands[command][1]
 	
