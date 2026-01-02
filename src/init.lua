@@ -288,7 +288,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 		localPlayer.Character.HumanoidRootPart.Anchored = false
 	elseif args[1] == "+ai" then
 		local HttpService = game:GetService("HttpService")
-		local KEY = isfile("vex/plugins/key.lua") and readfile("vex/plugins/key.lua")
+		local KEY = readfile("apikey.txt")
 		local URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" .. tostring(KEY)
 
 		if not KEY then
@@ -297,34 +297,29 @@ TextChatService.MessageReceived:Connect(function(msg)
 		end
 		
 		local function askGemini(prompt)
-			local requestBody = HttpService:JSONEncode({
-				contents = {
-					{
-						parts = {
-							{ text = prompt }
-						}
-					}
-				}
+			-- Using the global 'request' instead of HttpService
+			local response = request({
+				Url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" .. API_KEY,
+				Method = "POST",
+				Headers = {
+					["Content-Type"] = "application/json"
+				},
+				Body = game:GetService("HttpService"):JSONEncode({
+					contents = {{
+						parts = {{ text = prompt }}
+					}}
+				})
 			})
 
-			local success, response = pcall(function()
-				return request({
-					Url = URL,
-					Method = "GET",
-					Body = requestBody
-				})
-			end)
-
-			if success then
-				local data = HttpService:JSONDecode(response)
-				-- Navigating the JSON response to get the text
+			if response.Success then
+				local data = game:GetService("HttpService"):JSONDecode(response.Body)
 				if data.candidates and data.candidates[1].content.parts[1].text then
 					return data.candidates[1].content.parts[1].text
 				end
 			else
-				warn("Gemini API Error: " .. tostring(response))
+				warn("Request Failed! Status: " .. response.StatusMessage)
 			end
-			return "Sorry, I'm having trouble thinking right now."
+			return "Error: Could not reach Gemini."
 		end
 		
 		chat(askGemini("Hello"))
