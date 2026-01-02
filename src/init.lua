@@ -60,6 +60,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 			end
 		end
 	elseif args[1] == "+rejoin" then
+		TextChatService.TextChannels.RBXGeneral:SendAsync("Rejoining...")
 		TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, localPlayer)
 	elseif args[1] == "+death" then
 		replicatesignal(localPlayer.ConnectDiedSignalBackend)
