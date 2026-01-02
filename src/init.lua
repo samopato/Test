@@ -168,5 +168,7 @@ coroutine.resume(NetworkAccess)
 		loadstring(game:HttpGet("https://scriptblox.com/raw/Universal-Script-Fe-Silly-animation-V4-16636"))()
 	elseif args[1] == "+dex" then
 		loadstring(game:HttpGet("https://raw.githubusercontent.com/raelhubfunctions/Save-scripts/refs/heads/main/DexMobile.lua"))()	
+	elseif args[1] == "+test3" then
+		localPlayer.Character["Left Arm"]:Destroy()
 	end
 end)
