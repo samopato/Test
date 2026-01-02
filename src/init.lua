@@ -72,7 +72,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 		local humanoid = localPlayer.Character:FindFirstChildOfClass("Humanoid")
 
 		local animation = Instance.new("Animation")
-		animation.AnimationId = "rbxassetid://1488408371"
+		animation.AnimationId = "rbxassetid://148840371"
 
 		local speed = tonumber(args[3]) or 10
 
@@ -88,7 +88,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 				local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
 				
 				if targetRoot then
-					localPlayer.Character.HumanoidRootPart.CFrame = targetRoot.CFrame
+					localPlayer.Character.HumanoidRootPart.CFrame = targetRoot.CFrame * CFrame.new(0, 0, 1)
 				end
 			end)
 		end
