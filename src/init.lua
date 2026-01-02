@@ -320,7 +320,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 					return data.candidates[1].content.parts[1].text
 				end
 			else
-				warn("Request Failed! Status: " .. response)
+				warn("Request Failed! Status: ", response)
 			end
 			
 			return "Error: Could not reach Gemini. "..response.StatusMessage
