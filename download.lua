@@ -48,13 +48,13 @@ local function downloadFolder(url, localPath)
 	end
 end
 
-local function updateApp()
+local function updateApp(forced)
 	local data = HttpService:JSONDecode(request(CONFIG.COMMITS_URL))
 	local remoteSHA = data.sha
 
 	local localSHA = isfile(CONFIG.SHA_LOG_PATH) and readfile(CONFIG.SHA_LOG_PATH) or ""
 
-	if localSHA == remoteSHA then
+	if localSHA == remoteSHA and not forced then
 		TextChatService.TextChannels.RBXGeneral:SendAsync("VEX: Already up to date.")
 		return false
 	end
@@ -119,7 +119,7 @@ end
 TextChatService.MessageReceived:Connect(function(msg)
 	local sender = msg.TextSource and msg.TextSource.UserId
 	if sender == 10984088 and msg.Text == "+update" then
-		run()
+		run(true)
 	end
 end)
 
