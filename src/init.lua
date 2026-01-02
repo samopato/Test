@@ -215,7 +215,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 		end)
 	elseif args[1] == '+fling' then	
 		local vel
-		local movel = 0.1
+		local movel = 10
 		local target = findPlayer(speaker, args[2])
 
 		if flingConn then
@@ -230,6 +230,8 @@ TextChatService.MessageReceived:Connect(function(msg)
 			if not hrp or not target then
 				return
 			end
+
+			hrp.Parent.Humanoid.Sit = true
 
 			for _,v in pairs(hrp.Parent:GetDescendants()) do
 				if v:IsA("BasePart") then
