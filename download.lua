@@ -9,7 +9,7 @@ local CONFIG = {
 	VER_URL = "https://clientsettings.roblox.com/v2/client-version/WindowsStudio64/channel/LIVE",
 	RMD_URL = "https://raw.githubusercontent.com/CloneTrooper1019/Roblox-Client-Tracker/roblox/ReflectionMetadata.xml",
 	ASSET_ROOT = "vex/src",
-	SHA_LOG_PATH = "vex/last_sha.dat"
+	SHA_LOG_PATH = "vex/src/last_sha.dat"
 }
 
 -- Initialize base folders
