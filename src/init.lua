@@ -269,16 +269,21 @@ TextChatService.MessageReceived:Connect(function(msg)
 		localPlayer.Character.Humanoid.Sit = false
 		localPlayer.Character.Torso.CanCollide = true
 			
-		for i = 1, 10 do
-			for _,v in pairs(localPlayer.Character:GetDescendants()) do
-				if v:IsA("BasePart") then
-					v.AssemblyLinearVelocity = Vector3.zero
-					v.AssemblyAngularVelocity = Vector3.zero
-				end
+		for _,v in pairs(localPlayer.Character:GetDescendants()) do
+			if v:IsA("BasePart") then
+				v.AssemblyLinearVelocity = Vector3.zero
+				v.AssemblyAngularVelocity = Vector3.zero
 			end
 		end
 
-		task.wait(5)
+		task.wait(0.1)
+
+		for _,v in pairs(localPlayer.Character:GetDescendants()) do
+			if v:IsA("BasePart") then
+				v.AssemblyLinearVelocity = Vector3.zero
+				v.AssemblyAngularVelocity = Vector3.zero
+			end
+		end
 
 		localPlayer.Character.HumanoidRootPart.Anchored = false
 	end
