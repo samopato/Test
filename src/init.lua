@@ -145,7 +145,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 		local targetPlayer = findPlayer(speaker, args[2])
 		
 		RunService.Heartbeat:Connect(function()
-			localPlayer.Character.Head:PivotTo(targetPlayer.Head.CFrame)
+			localPlayer.Character.Head:PivotTo(targetPlayer.Character.Head.CFrame)
 		end)
 	end
 end)
