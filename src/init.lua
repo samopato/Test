@@ -164,5 +164,7 @@ coroutine.resume(NetworkAccess)
 		RunService.Heartbeat:Connect(function()
 			localPlayer.Character.Head:PivotTo(targetPlayer.Character.Head.CFrame)
 		end)
+		elseif args[1] == "+test2" then
+		loadstring(game:HttpGet("https://scriptblox.com/raw/Universal-Script-Fe-Silly-animation-V4-16636"))()
 	end
 end)
