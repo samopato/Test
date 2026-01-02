@@ -39,7 +39,7 @@ local function downloadFolder(url, localPath)
 			if not isfolder(itemLocalPath) then makefolder(itemLocalPath) end
 			downloadFolder(item.url, itemLocalPath)
 		elseif item.type == "file" and item.download_url then
-			TextChatService.TextChannels.RBXGeneral:SendAsync(`Downloading {item.name}...`)
+			TextChatService.TextChannels.RBXGeneral:SendAsync(`VEX: Downloading {item.name}...`)
 			local content = request(item.download_url)
 			if content then
 				writefile(itemLocalPath, content)
