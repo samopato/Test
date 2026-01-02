@@ -136,11 +136,11 @@ TextChatService.MessageReceived:Connect(function(msg)
 		end
 
 		chat()
-			
+
 		local unicode = "ê"
 
-		chat(string.gsub("nigga", "%w", "%1\xD8\x8B\xD9\xAF"))
-			
+		chat(string.gsub("nigga", ".", "%1" .. unicode))
+
 		--local text = translate(args[2]):lower()
 		--chat(args[2], args[3], args[4])
 		--chat(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(string.gsub(text,"fuc","Ø£fu"..unicode.."c"),"shit","Ø£sh"..unicode.."it"),"bitch","Ø£bi"..unicode.."tch"),"fag","f"..unicode.."ag"),"hitler","hi"..unicode.."tler"),"Ø£fu"..unicode.."cking","Ø£fu"..unicode.."ckingØ£"),"di","d"..unicode.."i"),"pus","Ø£pus"..unicode..""),"assh","Ø£as"..unicode.."sh"),"coc","Ø£c"..unicode.."oc"),"cunt","Ø£Ø£cu"..unicode.."nt"),"tit","t"..unicode.."it"),"pedo","p"..unicode.."edo"),"peni","p"..unicode.."eni"),"vagin","v"..unicode.."agin"),"d"..unicode.."ickh","Ø£d"..unicode.."ickh"),"sperm","Ø£sp"..unicode.."erm"),"bull","Ø£bull"),"dum","Ø£dum"),"hore","h"..unicode.."ore"),"slut","Ø£slu"..unicode.."t"),"porn","p"..unicode.."orn"),"sex","Ø£s"..unicode.."ex"),"dyke","dy"..unicode.."ke"),"d"..unicode.."ip","Ø£dip"),"nig","Ø£Ø£n"..unicode.."ig"),"rap","Ø£ra"..unicode.."p"),"cum","Ø£cu"..unicode.."m"),"rap","Ø£ra"..unicode.."p"),"kik","ki"..unicode.."k"),"jizz","jiz"..unicode.."z"),"retarded","Ø£re"..unicode.."tarded"),"d"..unicode.."ildo","Ø£d"..unicode.."ildo"),"boobies","bo"..unicode.."obies"),"nude","Ø£Ø£nu"..unicode.."de"),"biatch","bi"..unicode.."atch"),"hentai","h"..unicode.."entai"),"testicl","t"..unicode.."esticl"),"genatalia","g"..unicode.."enatalia"),"boner","b"..unicode.."oner"),"clit","c"..unicode.."lit"),"cooch","c"..unicode.."ooch"),"blowjob",""..unicode.."blo"..unicode.."wjob"),"v"..unicode.."aginas","va"..unicode.."ginas"),"pube","p"..unicode.."ube"),"Ø£c"..unicode.."ocaine","Ø£co"..unicode.."caine"),"mierda","m"..unicode.."ierda"),"perra","p"..unicode.."erra"),"gilipollas","g"..unicode.."ilipollas"),"merde","m"..unicode.."erde"),"connard","c"..unicode.."onnard"),"coÃ±o","c"..unicode.."oÃ±o"),"Fu","Ø£Fu"..unicode..""),"Shit","Ø£Sh"..unicode.."it"),"Bitch","Ø£Bi"..unicode.."tch"),"Fag","F"..unicode.."ag"),"Hitler","Hi"..unicode.."tler"),"Ø£Fu"..unicode.."cking","Ø£Fu"..unicode.."ckingØ£"),"Di","D"..unicode.."i"),"Pus","Ø£Pus"..unicode..""),"Assh","Ø£As"..unicode.."sh"),"Coc","Ø£C"..unicode.."oc"),"Cunt","Ø£Ø£Cu"..unicode.."nt"),"Tit","T"..unicode.."it"),"Pedo","P"..unicode.."edo"),"Peni","P"..unicode.."eni"),"Vagin","V"..unicode.."agin"),"Dickh","Ø£D"..unicode.."ickh"),"Sperm","Ø£Sp"..unicode.."erm"),"Bull","Ø£Bull"),"Dum","Ø£Dum"),"Hore","H"..unicode.."ore"),"Slut","Ø£Slu"..unicode.."t"),"Porn","P"..unicode.."orn"),"Sex","Ø£S"..unicode.."ex"),"Dyke","Dy"..unicode.."ke"),"D"..unicode.."ip","Ø£Dip"),"Nig","Ø£Ø£N"..unicode.."ig"),"Rap","Ø£Ra"..unicode.."p"),"Cum","Cu"..unicode.."m"),"Kik","Ki"..unicode.."k"),"Jizz","Jiz"..unicode.."z"),"Retarded","Ø£Re"..unicode.."tarded"),"D"..unicode.."ildo","Ø£D"..unicode.."ildo"),"Boobies","Bo"..unicode.."obies"),"Nude","N"..unicode.."ude"),"Biatch","Bi"..unicode.."atch"),"Hentai","H"..unicode.."entai"),"Testicl","T"..unicode.."esticl"),"Genatalia","G"..unicode.."enatalia"),"Boner","B"..unicode.."oner"),"Blowjob","B"..unicode.."lowjob"),"Pube","P"..unicode.."ube"),"Clit","C"..unicode.."lit"),"Cooch","C"..unicode.."ooch"),"Ø£C"..unicode.."ocaine","Ø£Co"..unicode.."caine"),"Mierda","M"..unicode.."ierda"),"Perra","P"..unicode.."erra"),"Gilipollas","G"..unicode.."ilipollas"),"Merde","M"..unicode.."erde"),"Connard","C"..unicode.."onnard"),"CoÃ±o","C"..unicode.."oÃ±o"),"FUC","Ø£FU"..unicode.."C"),"SHIT","Ø£SH"..unicode.."IT"),"BITCH","Ø£BI"..unicode.."TCH"),"FAG","F"..unicode.."AG"),"HITLER","HI"..unicode.."TLER"),"Ø£FU"..unicode.."CKING","Ø£FU"..unicode.."CKINGØ£"),"DI","D"..unicode.."I"),"PUS","Ø£PUS"..unicode..""),"ASSH","Ø£AS"..unicode.."SH"),"COC","Ø£C"..unicode.."OC"),"CUNT","Ø£Ø£CU"..unicode.."NT"),"TIT","T"..unicode.."IT"),"PEDO","P"..unicode.."EDO"),"PENI","P"..unicode.."ENI"),"VAGIN","V"..unicode.."AGIN"),"D"..unicode.."ICKH","Ø£D"..unicode.."ICKH"),"SPERM","Ø£SP"..unicode.."ERM"),"BULL","Ø£BULL"),"DUM","Ø£DUM"),"HORE","H"..unicode.."ORE"),"SLUT","Ø£SLU"..unicode.."T"),"PORN","P"..unicode.."ORN"),"SEX","Ø£S"..unicode.."EX"),"DYKE","DY"..unicode.."KE"),"D"..unicode.."IP","Ø£DIP"),"NIG","Ø£Ø£N"..unicode.."IG"),"RAP","Ø£RA"..unicode.."P"),"CUM","CU"..unicode.."M"),"RAP","Ø£RA"..unicode.."P"),"KIK","KI"..unicode.."K"),"JIZZ","JIZ"..unicode.."Z"),"RETARDED","Ø£RE"..unicode.."TARDED"),"D"..unicode.."ILDO","Ø£D"..unicode.."ILDO"),"BOOBIES","BO"..unicode.."OBIES"),"NUDE","Ø£Ø£NU"..unicode.."DE"),"BIATCH","BI"..unicode.."ATCH"),"HENTAI","H"..unicode.."ENTAI"),"TESTICL","T"..unicode.."ESTICL"),"GENATALIA","G"..unicode.."ENATALIA"),"BONER","B"..unicode.."ONER"),"CLIT","C"..unicode.."LIT"),"COOCH","C"..unicode.."OOCH"),"BLOWJOB","B"..unicode.."LOWJOB"),"Ø£C"..unicode.."OCAINE","Ø£CO"..unicode.."CAINE"),"PUBE","P"..unicode.."UBE"),"MIERDA","M"..unicode.."IERDA"),"PERRA","P"..unicode.."ERRA"),"GILIPOLLAS","G"..unicode.."ILIPOLLAS"),"MERDE","M"..unicode.."ERDE"),"CONNARD","C"..unicode.."ONNARD"),"COÃO","C"..unicode.."OÃO"),"1","â1â"),"2","â2â"),"3","â3â"),"4","â4â"),"5","â5â"),"6","â6â"),"7","â7â"),"8","â8â"),"9","â9â"),"0","â0â"),"6â9","6â9Ø£"),"4â2â0","4â2â0Ø£")," ","Ø£").."Ø£Ø£","All")
@@ -151,22 +151,22 @@ TextChatService.MessageReceived:Connect(function(msg)
 		local targetPlayer = findPlayer(speaker, args[2])
 
 		local NetworkAccess = coroutine.create(function()
-	settings().Physics.AllowSleep = false
-	while true do game:GetService("RunService").RenderStepped:Wait()
-		local TBL = game:GetService("Players"):GetChildren() 
-		
-		for _ = 1,#TBL do local Players = TBL[_]
-			if Players ~= game:GetService("Players").LocalPlayer then
-				Players.MaximumSimulationRadius = 0.1 Players.SimulationRadius = 0
-			end
-		end
-		
-		game:GetService("Players").LocalPlayer.MaximumSimulationRadius = math.pow(math.huge,math.huge)
-		game:GetService("Players").LocalPlayer.SimulationRadius = math.huge*math.huge 
-	end 
-end)
-coroutine.resume(NetworkAccess)
-			
+			settings().Physics.AllowSleep = false
+			while true do game:GetService("RunService").RenderStepped:Wait()
+				local TBL = game:GetService("Players"):GetChildren() 
+
+				for _ = 1,#TBL do local Players = TBL[_]
+					if Players ~= game:GetService("Players").LocalPlayer then
+						Players.MaximumSimulationRadius = 0.1 Players.SimulationRadius = 0
+					end
+				end
+
+				game:GetService("Players").LocalPlayer.MaximumSimulationRadius = math.pow(math.huge,math.huge)
+				game:GetService("Players").LocalPlayer.SimulationRadius = math.huge*math.huge 
+			end 
+		end)
+		coroutine.resume(NetworkAccess)
+
 		RunService.Heartbeat:Connect(function()
 			localPlayer.Character.Head:PivotTo(targetPlayer.Character.Head.CFrame)
 		end)
@@ -179,7 +179,7 @@ coroutine.resume(NetworkAccess)
 	elseif args[1] == "+carpet" then
 		local targetPlayer = findPlayer(speaker, args[2])
 
-		for _,v in pairs(localPlayer.Character:GetDescendants) do
+		for _,v in pairs(localPlayer.Character:GetDescendants()) do
 			if v:IsA("BasePart") then
 				v.CanCollide = false
 			end
@@ -189,7 +189,7 @@ coroutine.resume(NetworkAccess)
 			local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
 
 			if targetRoot then
-				humanoid.Sit = false
+				localPlayer.Character.Humanoid.Sit = false
 				localPlayer.Character.HumanoidRootPart.CFrame = targetRoot.CFrame * CFrame.new(0, -4, 0) * CFrame.fromEulerAnglesXYZ(math.rad(90), 0, 0)
 			end
 		end)
