@@ -48,7 +48,7 @@ local function downloadFolder(url, localPath)
 	end
 end
 
-local function updateApp()
+local function updateApp(forced)
 	local data = HttpService:JSONDecode(request(CONFIG.COMMITS_URL))
 	local remoteSHA = data.sha
 
