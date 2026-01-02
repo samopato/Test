@@ -164,7 +164,60 @@ coroutine.resume(NetworkAccess)
 		RunService.Heartbeat:Connect(function()
 			localPlayer.Character.Head:PivotTo(targetPlayer.Character.Head.CFrame)
 		end)
-		elseif args[1] == "+test2" then
+	elseif args[1] == "+test2" then
 		loadstring(game:HttpGet("https://scriptblox.com/raw/Universal-Script-Fe-Silly-animation-V4-16636"))()
+	elseif args[1] == "+follow" then
+		local HttpService = game:GetService("HttpService")
+local TeleportService = game:GetService("TeleportService")
+local Players = game:GetService("Players")
+
+local TARGET_ID = 10984088 -- REPLACE WITH FRIEND'S USERID
+
+-- Check if the custom 'request' function exists (Standard in most executors)
+local httpRequest = request or http_request or (http and http.request) or nil
+
+if not httpRequest then
+    return error("VEX: Your executor does not support the 'request' function.")
+end
+
+local function joinFriend(userId)
+    print("VEX: Fetching friend data from Roblox API...")
+
+    local response = httpRequest({
+        Url = "https://presence.roblox.com/v1/presence/users",
+        Method = "POST",
+        Headers = {
+            ["Content-Type"] = "application/json"
+        },
+        Body = HttpService:JSONEncode({
+            userIds = { userId }
+        })
+    })
+
+    if response.StatusCode == 200 then
+        local data = HttpService:JSONDecode(response.Body)
+        local presence = data.userPresences[1]
+
+        if presence and presence.userPresenceType == 2 then -- Type 2 means "In Game"
+            local placeId = presence.placeId
+            local jobId = presence.gameId -- In the API, 'gameId' is actually the Server JobId
+            
+            if placeId and jobId then
+                print(`VEX: Found friend in Game: {placeId}, Server: {jobId}`)
+                print("VEX: Teleporting...")
+                
+                TeleportService:TeleportToPlaceInstance(placeId, jobId, Players.LocalPlayer)
+            else
+                warn("VEX: Friend is in a game, but the Server ID (JobId) is hidden. (Privacy Settings?)")
+            end
+        else
+            warn("VEX: Friend is not currently in a game.")
+        end
+    else
+        warn("VEX: API Request Failed. Status: " .. response.StatusCode)
+    end
+end
+
+joinFriend(TARGET_ID)
 	end
 end)
