@@ -104,7 +104,7 @@ local function run(forced)
 	end
 
 	if forced then
-		TextChatService.TextChannels.RBXGeneral:SendAsync("VEX: Updating...")
+		TextChatService.TextChannels.RBXGeneral:SendAsync("VEX: Forcing Update...")
 	else
 		TextChatService.TextChannels.RBXGeneral:SendAsync("VEX: Loading...")
 	end
