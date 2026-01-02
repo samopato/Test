@@ -220,7 +220,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 
 		flingConn = RunService.Heartbeat:Connect(function()
 			local hrp = localPlayer.Character:FindFirstChild("HumanoidRootPart")
-			local target = target.Chararacter:FindFirstChild("HumanoidRootPart")
+			local target = target.Character:FindFirstChild("HumanoidRootPart")
 
 			if not hrp or not target then
 				return
