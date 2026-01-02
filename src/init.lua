@@ -65,36 +65,40 @@ TextChatService.MessageReceived:Connect(function(msg)
 		replicatesignal(localPlayer.ConnectDiedSignalBackend)
 		task.wait(Players.RespawnTime + 0.20)
 		replicatesignal(localPlayer.Kill)
-	elseif arg[1] == "+respawn" then
+	elseif args[1] == "+respawn" then
 		replicatesignal(localPlayer.ConnectDiedSignalBackend)
-	elseif arg[1] == "+bang" then
+	elseif args[1] == "+bang" then
 		local RunService = game:GetService("RunService")
 		local humanoid = localPlayer.Character:FindFirstChildOfClass("Humanoid")
-		
+
 		local animation = Instance.new("Animation")
 		animation.AnimationId = "rbxassetid://1488408371"
 
+		local speed = args[3] or 10
+
 		track = humanoid:LoadAnimation(animation)
 		track:Play()
-		track:AdjustSpeed(args[3] or 10)
+		track:AdjustSpeed(speed)
 
 		local targetPlayer = findPlayer(speaker, args[2])
 
 		if targetPlayer and targetPlayer.Character then
 			local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
 
-			if targetRoot then
-				conn = RunService.HeartBeat:Connect(function()
+			conn = RunService.HeartBeat:Connect(function()
+				if targetRoot then
 					humanoid.Parent.HumanoidRootPart.CFrame = targetRoot.CFrame
-				end)
-			end
+				else
+					conn:Disconnect()
+				end
+			end)
 		end
 	elseif args[1] == "+unbang" then
 		if conn then
 			conn:Disconnect()
 			conn = nil
 		end
-		
+
 		if track then
 			track:Stop()
 			track:Destroy()
