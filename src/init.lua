@@ -289,7 +289,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 	elseif args[1] == "+ai" then
 		local HttpService = game:GetService("HttpService")
 		local KEY = isfile("vex/plugins/key.lua") and readfile("vex/plugins/key.lua")
-		local URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=" ..tostring(KEY)
+		local URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
 
 		if not KEY then
 			chat("VEX: API key is missing from vex/plugins/")
@@ -304,6 +304,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 				Url = URL,
 				Method = "POST",
 				Headers = {
+					["x-goog-api-key"] = KEY,
 					["Content-Type"] = "application/json"
 				},
 				Body = HttpService:JSONEncode({
