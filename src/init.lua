@@ -327,7 +327,10 @@ end
 					return data.candidates[1].content.parts[1].text
 				end
 			else
-				warn("Request Failed! Status: " .. response.StatusMessage)
+				warn(KEY)
+				for _,v in pairs(response) do
+					warn(v)
+				end
 			end
 			
 			return "Error: Could not reach Gemini. "..response.StatusMessage
