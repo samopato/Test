@@ -242,7 +242,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 	
 			hrp.CFrame = target.CFrame * CFrame.new(0, 0, 1)
 			vel = hrp.Velocity
-			hrp.Velocity = vel * 10000 + Vector3.new(0, 10000, 0)
+			hrp.Velocity = vel * 1000000 + Vector3.new(0, 1000000, 0)
 			RunService.RenderStepped:Wait()
 			hrp.Velocity = vel
 			RunService.Stepped:Wait()
