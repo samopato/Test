@@ -219,6 +219,10 @@ TextChatService.MessageReceived:Connect(function(msg)
 
 		flingConn = RunService.Heartbeat:Connect(function()
 			local hrp = localPlayer.Character.HumanoidRootPart
+
+			if not hrp then
+				return
+			end
 			
 			vel = hrp.Velocity
 			hrp.Velocity = vel * 10000 + Vector3.new(0, 10000, 0)
