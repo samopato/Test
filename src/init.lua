@@ -96,8 +96,6 @@ TextChatService.MessageReceived:Connect(function(msg)
 		if targetPlayer and targetPlayer.Character then
 			track:Play()
 
-			chat("offset 1")
-				
 			conn = RunService.Heartbeat:Connect(function()
 				local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
 				
