@@ -48,7 +48,7 @@ local function downloadFolder(url, localPath)
 	end
 end
 
-local function updateApp(forced)
+local function updateApp()
 	local data = HttpService:JSONDecode(request(CONFIG.COMMITS_URL))
 	local remoteSHA = data.sha
 
@@ -97,16 +97,20 @@ end
 -- Execution
 -----------------------------------
 local thread
-local function run()
+local function run(forced)
 	if thread then
 		task.cancel(thread)
 		thread = nil
 	end
 
-	TextChatService.TextChannels.RBXGeneral:SendAsync("VEX: Loading...")
+	if forced then
+		TextChatService.TextChannels.RBXGeneral:SendAsync("VEX: Updating...")
+	else
+		TextChatService.TextChannels.RBXGeneral:SendAsync("VEX: Loading...")
+	end
 	
 	updateRobloxData()
-	local isUpdated = updateApp()
+	local isUpdated = updateApp(forced)
 	
 	local initPath = `{CONFIG.ASSET_ROOT}/init.lua`
 	if isfile(initPath) then
