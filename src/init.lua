@@ -56,7 +56,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 						v.AssemblyAngularVelocity = Vector3.zero
 					end
 				end
-				
+
 				character.Torso.CanCollide = true
 				character:PivotTo(targetHRP.CFrame)
 				return
@@ -194,7 +194,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 		local char = localPlayer.Character
 		local hum = char.Humanoid
 		local root = char.HumanoidRootPart
-		
+
 		local SETTINGS = {
 			OFFSET = Vector3.new(0, -4, 0),
 			PREDICTION_TIME = 0.12, -- Adjust based on your ping (0.1 to 0.2 is sweet spot)
@@ -248,7 +248,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 					v.Massless = true
 				end
 			end
-	
+
 			hrp.CFrame = target.CFrame * CFrame.new(0, 0, 1)
 			vel = hrp.Velocity
 			hrp.Velocity = vel * 1000000 + Vector3.new(0, 1000000, 0)
@@ -260,7 +260,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 		end)
 	elseif args[1] == "+unfling" then		
 		localPlayer.Character.HumanoidRootPart.Anchored = true
-			
+
 		if flingConn then
 			flingConn:Disconnect()
 			flingConn = nil
@@ -268,7 +268,7 @@ TextChatService.MessageReceived:Connect(function(msg)
 
 		localPlayer.Character.Humanoid.Sit = false
 		localPlayer.Character.Torso.CanCollide = true
-			
+
 		for _,v in pairs(localPlayer.Character:GetDescendants()) do
 			if v:IsA("BasePart") then
 				v.AssemblyLinearVelocity = Vector3.zero
@@ -286,5 +286,47 @@ TextChatService.MessageReceived:Connect(function(msg)
 		end
 
 		localPlayer.Character.HumanoidRootPart.Anchored = false
+	elseif args[1] == "+ai" then
+		local HttpService = game:GetService("HttpService")
+		local KEY = readfile("apikey.txt")
+		local URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" .. tostring(KEY)
+
+		if not KEY then
+			chat("VEX: API key is missing from vex/plugins/")
+			return
+		end
+		
+		local function askGemini(prompt)
+			local requestBody = HttpService:JSONEncode({
+				contents = {
+					{
+						parts = {
+							{ text = prompt }
+						}
+					}
+				}
+			})
+
+			local success, response = pcall(function()
+				return request({
+					Url = URL,
+					Method = "GET",
+					Body = requestBody
+				})
+			end)
+
+			if success then
+				local data = HttpService:JSONDecode(response)
+				-- Navigating the JSON response to get the text
+				if data.candidates and data.candidates[1].content.parts[1].text then
+					return data.candidates[1].content.parts[1].text
+				end
+			else
+				warn("Gemini API Error: " .. tostring(response))
+			end
+			return "Sorry, I'm having trouble thinking right now."
+		end
+		
+		chat(askGemini("Hello"))
 	end
 end)
