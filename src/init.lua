@@ -158,7 +158,9 @@ Messages should stay under 163 characters!
 					model = "meta-llama/llama-3.1-8b-instruct:free",
 					messages = {
 						role = "user",
-						content = prompt
+						messages = {
+          					{ role = "user", content = prompt }
+      					}
 					},
 				})
 			})
