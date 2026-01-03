@@ -110,10 +110,10 @@ local commands do
 
 	commands.ai = {function(speaker, args)
 		local KEY = isfile("vex/plugins/key.lua") and readfile("vex/plugins/key.lua")
-		local URL = "https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash-lite:generateContent"
+		local URL = "https://api.openai.com/v1/chat/completions"
 
 		if not KEY then
-			chat("VEX: API key is missing from vex/plugins/")
+			chat("VEX: OpenAI API key is missing from vex/plugins/")
 			return
 		end
 
@@ -150,30 +150,21 @@ Messages should stay under 163 characters!
 				Url = URL,
 				Method = "POST",
 				Headers = {
-					["x-goog-api-key"] = KEY,
+					["Authorization"] = KEY
 					["Content-Type"] = "application/json"
 				},
 				Body = HttpService:JSONEncode({
-					contents = {
-						{
-							role = "user",
-							parts = {
-								{ text = "SYSTEM INSTRUCTIONS: " .. systemPrompt },
-								{ text = "PLAYER MESSAGE: " .. prompt }
-							}
-						}
+					messages = {
+						role = "user",
+						content = prompt
 					},
-					generationConfig = {
-						maxOutputTokens = 300,
-						temperature = 0.7
-					}
 				})
 			})
 
 			if response.Success then
 				local data = game:GetService("HttpService"):JSONDecode(response.Body)
 				if data.candidates and data.candidates[1].content.parts[1].text then
-					return processAIResponse(data.candidates[1].content.parts[1].text)
+					return processAIResponse(data["choices"][1]["message"]["content"])
 				end
 			else
 				for _,v in pairs(response) do
@@ -181,7 +172,7 @@ Messages should stay under 163 characters!
 				end
 			end
 
-			return "Error: Could not reach Gemini. "
+			return "Error: Could not reach AI. "
 		end
 
 		local prompt = table.concat(args, " ")
