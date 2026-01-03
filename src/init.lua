@@ -88,7 +88,7 @@ localPlayer.CharacterAdded:Connect(function(char)
 		anim.AnimationId = id
 		EmoteTracks[name] = char.Humanoid:LoadAnimation(anim)
 	end
-end
+end)
 
 -----------------------------
 -- Main
