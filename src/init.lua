@@ -157,8 +157,7 @@ Messages should stay under 163 characters!
 				Body = HttpService:JSONEncode({
 					model = "meta-llama/llama-3.1-8b-instruct:free",
 					messages = {
-          					{ role = "user", content = prompt }
-      					}
+          				{ role = "user", content = prompt }
 					},
 				})
 			})
