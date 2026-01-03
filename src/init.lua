@@ -24,6 +24,8 @@ local function whisper(target, text)
 
 	if whisperChannel then
 		whisperChannel:SendAsync(text)
+
+		chat("Tried to send")
 	else
 		chat("/whisper @" .. target.Name)
 
