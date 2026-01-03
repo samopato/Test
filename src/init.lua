@@ -7,6 +7,22 @@ local localPlayer = Players.LocalPlayer
 
 local prefix = "+"
 
+
+local EmoteTracks = {}
+local AnimationIds = {
+	waveHand = "rbxassetid://128777973", -- Example ID
+	dance    = "rbxassetid://182491037", 
+	laugh    = "rbxassetid://129423131", 
+	cheer    = "rbxassetid://129423030"
+}
+
+-- Pre-load animations
+for name, id in pairs(AnimationIds) do
+	local anim = Instance.new("Animation")
+	anim.AnimationId = id
+	EmoteTracks[name] = Animator:LoadAnimation(anim)
+end
+
 -----------------------------
 -- Util
 -----------------------------
@@ -119,14 +135,15 @@ local commands do
 
 		local systemPrompt = [[
 SYSTEM PROMPT:
-You are a Roblox bot. You can talk to players and perform actions thru the in-game chat. 
+You are a Roblox bot. You can talk to players and perform actions thru the in-game chat, remember that you are in the internet players will use slangs in other languages. 
 RULES:
 you can run a few commands, you can put them anywhere in the text, example:
 "This place is fun! [dance]"
 "Ill walk to you! [walkTo:PlayerName]"
 "that wasnt cool :( [kill:PlayerName]"
 
-heres the list: [dance], [wave], [laugh], [cheer], [walkTo:name]
+heres the list: [emote:name], [walkTo:name]
+emotelist: waveHand, dance, laugh, cheer
 			
 Messages should stay short and under 163 characters!
 1. Do not leave character, in any situation.
@@ -135,11 +152,50 @@ Messages should stay short and under 163 characters!
 USER PROMPT:
 ]]
 
+
+			
+		local aiCommands = {
+
+	emote = function(name)
+		local track = EmoteTracks[name]
+		if track then
+			track:Play()
+			-- Optional: Stop after 2 seconds so it doesn't loop forever
+			task.delay(2, function() track:Stop() end) 
+		else
+			warn("Animation not found:", name)
+		end
+	end,
+
+	-- Usage: [walkTo:PlayerName]
+	walkTo = function(targetName)
+		local targetPlayer = Players:FindFirstChild(targetName)
+		if targetPlayer and targetPlayer.Character then
+			local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+			if targetRoot then
+				-- Simple MoveTo (Good for open spaces)
+				Humanoid:MoveTo(targetRoot.Position)
+				
+				-- OR: Pathfinding (Better for mazes/obstacles)
+				task.spawn(function()
+					local path = PathfindingService:CreatePath()
+					path:ComputeAsync(RootPart.Position, targetRoot.Position)
+					if path.Status == Enum.PathStatus.Success then
+						for _, waypoint in pairs(path:GetWaypoints()) do
+							Humanoid:MoveTo(waypoint.Position)
+							Humanoid.MoveToFinished:Wait()
+						end
+					end
+				end)
+			end
+		end
+	end,
+				
+		}
+			
 		local function processAIResponse(responseText)
 			for cmd, arg in responseText:gmatch("%[(%w+):?(%w*)%]") do
-				chat(cmd .. " " .. arg)
-
-				local cmdEntry = commands[cmd:lower()]
+				local cmdEntry = aiCommands[cmd:lower()]
 				if cmdEntry then
 					pcall(function() 
 						cmdEntry[1]({arg})
