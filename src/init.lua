@@ -118,7 +118,8 @@ local commands do
 		end
 
 		local systemPrompt = [[
-You are a helpful Roblox bot. You can talk to players and perform actions. 
+SERVER PROMPT:
+You are a Roblox bot. You can talk to players and perform actions thru the in-game chat. 
 RULES:
 1. If a player asks you to move, use: [moveTo:PlayerName]
 2. If a player asks you to dance, use: [dance]
@@ -126,11 +127,13 @@ RULES:
 4. You can combine text and commands. Example: "On it! [kill:Builderman]"
 5. If a player asks you to teleport to someone, use: [tp:PlayerName]
 Messages should stay under 163 characters!
+
+USER PROMPT:
 ]]
 
 		local function processAIResponse(responseText)
 			for cmd, arg in responseText:gmatch("%[(%w+):?(%w*)%]") do
-				warn("AI wants to run command: " .. cmd .. " with arg: " .. arg)
+				chat("AI wants to run command: " .. cmd .. " with arg: " .. arg)
 
 				local cmdEntry = commands[cmd:lower()]
 				if cmdEntry then
@@ -155,15 +158,14 @@ Messages should stay under 163 characters!
 					["X-Title"] = game.PlaceId
 				},
 				Body = HttpService:JSONEncode({
-					model = "deepseek/deepseek-r1-0528:free",
+					model = "xiaomi/mimo-v2-flash:free",
 					messages = {
-          				{ role = "user", content = prompt }
+          				{ role = "user", content = serverPrompt ..prompt }
 					},
 				})
 			})
 
 			if response.Success then
-				chat("Success!")
 				local data = game:GetService("HttpService"):JSONDecode(response.Body)
 				if data.choices and data.choices[1].message.content then
 					return processAIResponse(data.choices[1].message.content)
