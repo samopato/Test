@@ -33,10 +33,10 @@ local function whisper(target, text)
 	else
 		chat("/whisper @" .. target.Name)
 
-		TextChatService.TextChannels:WaitForChild(channelName, 5)
-		warn("retry")
-		
-		whisper(target, text)
+		local channel = TextChatService.TextChannels:WaitForChild(channelName, 5)
+		if channel then
+			whisper(target, text)
+		end
 	end
 end
 
