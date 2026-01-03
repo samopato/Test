@@ -163,17 +163,18 @@ Messages should stay under 163 characters!
 			})
 
 			if response.Success then
+				chat("Success!")
 				local data = game:GetService("HttpService"):JSONDecode(response.Body)
-				if data.candidates and data.candidates[1].content.parts[1].text then
+				if data.choices and data.choices[1].message.content then
 					return processAIResponse(data.choices[1].message.content)
 				end
 			else
 				for _,v in pairs(response) do
 					warn(v)
 				end
-			end
 
-			return "Error: Could not reach AI. "
+				chat("Error: Could not reach AI. ")
+			end
 		end
 
 		local prompt = table.concat(args, " ")
