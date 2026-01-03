@@ -150,7 +150,7 @@ Messages should stay under 163 characters!
 				Url = URL,
 				Method = "POST",
 				Headers = {
-					["Authorization"] = KEY
+					["Authorization"] = KEY,
 					["Content-Type"] = "application/json"
 				},
 				Body = HttpService:JSONEncode({
