@@ -21,14 +21,12 @@ local function whisper(target, text)
 
 	local channelName = "RBXWhisper:" .. id1 .. "_" .. id2
 	local whisperChannel = TextChatService.TextChannels:FindFirstChild(channelName)
-	
+
 	if whisperChannel then
 		whisperChannel:SendAsync(text)
 	else
-		
 		local general = TextChatService.TextChannels.RBXGeneral
-		chat("test3")
-		chat("/w " .. target.Name .. " " .. text)
+		general:SendAsync("/whisper " .. target.Name .. " " .. text)
 	end
 end
 
@@ -83,6 +81,13 @@ local commands do
 	local conn
 	local track
 	local flingConn
+
+	commands.whisper = {function(speaker, args)
+		local target = args[1]
+		table.remove(args, 1)
+		
+		whisper(target, table.concat(args, " "))
+	end}
 
 	commands.help = {function(speaker, args)
 		local list = {}
