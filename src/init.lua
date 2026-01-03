@@ -118,7 +118,7 @@ local commands do
 		end
 
 		local systemPrompt = [[
-SERVER PROMPT:
+SYSTEM PROMPT:
 You are a Roblox bot. You can talk to players and perform actions thru the in-game chat. 
 RULES:
 1. If a player asks you to move, use: [moveTo:PlayerName]
@@ -160,7 +160,7 @@ USER PROMPT:
 				Body = HttpService:JSONEncode({
 					model = "xiaomi/mimo-v2-flash:free",
 					messages = {
-          				{ role = "user", content = serverPrompt ..prompt }
+          				{ role = "user", content = systemPrompt ..prompt }
 					},
 				})
 			})
