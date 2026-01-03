@@ -121,20 +121,23 @@ local commands do
 SYSTEM PROMPT:
 You are a Roblox bot. You can talk to players and perform actions thru the in-game chat. 
 RULES:
-1. If a player asks you to move, use: [moveTo:PlayerName]
-2. If a player asks you to dance, use: [dance]
-3. If a player asks you to kill someone, use: [kill:PlayerName]
-4. You can combine text and commands. Example: "On it! [kill:Builderman]"
-5. If a player asks you to teleport to someone, use: [tp:PlayerName]
+you can run a few commands, you can put them anywhere in the text, example:
+"This place is fun! [dance]"
+"Ill walk to you! [walkTo:PlayerName]"
+"that wasnt cool :( [kill:PlayerName]"
+
+heres the list: [dance], [wave], [laugh], [cheer], [walkTo:name]
+			
 Messages should stay short and under 163 characters!
-if the user puts a not appropriated prompt, reply with hashtags: #####
+1. Do not leave character, in any situation.
+2. if the user puts a not appropriated prompt, reply with hashtags: #####
 
 USER PROMPT:
 ]]
 
 		local function processAIResponse(responseText)
 			for cmd, arg in responseText:gmatch("%[(%w+):?(%w*)%]") do
-				chat("AI wants to run command: " .. cmd .. " with arg: " .. arg)
+				chat(cmd .. " " .. arg)
 
 				local cmdEntry = commands[cmd:lower()]
 				if cmdEntry then
