@@ -69,16 +69,15 @@ local commands do
 
 	commands.help = {function(speaker, args)
 		local list = {}
-		for name, data in pairs(Commands) do
-			local hasUn = data[2] and " (has un-)" or ""
-			table.insert(list, prefix .. name .. hasUn)
+		for name, data in next, commands do
+			table.insert(list, prefix .. name)
 		end
 		chat("VEX: all commands: " .. table.concat(list, ", "))
 	end}
 
 	commands.ai = {function(speaker, args)
 		local KEY = isfile("vex/plugins/key.lua") and readfile("vex/plugins/key.lua")
-		local URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+		local URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
 
 		if not KEY then
 			chat("VEX: API key is missing from vex/plugins/")
