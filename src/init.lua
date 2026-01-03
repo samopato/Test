@@ -18,15 +18,11 @@ local function chat(text)
 end
 
 local function whisper(target, text)
-	warn("whisper")
-	
 	local id1 = math.min(localPlayer.UserId, target.UserId)
 	local id2 = math.max(localPlayer.UserId, target.UserId)
 
 	local channelName = "RBXWhisper:" .. id1 .. "_" .. id2
 	local whisperChannel = TextChatService.TextChannels:FindFirstChild(channelName)
-
-	chat(tostring(whisperChannel and true or false))
 
 	if whisperChannel then
 		whisperChannel:SendAsync(text)
