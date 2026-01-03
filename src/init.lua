@@ -11,8 +11,23 @@ local prefix = "+"
 -- Util
 -----------------------------
 
-local function chat(...)
-	TextChatService.TextChannels.RBXGeneral:SendAsync(...)
+local function chat(text)
+	TextChatService.TextChannels.RBXGeneral:SendAsync(text)
+end
+
+local function whisper(target, text)
+	local id1 = math.min(localPlayer.UserId, target.UserId)
+	local id2 = math.max(localPlayer.UserId, target.UserId)
+
+	local channelName = "RBXWhisper:" .. id1 .. "_" .. id2
+	local whisperChannel = TextChatService.TextChannels:FindFirstChild(channelName)
+
+	if whisperChannel then
+		whisperChannel:SendAsync(text)
+	else
+		local general = TextChatService.TextChannels.RBXGeneral
+		general:SendAsync("/w " .. target.Name .. " " .. text)
+	end
 end
 
 local function findPlayer(speaker, nameHint)
@@ -72,7 +87,7 @@ local commands do
 		for name, data in next, commands do
 			table.insert(list, prefix .. name)
 		end
-		chat("VEX: all commands: " .. table.concat(list, ", "))
+		whisper(speaker, "VEX: all commands: " .. table.concat(list, ", "))
 	end}
 
 	commands.ai = {function(speaker, args)
