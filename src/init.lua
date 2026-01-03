@@ -19,6 +19,10 @@ local function findPlayer(speaker, nameHint)
 	local children = Players:GetPlayers()
 	local lowerHint = string.lower(nameHint)
 
+	if nameHint == "" or nil then
+		return speaker
+	end
+
 	if nameHint == "me" then
 		return speaker
 	end
@@ -37,7 +41,7 @@ local function findPlayer(speaker, nameHint)
 	return nil
 end
 
-local function parseCommand(message)	
+local function parseCommand(message)
 	local undo = string.sub(message, 2, 3) == "un" and true
 	local content = string.sub(message, undo and 4 or 2)
 	local args = string.split(content, " ")
@@ -64,7 +68,12 @@ local commands do
 	local flingConn
 
 	commands.help = {function(speaker, args)
-		chat()
+		local list = {}
+		for name, data in pairs(Commands) do
+			local hasUn = data[2] and " (has un-)" or ""
+			table.insert(list, prefix .. name .. hasUn)
+		end
+		chat("VEX: all commands: " .. table.concat(list, ", "))
 	end}
 
 	commands.ai = {function(speaker, args)
@@ -76,6 +85,34 @@ local commands do
 			return
 		end
 
+		local systemPrompt = [[
+You are a helpful Roblox bot. You can talk to players and perform actions. 
+RULES:
+1. If a player asks you to move, use: [moveTo:PlayerName]
+2. If a player asks you to dance, use: [dance]
+3. If a player asks you to kill someone, use: [kill:PlayerName]
+4. You can combine text and commands. Example: "On it! [kill:Builderman]"
+5. If a player asks you to teleport to someone, use: [tp:PlayerName]
+Messages should stay under 163 characters!
+]]
+
+		local function processAIResponse(responseText)
+			for cmd, arg in responseText:gmatch("%[(%w+):?(%w*)%]") do
+				print("AI wants to run command: " .. cmd .. " with arg: " .. arg)
+
+				local cmdEntry = commands[cmd:lower()]
+				if cmdEntry then
+					pcall(function() 
+						cmdEntry[1]({arg})
+					end)
+				end
+			end
+
+			local cleanText = responseText:gsub("%[(.-)%]", "")
+			return cleanText
+		end
+
+
 		local function askGemini(prompt)
 			local response = request({
 				Url = URL,
@@ -85,6 +122,7 @@ local commands do
 					["Content-Type"] = "application/json"
 				},
 				Body = HttpService:JSONEncode({
+					system_instruction = { parts = {{ text = systemPrompt }} },
 					contents = {
 						{
 							role = "user",
@@ -99,7 +137,7 @@ local commands do
 			if response.Success then
 				local data = game:GetService("HttpService"):JSONDecode(response.Body)
 				if data.candidates and data.candidates[1].content.parts[1].text then
-					return data.candidates[1].content.parts[1].text
+					return processAIResponse(data.candidates[1].content.parts[1].text)
 				end
 			end
 
@@ -109,7 +147,7 @@ local commands do
 		local prompt = table.concat(args, " ")
 		if #prompt > 0 then
 			local response = askGemini(prompt)
-			chat(response)
+			chat(string.sub(response, 0, 163))
 		end
 	end}
 
@@ -332,13 +370,13 @@ local function onMessageReceived(message)
 	if string.sub(message.Text, 0, 1) ~= prefix then
 		return
 	end
-	
+
 
 	local speaker = Players:GetPlayerByUserId(message.TextSource and message.TextSource.UserId)
 	local command, args, undo = parseCommand(message.Text)
-	
+
 	local callback = undo and commands[command][2] or commands[command][1]
-	
+
 	if callback then
 		callback(speaker, args)
 	end
