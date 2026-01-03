@@ -110,7 +110,7 @@ local commands do
 
 	commands.ai = {function(speaker, args)
 		local KEY = isfile("vex/plugins/key.lua") and readfile("vex/plugins/key.lua")
-		local URL = "https://api.openai.com/v1/chat/completions"
+		local URL = "meta-llama/llama-3.1-8b-instruct:free"
 
 		if not KEY then
 			chat("VEX: OpenAI API key is missing from vex/plugins/")
@@ -145,16 +145,17 @@ Messages should stay under 163 characters!
 		end
 
 
-		local function askAI(prompt)
+		local function askGemini(prompt)
 			local response = request({
 				Url = URL,
 				Method = "POST",
 				Headers = {
 					["Authorization"] = "Bearer " ..KEY,
-					["Content-Type"] = "application/json"
+					["Content-Type"] = "application/json",
+					["X-Title"] = game.PlaceId
 				},
 				Body = HttpService:JSONEncode({
-					model = "gpt-3.5-turbo",
+					model = "gpt-4o",
 					messages = {
 						role = "user",
 						content = prompt
@@ -165,7 +166,7 @@ Messages should stay under 163 characters!
 			if response.Success then
 				local data = game:GetService("HttpService"):JSONDecode(response.Body)
 				if data.candidates and data.candidates[1].content.parts[1].text then
-					return processAIResponse(data["choices"][1]["message"]["content"])
+					return processAIResponse(data.choices[1].message.content)
 				end
 			else
 				for _,v in pairs(response) do
@@ -178,7 +179,7 @@ Messages should stay under 163 characters!
 
 		local prompt = table.concat(args, " ")
 		if #prompt > 0 then
-			local response = askAI(prompt)
+			local response = askGemini(prompt)
 			chat(string.sub(response, 0, 163))
 		end
 	end}
