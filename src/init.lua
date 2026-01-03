@@ -28,7 +28,7 @@ local function whisper(target, text)
 		local general = TextChatService.TextChannels.RBXGeneral
 		general:SendAsync("/whisper @" .. target.Name)
 
-		task.wait(0.5)
+		TextChatService.TextChannels:WaitForChild(channelName, 5)
 		
 		whisper(target, text)
 	end
