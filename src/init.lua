@@ -145,6 +145,10 @@ Messages should stay under 163 characters!
 				if data.candidates and data.candidates[1].content.parts[1].text then
 					return processAIResponse(data.candidates[1].content.parts[1].text)
 				end
+			else
+				for _,v in pairs(response) do
+					warn(v)
+				end
 			end
 
 			return "Error: Could not reach Gemini. "
