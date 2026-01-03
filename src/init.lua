@@ -82,6 +82,14 @@ local function parseCommand(message)
 	return command, args, undo
 end
 
+localPlayer.CharacterAdded:Connect(function(char)
+	for name, id in pairs(AnimationIds) do
+		local anim = Instance.new("Animation")
+		anim.AnimationId = id
+		EmoteTracks[name] = char.Humanoid:LoadAnimation(anim)
+	end
+end
+
 -----------------------------
 -- Main
 -----------------------------
@@ -144,21 +152,18 @@ Messages should stay short and under 163 characters!
 
 USER PROMPT:
 ]]
-
-		for name, id in pairs(AnimationIds) do
-	local anim = Instance.new("Animation")
-	anim.AnimationId = id
-	EmoteTracks[name] = localPlayer.Character.Humanoid:LoadAnimation(anim)
-end
 			
 		local aiCommands = {
 
 	emote = function(name)
 		local track = EmoteTracks[name]
+
+		chat
+		
 		if track then
 			track:Play()
 			-- Optional: Stop after 2 seconds so it doesn't loop forever
-			task.delay(2, function() track:Stop() end) 
+			task.delay(3, function() track:Stop() end) 
 		else
 			warn("Animation not found:", name)
 		end
