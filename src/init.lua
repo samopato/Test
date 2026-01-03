@@ -154,6 +154,7 @@ Messages should stay under 163 characters!
 					["Content-Type"] = "application/json"
 				},
 				Body = HttpService:JSONEncode({
+					model = "gpt-3.5-turbo",
 					messages = {
 						role = "user",
 						content = prompt
