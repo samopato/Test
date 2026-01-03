@@ -26,7 +26,7 @@ local function whisper(target, text)
 		whisperChannel:SendAsync(text)
 	else
 		local general = TextChatService.TextChannels.RBXGeneral
-		general:SendAsync("/whisper " .. target.Name .. " " .. text)
+		general:SendAsync("/whisper @" .. target.Name .. " " .. text)
 	end
 end
 
