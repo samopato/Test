@@ -21,14 +21,14 @@ local function whisper(target, text)
 
 	local channelName = "RBXWhisper:" .. id1 .. "_" .. id2
 	local whisperChannel = TextChatService.TextChannels:FindFirstChild(channelName)
-
-	chat("test")
 	
 	if whisperChannel then
 		whisperChannel:SendAsync(text)
 	else
+		
 		local general = TextChatService.TextChannels.RBXGeneral
-		general:SendAsync("/w " .. target.Name .. " " .. text)
+		chat("test3")
+		chat("/w " .. target.Name .. " " .. text)
 	end
 end
 
