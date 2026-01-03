@@ -126,7 +126,8 @@ RULES:
 3. If a player asks you to kill someone, use: [kill:PlayerName]
 4. You can combine text and commands. Example: "On it! [kill:Builderman]"
 5. If a player asks you to teleport to someone, use: [tp:PlayerName]
-Messages should stay under 163 characters!
+Messages should stay short and under 163 characters!
+if the user puts a not appropriated prompt, reply with hashtags: #####
 
 USER PROMPT:
 ]]
