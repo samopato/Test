@@ -25,9 +25,11 @@ local function whisper(target, text)
 	if whisperChannel then
 		whisperChannel:SendAsync(text)
 	else
-		local general = TextChatService.TextChannels.RBXGeneral
-		general:SendAsync("/whisper @" .. target.Name)
-		general:SendAsync()
+		chat("/whisper @" .. target.Name)
+
+		task.wait(5)
+
+		chat(tostring(whisperChannel and true or false))
 		
 		whisper(target, text)
 	end
