@@ -10,7 +10,7 @@ local prefix = "+"
 
 local EmoteTracks = {}
 local AnimationIds = {
-	waveHand = "rbxassetid://128777973", -- Example ID
+	wavehand = "rbxassetid://128777973", -- Example ID
 	dance    = "rbxassetid://182491037", 
 	laugh    = "rbxassetid://129423131", 
 	cheer    = "rbxassetid://129423030"
@@ -168,7 +168,7 @@ USER PROMPT:
 	end,
 
 	-- Usage: [walkTo:PlayerName]
-	walkTo = function(targetName)
+	walkto = function(targetName)
 		local targetPlayer = Players:FindFirstChild(targetName)
 		if targetPlayer and targetPlayer.Character then
 			local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -197,9 +197,7 @@ USER PROMPT:
 			for cmd, arg in responseText:gmatch("%[(%w+):?(%w*)%]") do
 				local cmdEntry = aiCommands[cmd:lower()]
 				if cmdEntry then
-					pcall(function() 
-						cmdEntry[1]({arg})
-					end)
+					cmdEntry(arg:lower())
 				end
 			end
 
