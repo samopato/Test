@@ -38,7 +38,7 @@ local function findPlayer(speaker, nameHint)
 end
 
 local function parseCommand(message)	
-	local undo = string.sub(message, 2, 3)
+	local undo = string.sub(message, 2, 3) == "un" and true
 	local content = string.sub(message, undo and 4 or 2)
 	local args = string.split(content, " ")
 	local command = string.lower(args[1])
