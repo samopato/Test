@@ -12,7 +12,9 @@ local prefix = "+"
 -----------------------------
 
 local function chat(text)
-	TextChatService.TextChannels.RBXGeneral:SendAsync(text)
+	task.spawn(function()
+		TextChatService.TextChannels.RBXGeneral:SendAsync(text)
+	end)
 end
 
 local function whisper(target, text)
@@ -30,8 +32,6 @@ local function whisper(target, text)
 		whisperChannel:SendAsync(text)
 	else
 		chat("/whisper @" .. target.Name)
-		
-		warn("retry")
 
 		whisper(target, text)
 	end
