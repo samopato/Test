@@ -26,7 +26,9 @@ local function whisper(target, text)
 		whisperChannel:SendAsync(text)
 	else
 		local general = TextChatService.TextChannels.RBXGeneral
-		general:SendAsync("/whisper @" .. target.Name .. " " .. text)
+		general:SendAsync("/whisper @" .. target.Name)
+
+		whisper(speaker, text)
 	end
 end
 
@@ -94,6 +96,7 @@ local commands do
 		for name, data in next, commands do
 			table.insert(list, prefix .. name)
 		end
+			
 		whisper(speaker, "VEX: all commands: " .. table.concat(list, ", "))
 	end}
 
