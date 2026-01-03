@@ -16,6 +16,8 @@ local function chat(text)
 end
 
 local function whisper(target, text)
+	warn("whisper")
+	
 	local id1 = math.min(localPlayer.UserId, target.UserId)
 	local id2 = math.max(localPlayer.UserId, target.UserId)
 
@@ -28,6 +30,8 @@ local function whisper(target, text)
 		whisperChannel:SendAsync(text)
 	else
 		chat("/whisper @" .. target.Name)
+		
+		warn("retry")
 
 		whisper(target, text)
 	end
