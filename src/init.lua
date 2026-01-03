@@ -83,7 +83,7 @@ local commands do
 	local flingConn
 
 	commands.whisper = {function(speaker, args)
-		local target = args[1]
+		local target = findPlayer(speaker, args[1])
 		table.remove(args, 1)
 		
 		whisper(target, table.concat(args, " "))
