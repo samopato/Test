@@ -77,7 +77,7 @@ local commands do
 
 	commands.ai = {function(speaker, args)
 		local KEY = isfile("vex/plugins/key.lua") and readfile("vex/plugins/key.lua")
-		local URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent"
+		local URL = "https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash-lite:generateContent"
 
 		if not KEY then
 			chat("VEX: API key is missing from vex/plugins/")
