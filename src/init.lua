@@ -16,13 +16,6 @@ local AnimationIds = {
 	cheer    = "rbxassetid://129423030"
 }
 
--- Pre-load animations
-for name, id in pairs(AnimationIds) do
-	local anim = Instance.new("Animation")
-	anim.AnimationId = id
-	EmoteTracks[name] = Animator:LoadAnimation(anim)
-end
-
 -----------------------------
 -- Util
 -----------------------------
@@ -152,7 +145,11 @@ Messages should stay short and under 163 characters!
 USER PROMPT:
 ]]
 
-
+		for name, id in pairs(AnimationIds) do
+	local anim = Instance.new("Animation")
+	anim.AnimationId = id
+	EmoteTracks[name] = localPlayer.Character.Humanoid:LoadAnimation(anim)
+end
 			
 		local aiCommands = {
 
