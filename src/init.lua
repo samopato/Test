@@ -145,12 +145,12 @@ Messages should stay under 163 characters!
 		end
 
 
-		local function askGemini(prompt)
+		local function askAI(prompt)
 			local response = request({
 				Url = URL,
 				Method = "POST",
 				Headers = {
-					["Authorization"] = KEY,
+					["Authorization"] = "Bearer " ..KEY,
 					["Content-Type"] = "application/json"
 				},
 				Body = HttpService:JSONEncode({
@@ -177,7 +177,7 @@ Messages should stay under 163 characters!
 
 		local prompt = table.concat(args, " ")
 		if #prompt > 0 then
-			local response = askGemini(prompt)
+			local response = askAI(prompt)
 			chat(string.sub(response, 0, 163))
 		end
 	end}
