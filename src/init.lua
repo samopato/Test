@@ -77,6 +77,7 @@ end
 -----------------------------
 
 local conn
+local carpetConn
 local track
 local flingConn
 
@@ -326,13 +327,20 @@ Messages should stay under 163 characters!
 		}
 
 		-- Inside your +carpet elseif:
-		local connection
-		connection = RunService.Heartbeat:Connect(function()
+		carpetConn = RunService.Heartbeat:Connect(function()
 			local targetChar = targetPlayer.Character
 			local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
 
 			if targetRoot and root then
 				hum.Sit = false
+				hum.PlatformStand = true
+
+				for _,v in pairs(char:GetChildren()) do
+					if v:IsA("BasePart") then
+						v.CanCollide = false
+						v.Massless = true
+					end
+				end
 
 				local predictedPos = targetRoot.Position + (targetRoot.AssemblyLinearVelocity * SETTINGS.PREDICTION_TIME)
 				local finalPos = predictedPos + SETTINGS.OFFSET
@@ -348,7 +356,13 @@ Messages should stay under 163 characters!
 			end
 		end)
 	end, function(speaker, args)
+		if carpetConn then
+			carpetConn:Disconnect()
+			carpetConn = nil
+		end
 
+		char.Torso.CanCollide = true
+		hum.PlatformStand = false
 	end}
 
 	commands.bang = {function(speaker, args)
