@@ -97,7 +97,7 @@ Messages should stay under 163 characters!
 
 		local function processAIResponse(responseText)
 			for cmd, arg in responseText:gmatch("%[(%w+):?(%w*)%]") do
-				print("AI wants to run command: " .. cmd .. " with arg: " .. arg)
+				warn("AI wants to run command: " .. cmd .. " with arg: " .. arg)
 
 				local cmdEntry = commands[cmd:lower()]
 				if cmdEntry then
@@ -121,14 +121,12 @@ Messages should stay under 163 characters!
 					["Content-Type"] = "application/json"
 				},
 				Body = HttpService:JSONEncode({
-					system_instruction = {
-						parts = { { text = systemPrompt } }
-					},
 					contents = {
 						{
 							role = "user",
 							parts = {
-								{ text = prompt }
+								{ text = "SYSTEM INSTRUCTIONS: " .. systemPrompt },
+								{ text = "PLAYER MESSAGE: " .. prompt }
 							}
 						}
 					},
