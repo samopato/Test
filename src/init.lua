@@ -155,7 +155,7 @@ Messages should stay under 163 characters!
 					["X-Title"] = game.PlaceId
 				},
 				Body = HttpService:JSONEncode({
-					model = "google/gemma-3-27b-it",
+					model = "xiaomi/mimo-v2-flash",
 					messages = {
           				{ role = "user", content = prompt }
 					},
