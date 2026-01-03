@@ -157,8 +157,6 @@ USER PROMPT:
 
 	emote = function(name)
 		local track = EmoteTracks[name]
-
-		chat
 		
 		if track then
 			track:Play()
