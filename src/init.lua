@@ -23,13 +23,12 @@ local function whisper(target, text)
 	local whisperChannel = TextChatService.TextChannels:FindFirstChild(channelName)
 
 	chat(tostring(whisperChannel and true or false))
-	
+
 	if whisperChannel then
 		whisperChannel:SendAsync(text)
 	else
 		chat("/whisper @" .. target.Name)
-		chat(" ")
-		
+
 		whisper(target, text)
 	end
 end
