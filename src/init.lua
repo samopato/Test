@@ -82,6 +82,13 @@ local function parseCommand(message)
 	return command, args, undo
 end
 
+if localPlayer.Character then
+	for name, id in pairs(AnimationIds) do
+		local anim = Instance.new("Animation")
+		anim.AnimationId = id
+		EmoteTracks[name] = char.Humanoid:LoadAnimation(anim)
+	end
+end
 localPlayer.CharacterAdded:Connect(function(char)
 	for name, id in pairs(AnimationIds) do
 		local anim = Instance.new("Animation")
