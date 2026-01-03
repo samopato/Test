@@ -23,15 +23,14 @@ local function whisper(target, text)
 	local whisperChannel = TextChatService.TextChannels:FindFirstChild(channelName)
 
 	if whisperChannel then
-		chat("Test")
 		whisperChannel:SendAsync(text)
+		return true
 	else
 		local general = TextChatService.TextChannels.RBXGeneral
 		general:SendAsync("/whisper @" .. target.Name)
 
-		TextChatService.TextChannels:WaitForChild(channelName, 5)
-
-		whisper(target, text)
+		local g
+		repeat g = whisper(target, text) until g		
 	end
 end
 
