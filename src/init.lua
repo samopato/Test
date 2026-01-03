@@ -110,7 +110,7 @@ local commands do
 
 	commands.ai = {function(speaker, args)
 		local KEY = isfile("vex/plugins/key.lua") and readfile("vex/plugins/key.lua")
-		local URL = "meta-llama/llama-3.1-8b-instruct:free"
+		local URL = "https://openrouter.ai/api/v1/chat/completions"
 
 		if not KEY then
 			chat("VEX: OpenAI API key is missing from vex/plugins/")
@@ -155,7 +155,7 @@ Messages should stay under 163 characters!
 					["X-Title"] = game.PlaceId
 				},
 				Body = HttpService:JSONEncode({
-					model = "gpt-4o",
+					model = "meta-llama/llama-3.1-8b-instruct:free",
 					messages = {
 						role = "user",
 						content = prompt
