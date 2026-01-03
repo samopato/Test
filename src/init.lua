@@ -27,8 +27,8 @@ local function whisper(target, text)
 	else
 		local general = TextChatService.TextChannels.RBXGeneral
 		general:SendAsync("/whisper @" .. target.Name)
-
-		whisper(speaker, text)
+		
+		whisper(target, text)
 	end
 end
 
@@ -83,6 +83,10 @@ local commands do
 	local conn
 	local track
 	local flingConn
+	
+	commands.chat = {function(speaker, args)
+		chat(table.concat(args, " "))
+	end}
 
 	commands.whisper = {function(speaker, args)
 		local target = findPlayer(speaker, args[1])
@@ -96,7 +100,6 @@ local commands do
 		for name, data in next, commands do
 			table.insert(list, prefix .. name)
 		end
-			
 		whisper(speaker, "VEX: all commands: " .. table.concat(list, ", "))
 	end}
 
