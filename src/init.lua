@@ -155,7 +155,7 @@ Messages should stay under 163 characters!
 					["X-Title"] = game.PlaceId
 				},
 				Body = HttpService:JSONEncode({
-					model = "gemma-3-27b-it:free",
+					model = "google/gemma-3-27b-it:free",
 					messages = {
           				{ role = "user", content = prompt }
 					},
