@@ -122,7 +122,9 @@ Messages should stay under 163 characters!
 					["Content-Type"] = "application/json"
 				},
 				Body = HttpService:JSONEncode({
-					system_instruction = { parts = {{ text = systemPrompt }} },
+					system_instruction = {
+						parts = { { text = systemPrompt } }
+					},
 					contents = {
 						{
 							role = "user",
@@ -130,6 +132,10 @@ Messages should stay under 163 characters!
 								{ text = prompt }
 							}
 						}
+					},
+					generationConfig = {
+						maxOutputTokens = 300,
+						temperature = 0.7
 					}
 				})
 			})
@@ -141,7 +147,7 @@ Messages should stay under 163 characters!
 				end
 			end
 
-			return "Error: Could not reach Gemini. "..response.StatusMessage
+			return "Error: Could not reach Gemini. "
 		end
 
 		local prompt = table.concat(args, " ")
