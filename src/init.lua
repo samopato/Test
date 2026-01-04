@@ -235,7 +235,7 @@ USER PROMPT:
 			walkto = function(targetName)
 				local Humanoid = localPlayer.Character:FindFirstChild("Humanoid")
 				local RootPart = localPlayer.Character:FindFirstChild("HumanoidRootPart")
-				
+
 				local targetPlayer = findPlayer(nil, targetName)
 				if targetPlayer and targetPlayer.Character then
 					local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -305,7 +305,8 @@ USER PROMPT:
 
 		local prompt = speaker.Name .. ": " ..table.concat(args, " ")
 		if #prompt > 0 then
-			local response = askGemini(prompt)
+			chat("/e cheer ")
+			local response = askAI(prompt)
 			chat(string.sub(response, 0, 163))
 		end
 	end}
@@ -607,7 +608,7 @@ local function onMessageReceived(message)
 	if whiteListEnabled and not table.find(whiteList, speaker.UserId) then
 		return
 	end
-	
+
 	local callback = not undo and commands[command][1] or commands[command][2]
 
 	if callback then
