@@ -297,7 +297,7 @@ USER PROMPT:
 				end
 			end
 
-			hrp.CFrame = target.CFrame * CFrame.new(0, 0, 1)
+			hrp.CFrame = target.CFrame * CFrame.new(0, 0, -5)
 			vel = hrp.Velocity
 			hrp.Velocity = vel * 1000000 + Vector3.new(0, 1000000, 0)
 			RunService.RenderStepped:Wait()
