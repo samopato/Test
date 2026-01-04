@@ -116,10 +116,12 @@ local commands do
 
 	commands.drop = {function()
 		for _,v in next, localPlayer.Character:GetChildren() do
-			if v:IsA("Tool") and v.CanBeDropped then
-				v.Parent = workspace
-			else 
-				v.Parent = localPlayer:FindFirstChildOfClass("Backpack")
+			if v:IsA("Tool") then
+				if v.CanBeDropped then
+					v.Parent = workspace
+				else
+					v.Parent = localPlayer:FindFirstChildOfClass("Backpack")
+				end
 			end
 		end
 	end}
