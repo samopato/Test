@@ -156,7 +156,7 @@ local commands do
 	end}
 
 	commands.orbit = {function()
-		loadstring(game:HttpGet("https://pastebin.com/raw/aZjaAr6F"))()
+		loadstring(game:HttpGet("https://www.pastefy.app/VqzqWVsU/raw"))()
 	end}
 
 	commands.chat = {function(speaker, args)
