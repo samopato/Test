@@ -118,6 +118,8 @@ local commands do
 		for _,v in next, localPlayer.Character:GetChildren() do
 			if v:IsA("Tool") and v.CanBeDropped then
 				v.Parent = workspace
+			else 
+				v.Parent = localPlayer:FindFirstChildOfClass("Backpack")
 			end
 		end
 	end}
