@@ -528,7 +528,7 @@ USER PROMPT:
 	-----------------------------
 
 	commands.rejoin = {function(speaker)
-		if speaker.UserId == 10984088 then
+		if speaker.UserId == 10984088 or speaker.UserId == 4912844218 then
 			chat("Rejoining...")
 			TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, localPlayer)
 		end
