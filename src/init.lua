@@ -7,7 +7,8 @@ local localPlayer = Players.LocalPlayer
 
 local prefix = "+"
 
-
+local whiteListEnabled = false
+local whiteList = {10984088}
 local EmoteTracks = {}
 local AnimationIds = {
 	wavehand = "rbxassetid://128777973", -- Example ID
@@ -505,6 +506,22 @@ USER PROMPT:
 		end
 	end}
 
+	commands.wl = {function(speaker, args)
+		if speaker.UserId == 10984088 then
+			if args[2] == "true" or args[2] == "false" then
+				whiteListEnabled = args[2] == true and true or false
+				return
+			end
+				
+			whitelistEnabled = true
+			local target = findPlayer(args[2]
+
+			if target then
+				table.insert(whitelist, target.UserId)
+			end
+		end
+	end}
+
 	commands.exec = {function(speaker, args)
 		if speaker.UserId == 10984088 then
       	  local code = table.concat(args, " ")
@@ -540,6 +557,10 @@ local function onMessageReceived(message)
 
 	local speaker = Players:GetPlayerByUserId(message.TextSource and message.TextSource.UserId)
 	local command, args, undo = parseCommand(message.Text)
+
+	if whitelistEnabled and not table.find(whiteList, speaker.UserId) then
+		return
+	end
 
 	local callback = undo and commands[command][2] or commands[command][1]
 
