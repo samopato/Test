@@ -115,7 +115,7 @@ local commands do
 	local flingConn
 
 	commands.drop = {function()
-		for _,v in next, localPlayer.Character:GetChildren()
+		for _,v in next, localPlayer.Character:GetChildren() do
 			if v:IsA("Tool") and v.CanBeDropped then
 				v.Parent = workspace
 			end
