@@ -3,7 +3,7 @@ local Players = game:GetService("Players")
 local TextChatService = game:GetService("TextChatService")
 
 local CONFIG = {
-	PATHS = {"vex", "vex/plugins", "vex/src", "vex/saved"},
+	PATHS = {"vex", "vex/plugins", "vex/src", "vex/saved", "vex/data"},
 	COMMITS_URL = "https://api.github.com/repos/samopato/Test/commits/main",
 	APP_URL = "https://api.github.com/repos/samopato/Test/contents/src",
 	VER_URL = "https://clientsettings.roblox.com/v2/client-version/WindowsStudio64/channel/LIVE",
