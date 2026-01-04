@@ -558,7 +558,7 @@ local function onMessageReceived(message)
 	local speaker = Players:GetPlayerByUserId(message.TextSource and message.TextSource.UserId)
 	local command, args, undo = parseCommand(message.Text)
 
-	if whitelistEnabled and not table.find(whiteList, speaker.UserId) then
+	if whiteListEnabled and not table.find(whiteList, speaker.UserId) then
 		return
 	end
 
