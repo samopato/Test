@@ -119,17 +119,17 @@ local commands do
 			if v:IsA("Tool") and v.CanBeDropped then
 				v.Parent = workspace
 			end
-		do
-	}
-			
+		end
+	end}
+
 	commands.equiptools = {function()
 		for _,v in next, localPlayer:FindFirstChildOfClass("Backpack"):GetChildren() do
 			if v:IsA("Tool") or v:IsA("HopperBin") then
 				v.Parent = localPlayer.Character
 			end
 		end
-	}
-	
+	end}
+
 	commands.chat = {function(speaker, args)
 		chat(table.concat(args, " "))
 	end}
@@ -525,13 +525,13 @@ USER PROMPT:
 	commands.whitelist = {function(speaker, args)
 		if speaker.UserId == 10984088 then
 			local arg = tostring(args[1]):lower()
-			
+
 			if arg == "true" or arg == "false" then
 				whiteListEnabled = arg == "true" and true or false
 				return
 			end
-			
-			
+
+
 			local target = findPlayer(speaker, args[1])
 
 			if target then
@@ -575,7 +575,7 @@ local function onMessageReceived(message)
 
 	local speaker = Players:GetPlayerByUserId(message.TextSource and message.TextSource.UserId)
 	local command, args, undo = parseCommand(message.Text)
-	
+
 	if whiteListEnabled and not table.find(whiteList, speaker.UserId) then
 		return
 	end
