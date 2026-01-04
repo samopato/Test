@@ -182,6 +182,7 @@ local commands do
 			end
 
 			local function EnablePartControl()
+				LocalPlayer:AddReplicationFocus(RootPart)
 				LocalPlayer.ReplicationFocus = workspace
 				LocalPlayer:AddReplicationFocus(RootPart)
 				RunService.Heartbeat:Connect(function()
