@@ -8,7 +8,7 @@ local localPlayer = Players.LocalPlayer
 local prefix = "+"
 
 local whiteListEnabled = true
-local whiteList = {10984088}
+local whiteList = {10984088, 4912844218}
 local EmoteTracks = {}
 local AnimationIds = {
 	wavehand = "rbxassetid://128777973", -- Example ID
