@@ -156,7 +156,7 @@ local commands do
 	end}
 
 	commands.orbit = {function()
-		loadstring(game:HttpGet("https://www.pastefy.app/VqzqWVsU/raw"))()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/hellohellohell012321/KAWAII-AURA/main/kawaii_aura.lua", true))()
 	end}
 
 	commands.chat = {function(speaker, args)
