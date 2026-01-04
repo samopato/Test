@@ -168,7 +168,7 @@ USER PROMPT:
 		if track then
 			track:Play()
 			-- Optional: Stop after 2 seconds so it doesn't loop forever
-			task.delay(3, function() track:Stop() end) 
+			task.delay(5, function() track:Stop() end) 
 		else
 			warn("Animation not found:", name)
 		end
@@ -223,7 +223,7 @@ USER PROMPT:
 					["X-Title"] = game.PlaceId
 				},
 				Body = HttpService:JSONEncode({
-					model = "xiaomi/mimo-v2-flash:free",
+					model = "deepseek/deepseek-r1-0528:free",
 					messages = {
           				{ role = "user", content = systemPrompt ..prompt }
 					},
