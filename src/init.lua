@@ -130,6 +130,7 @@ local commands do
 		local Backpack = localPlayer:FindFirstChildOfClass("Backpack")
 		local amount = tonumber(args[1]) or 1
 		local delay_ = tonumber(args[2]) or false
+			
 		for _, v in next, Backpack:GetChildren() do
 			v.Parent = speaker.Character
 			task.spawn(function()
@@ -140,6 +141,8 @@ local commands do
 					end
 				end
 			end)
+
+			v.Parent = Backpack
 		end
 	end)
 
