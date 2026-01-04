@@ -282,7 +282,7 @@ USER PROMPT:
 					["X-Title"] = game.PlaceId
 				},
 				Body = HttpService:JSONEncode({
-					model = "deepseek/deepseek-r1-0528:free",
+					model = "arcee-ai/trinity-mini:free",
 					messages = {
 						{ role = "user", content = systemPrompt ..prompt }
 					},
