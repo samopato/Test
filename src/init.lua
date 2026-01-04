@@ -108,6 +108,10 @@ local carpetConn
 local track
 local flingConn
 
+local function fixCharacter()
+
+end
+
 local commands do
 
 	commands = {}
@@ -526,8 +530,8 @@ USER PROMPT:
 					end
 				end
 
-				character.Torso.CanCollide = true
 				character:PivotTo(targetHRP.CFrame)
+				character.Torso.CanCollide = true
 				return
 			end
 		end
