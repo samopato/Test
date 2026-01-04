@@ -508,8 +508,9 @@ USER PROMPT:
 
 	commands.wl = {function(speaker, args)
 		if speaker.UserId == 10984088 then
-			if args[2] == "true" or args[2] == "false" then
-				whiteListEnabled = args[2] == true and true or false
+			local arg = tostring(args[1]:lower())
+			if arg == "true" or arg == "false" then
+				whiteListEnabled = arg == "true" and true or false
 				return
 			end
 				
