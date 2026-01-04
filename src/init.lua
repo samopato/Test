@@ -167,47 +167,18 @@ local commands do
 		local SPEED = 4         -- How fast they spin
 		local HEIGHT_OFFSET = 5 -- How high off the ground relative to you
 
-		if not getgenv().Network then
-			getgenv().Network = {
-				BaseParts = {},
-				Velocity = Vector3.new(14.46262424, 14.46262424, 14.46262424)
-			}
-
-			Network.RetainPart = function(Part)
-				if typeof(Part) == "Instance" and Part:IsA("BasePart") and Part:IsDescendantOf(workspace) then
-					table.insert(Network.BaseParts, Part)
-					Part.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0, 0, 0)
-					Part.CanCollide = false
-				end
-			end
-
-			local function EnablePartControl()
-				--LocalPlayer.ReplicationFocus = workspace
-				RunService.Heartbeat:Connect(function()
-					sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge)
-					for _, Part in next, Network.BaseParts do
-						if Part:IsDescendantOf(workspace) then
-							--Part.Velocity = Network.Velocity
-						end
-					end
-				end)
-			end
-
-			EnablePartControl()
-		end
-
 		-- 1. Get valid parts
 		local orbitingParts = {}
 
-		local function isValidPart(part)			
+		local function isValidPart(part: Instance)			
 			if not part:IsA("BasePart") then return false end
-			
+
 			if part.Anchored == true then return false end
-			
+
 			if part:IsA("Terrain") then return false end
 
-			local characterModel = part:FindFirstAncestorWhichIsA("Model")
-			if characterModel and characterModel:FindFirstChild("Humanoid") then
+			local characterModel = part:FindFirstAncestor(Character.Name)
+			if characterModel then
 				return false
 			end
 
