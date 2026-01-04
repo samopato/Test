@@ -179,7 +179,7 @@ local commands do
 		local URL = "https://openrouter.ai/api/v1/chat/completions"
 
 		if not KEY then
-			chat("VEX: OpenAI API key is missing from vex/plugins/")
+			chat("VEX: OpenRouter API key is missing from vex/plugins/key.lua")
 			return
 		end
 
@@ -236,12 +236,10 @@ USER PROMPT:
 				local Humanoid = localPlayer.Character:FindFirstChild("Humanoid")
 				local RootPart = localPlayer.Character:FindFirstChild("HumanoidRootPart")
 				
-				local targetPlayer = Players:FindFirstChild(targetName)
+				local targetPlayer = findPlayer(nil, targetName)
 				if targetPlayer and targetPlayer.Character then
 					local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
 					if targetRoot then
-						-- Simple MoveTo (Good for open spaces)
-						Humanoid:MoveTo(targetRoot.Position)
 
 						-- OR: Pathfinding (Better for mazes/obstacles)
 						task.spawn(function()
@@ -274,7 +272,7 @@ USER PROMPT:
 		end
 
 
-		local function askGemini(prompt)
+		local function askAI(prompt)
 			local response = request({
 				Url = URL,
 				Method = "POST",
@@ -609,8 +607,8 @@ local function onMessageReceived(message)
 	if whiteListEnabled and not table.find(whiteList, speaker.UserId) then
 		return
 	end
-
-	local callback = undo and commands[command][2] or commands[command][1]
+	
+	local callback = not undo and commands[command][1] or commands[command][2]
 
 	if callback then
 		callback(speaker, args)
