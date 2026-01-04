@@ -3,6 +3,7 @@ local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
 local TextChatService = game:GetService("TextChatService")
 local TeleportService = game:GetService("TeleportService")
+local PathfindingService = game:GetService("PathfindingService")
 local localPlayer = Players.LocalPlayer
 
 local prefix = "+"
@@ -130,7 +131,7 @@ local commands do
 		local Backpack = localPlayer:FindFirstChildOfClass("Backpack")
 		local amount = tonumber(args[1]) or 1
 		local delay_ = tonumber(args[2]) or false
-			
+
 		for _, v in next, Backpack:GetChildren() do
 			v.Parent = localPlayer.Character
 			task.spawn(function()
@@ -232,6 +233,9 @@ USER PROMPT:
 
 			-- Usage: [walkTo:PlayerName]
 			walkto = function(targetName)
+				local Humanoid = localPlayer.Character:FindFirstChild("Humanoid")
+				local RootPart = localPlayer.Character:FindFirstChild("HumanoidRootPart")
+				
 				local targetPlayer = Players:FindFirstChild(targetName)
 				if targetPlayer and targetPlayer.Character then
 					local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
