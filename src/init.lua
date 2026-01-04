@@ -166,7 +166,36 @@ local commands do
 		local RADIUS = 50       -- How far away (in studs)
 		local SPEED = 4         -- How fast they spin
 		local HEIGHT_OFFSET = 5 -- How high off the ground relative to you
+		
+		if not getgenv().Network then
+			getgenv().Network = {
+				BaseParts = {},
+				Velocity = Vector3.new(14.46262424, 14.46262424, 14.46262424)
+			}
 
+			Network.RetainPart = function(Part)
+				if typeof(Part) == "Instance" and Part:IsA("BasePart") and Part:IsDescendantOf(workspace) then
+					table.insert(Network.BaseParts, Part)
+					Part.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0, 0, 0)
+					Part.CanCollide = false
+				end
+			end
+
+			local function EnablePartControl()
+				--LocalPlayer.ReplicationFocus = workspace
+				RunService.Heartbeat:Connect(function()
+					sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge)
+					for _, Part in next, Network.BaseParts do
+						if Part:IsDescendantOf(workspace) then
+							Part.Velocity = Network.Velocity
+						end
+					end
+				end)
+			end
+
+			EnablePartControl()
+		end
+		
 		-- 1. Get valid parts
 		local orbitingParts = {}
 
