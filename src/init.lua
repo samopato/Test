@@ -183,6 +183,7 @@ local commands do
 
 			local function EnablePartControl()
 				LocalPlayer.ReplicationFocus = workspace
+				LocalPlayer:AddReplicationFocus(RootPart)
 				RunService.Heartbeat:Connect(function()
 					sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge)
 					for _, Part in next, Network.BaseParts do
