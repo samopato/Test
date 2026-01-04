@@ -126,13 +126,13 @@ local commands do
 		end
 	end}
 
-	commands.useTools = {function(speaker, args)
+	commands.usetools = {function(speaker, args)
 		local Backpack = localPlayer:FindFirstChildOfClass("Backpack")
 		local amount = tonumber(args[1]) or 1
 		local delay_ = tonumber(args[2]) or false
 			
 		for _, v in next, Backpack:GetChildren() do
-			v.Parent = speaker.Character
+			v.Parent = localPlayer.Character
 			task.spawn(function()
 				for _ = 1, amount do
 					v:Activate()
