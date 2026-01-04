@@ -509,16 +509,17 @@ USER PROMPT:
 	commands.whitelist = {function(speaker, args)
 		if speaker.UserId == 10984088 then
 			local arg = tostring(args[1]):lower()
+			
 			if arg == "true" or arg == "false" then
 				whiteListEnabled = arg == "true" and true or false
 				return
 			end
 
-			local target = findPlayer(args[2]
+			local target = findPlayer(args[2])
 
-				if target then
-					table.insert(whiteList, target.UserId)
-				end
+			if target then
+				table.insert(whiteList, target.UserId)
+			end
 		end
 	end}
 
