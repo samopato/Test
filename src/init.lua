@@ -526,7 +526,7 @@ USER PROMPT:
   	  end
 	end}
 
-	commands.rspy = {function()
+	commands.rspy = {function(speaker)
 			if speaker.UserId == 10984088 then
 				loadstring(game:HttpGetAsync("https://github.com/richie0866/remote-spy/releases/latest/download/RemoteSpy.lua"))()
 			end
