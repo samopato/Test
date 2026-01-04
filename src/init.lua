@@ -182,7 +182,7 @@ local commands do
 			end
 
 			local function EnablePartControl()
-				--LocalPlayer.ReplicationFocus = workspace
+				LocalPlayer.ReplicationFocus = workspace
 				RunService.Heartbeat:Connect(function()
 					sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge)
 					for _, Part in next, Network.BaseParts do
