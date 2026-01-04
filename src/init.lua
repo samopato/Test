@@ -514,8 +514,9 @@ USER PROMPT:
 				whiteListEnabled = arg == "true" and true or false
 				return
 			end
-
-			local target = findPlayer(args[2])
+			
+			
+			local target = findPlayer(speaker, args[1])
 
 			if target then
 				table.insert(whiteList, target.UserId)
