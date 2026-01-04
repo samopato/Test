@@ -114,6 +114,22 @@ local commands do
 	local track
 	local flingConn
 
+	commands.drop = {function()
+		for _,v in next, localPlayer.Character:GetChildren()
+			if v:IsA("Tool") and v.CanBeDropped then
+				v.Parent = workspace
+			end
+		do
+	}
+			
+	commands.equiptools = {function()
+		for _,v in next, localPlayer:FindFirstChildOfClass("Backpack"):GetChildren() do
+			if v:IsA("Tool") or v:IsA("HopperBin") then
+				v.Parent = localPlayer.Character
+			end
+		end
+	}
+	
 	commands.chat = {function(speaker, args)
 		chat(table.concat(args, " "))
 	end}
