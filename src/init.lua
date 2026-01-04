@@ -157,120 +157,107 @@ local commands do
 
 	commands.orbit = {function()
 		local RunService = game:GetService("RunService")
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local RootPart = Character:WaitForChild("HumanoidRootPart")
+		local Players = game:GetService("Players")
+		local LocalPlayer = Players.LocalPlayer
+		local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+		local RootPart = Character:WaitForChild("HumanoidRootPart")
 
--- SETTINGS
-local RADIUS = 50       -- How far away (in studs)
-local SPEED = 4         -- How fast they spin
-local HEIGHT_OFFSET = 5 -- How high off the ground relative to you
+		-- SETTINGS
+		local RADIUS = 50       -- How far away (in studs)
+		local SPEED = 4         -- How fast they spin
+		local HEIGHT_OFFSET = 5 -- How high off the ground relative to you
 
-if not getgenv().Network then
-    getgenv().Network = {
-        BaseParts = {},
-        Velocity = Vector3.new(14.46262424, 14.46262424, 14.46262424)
-    }
+		if not getgenv().Network then
+			getgenv().Network = {
+				BaseParts = {},
+				Velocity = Vector3.new(14.46262424, 14.46262424, 14.46262424)
+			}
 
-    Network.RetainPart = function(Part)
-        if typeof(Part) == "Instance" and Part:IsA("BasePart") and Part:IsDescendantOf(Workspace) then
-            table.insert(Network.BaseParts, Part)
-            Part.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0, 0, 0)
-            Part.CanCollide = false
-        end
-    end
+			Network.RetainPart = function(Part)
+				if typeof(Part) == "Instance" and Part:IsA("BasePart") and Part:IsDescendantOf(workspace) then
+					table.insert(Network.BaseParts, Part)
+					Part.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0, 0, 0)
+					Part.CanCollide = false
+				end
+			end
 
-    local function EnablePartControl()
-        LocalPlayer.ReplicationFocus = Workspace
-        RunService.Heartbeat:Connect(function()
-            sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge)
-            for _, Part in pairs(Network.BaseParts) do
-                if Part:IsDescendantOf(Workspace) then
-                    Part.Velocity = Network.Velocity
-                end
-            end
-        end)
-    end
+			local function EnablePartControl()
+				--LocalPlayer.ReplicationFocus = workspace
+				RunService.Heartbeat:Connect(function()
+					sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge)
+					for _, Part in next, Network.BaseParts do
+						if Part:IsDescendantOf(workspace) then
+							Part.Velocity = Network.Velocity
+						end
+					end
+				end)
+			end
 
-    EnablePartControl()
-end
+			EnablePartControl()
+		end
+
+		-- 1. Get valid parts
+		local orbitingParts = {}
+
+		local function isValidPart(part)			
+			if not part:IsA("BasePart") then return false end
 			
--- 1. Get valid parts
-local orbitingParts = {}
+			if part.Anchored == true then return false end
+			
+			if part:IsA("Terrain") then return false end
 
-local function isValidPart(part)
-    -- Must be a physical part
-    if not part:IsA("BasePart") then return false end
-    -- Must be unanchored
-    if part.Anchored == true then return false end
-    -- Must not be the Terrain
-    if part:IsA("Terrain") then return false end
-    
-    -- CHECK: Don't grab parts inside ANY character (yours or others)
-    local characterModel = part:FindFirstAncestorWhichIsA("Model")
-    if characterModel and characterModel:FindFirstChild("Humanoid") then
-        return false
-    end
-    
-    return true
-end
+			local characterModel = part:FindFirstAncestorWhichIsA("Model")
+			if characterModel and characterModel:FindFirstChild("Humanoid") then
+				return false
+			end
 
--- Collect parts from Workspace
-for _, part in pairs(workspace:GetDescendants()) do
-    if isValidPart(part) then
-        table.insert(orbitingParts, part)
-        
-        -- Optional: Disable collision so they don't fling you
-        part.CanCollide = false 
-        
-        -- Optional: Set network ownership to prevent jitter (if running on server)
-        -- part:SetNetworkOwner(LocalPlayer) 
-    end
-end
+			return true
+		end
 
-print("Found " .. #orbitingParts .. " parts to orbit.")
+		-- Collect parts from Workspace
+		for _, part in next, workspace:GetDescendants() do
+			if isValidPart(part) then
+				table.insert(orbitingParts, part)
 
--- 2. The Orbit Loop
-RunService.RenderStepped:Connect(function()
-    -- Current time controls the rotation angle
-    local currentTime = tick() * SPEED
-    
-    if not RootPart then return end
+				part.CanCollide = false 
+				part.Massless = true
+			end
+		end
 
-    for index, part in pairs(orbitingParts) do
-        -- Check if part still exists
-        if part and part.Parent then
-            -- Math to distribute parts evenly in a circle
-            -- (Index / Total) gives us a percentage (0.0 to 1.0)
-            -- Multiply by 2PI (360 degrees) to get the angle offset
-            local angleOffset = (index / #orbitingParts) * (math.pi * 2)
-            
-            local currentAngle = currentTime + angleOffset
-            
-            -- Calculate X and Z based on angle (Circle Math)
-            local x = math.cos(currentAngle) * RADIUS
-            local z = math.sin(currentAngle) * RADIUS
-            
-            -- Set new position relative to your RootPart
-            local newCFrame = CFrame.new(
-                RootPart.Position.X + x,
-                RootPart.Position.Y + HEIGHT_OFFSET,
-                RootPart.Position.Z + z
-            )
-            
-            -- Rotate the part slightly for visual effect
-            part.CFrame = newCFrame * CFrame.Angles(currentTime, currentTime, 0)
-            
-            -- Reset velocity so physics doesn't fight us
-            part.AssemblyLinearVelocity = Vector3.zero
-            part.AssemblyAngularVelocity = Vector3.zero
-        else
-            -- Clean up table if part is destroyed
-            table.remove(orbitingParts, index)
-        end
-    end
-end)
+		print("Found " .. #orbitingParts .. " parts to orbit.")
+
+		RunService.RenderStepped:Connect(function()
+			local currentTime = tick() * SPEED
+
+			if not RootPart then return end
+
+			for index, part in next, orbitingParts do
+				if part and part.Parent then
+
+					local angleOffset = (index / #orbitingParts) * (math.pi * 2)
+
+					local currentAngle = currentTime + angleOffset
+
+					-- Calculate X and Z based on angle (Circle Math)
+					local x = math.cos(currentAngle) * RADIUS
+					local z = math.sin(currentAngle) * RADIUS
+
+					-- Set new position relative to your RootPart
+					local newCFrame = CFrame.new(
+						RootPart.Position.X + x,
+						RootPart.Position.Y + HEIGHT_OFFSET,
+						RootPart.Position.Z + z
+					)
+
+					part.CFrame = newCFrame * CFrame.Angles(currentTime, currentTime, 0)
+					part.AssemblyLinearVelocity = Vector3.zero
+					part.AssemblyAngularVelocity = Vector3.zero
+				else
+					-- Clean up table if part is destroyed
+					table.remove(orbitingParts, index)
+				end
+			end
+		end)
 	end}
 
 	commands.chat = {function(speaker, args)
