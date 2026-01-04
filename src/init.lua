@@ -7,7 +7,7 @@ local localPlayer = Players.LocalPlayer
 
 local prefix = "+"
 
-local whiteListEnabled = false
+local whiteListEnabled = true
 local whiteList = {10984088}
 local EmoteTracks = {}
 local AnimationIds = {
