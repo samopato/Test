@@ -163,8 +163,8 @@ local commands do
 		local RootPart = Character:WaitForChild("HumanoidRootPart")
 
 		-- SETTINGS
-		local RADIUS = 50       -- How far away (in studs)
-		local SPEED = 4         -- How fast they spin
+		local RADIUS = 30       -- How far away (in studs)
+		local SPEED = 10         -- How fast they spin
 		local HEIGHT_OFFSET = 5 -- How high off the ground relative to you
 		
 		if not getgenv().Network then
@@ -207,25 +207,31 @@ local commands do
 
 			if part:IsA("Terrain") then return false end
 
-			local characterModel = part:FindFirstAncestor(Character.Name)
-			if characterModel then
-				return false
-			end
+			if part.Parent == LocalPlayer.Character or part:IsDescendantOf(LocalPlayer.Character) then
+           		return false
+       		end
 
 			return true
 		end
 
 		-- Collect parts from Workspace
-		for _, part in next, workspace:GetDescendants() do
-			if isValidPart(part) then
-				table.insert(orbitingParts, part)
+		task.spawn(function()
+			while task.wait(0.5) do
+				for _, part in next, workspace:GetDescendants() do
+					if isValidPart(part) then
+						table.insert(orbitingParts, part)
 
-				part.CanCollide = false 
-				part.Massless = true
+						part.CanCollide = false 
+						part.Massless = true
+					else 
+						local i = table.find(orbitingParts, part)
+						if i then
+							table.remove(orbitingParts, i)
+						end
+					end
+				end
 			end
-		end
-
-		print("Found " .. #orbitingParts .. " parts to orbit.")
+		end)
 
 		RunService.RenderStepped:Connect(function()
 			local currentTime = tick() * SPEED
@@ -254,7 +260,6 @@ local commands do
 					part.AssemblyLinearVelocity = Vector3.zero
 					part.AssemblyAngularVelocity = Vector3.zero
 				else
-					-- Clean up table if part is destroyed
 					table.remove(orbitingParts, index)
 				end
 			end
