@@ -513,11 +513,10 @@ USER PROMPT:
 				return
 			end
 				
-			whitelistEnabled = true
 			local target = findPlayer(args[2]
 
 			if target then
-				table.insert(whitelist, target.UserId)
+				table.insert(whiteList, target.UserId)
 			end
 		end
 	end}
@@ -555,12 +554,13 @@ local function onMessageReceived(message)
 		return
 	end
 
-	local speaker = Players:GetPlayerByUserId(message.TextSource and message.TextSource.UserId)
-	local command, args, undo = parseCommand(message.Text)
-
 	if whiteListEnabled and not table.find(whiteList, speaker.UserId) then
 		return
 	end
+
+	local speaker = Players:GetPlayerByUserId(message.TextSource and message.TextSource.UserId)
+	local command, args, undo = parseCommand(message.Text)
+
 
 	local callback = undo and commands[command][2] or commands[command][1]
 
