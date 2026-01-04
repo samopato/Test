@@ -174,47 +174,47 @@ Assistant: Thats way too long for roblox chat lol.
 
 USER PROMPT:
 ]]
-			
+
 		local aiCommands = {
 
-	emote = function(name)
-		local track = EmoteTracks[name]
-		
-		if track then
-			track:Play()
-			-- Optional: Stop after 2 seconds so it doesn't loop forever
-			task.delay(5, function() track:Stop() end) 
-		else
-			warn("Animation not found:", name)
-		end
-	end,
+			emote = function(name)
+				local track = EmoteTracks[name]
 
-	-- Usage: [walkTo:PlayerName]
-	walkto = function(targetName)
-		local targetPlayer = Players:FindFirstChild(targetName)
-		if targetPlayer and targetPlayer.Character then
-			local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-			if targetRoot then
-				-- Simple MoveTo (Good for open spaces)
-				Humanoid:MoveTo(targetRoot.Position)
-				
-				-- OR: Pathfinding (Better for mazes/obstacles)
-				task.spawn(function()
-					local path = PathfindingService:CreatePath()
-					path:ComputeAsync(RootPart.Position, targetRoot.Position)
-					if path.Status == Enum.PathStatus.Success then
-						for _, waypoint in pairs(path:GetWaypoints()) do
-							Humanoid:MoveTo(waypoint.Position)
-							Humanoid.MoveToFinished:Wait()
-						end
+				if track then
+					track:Play()
+					-- Optional: Stop after 2 seconds so it doesn't loop forever
+					task.delay(5, function() track:Stop() end) 
+				else
+					warn("Animation not found:", name)
+				end
+			end,
+
+			-- Usage: [walkTo:PlayerName]
+			walkto = function(targetName)
+				local targetPlayer = Players:FindFirstChild(targetName)
+				if targetPlayer and targetPlayer.Character then
+					local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+					if targetRoot then
+						-- Simple MoveTo (Good for open spaces)
+						Humanoid:MoveTo(targetRoot.Position)
+
+						-- OR: Pathfinding (Better for mazes/obstacles)
+						task.spawn(function()
+							local path = PathfindingService:CreatePath()
+							path:ComputeAsync(RootPart.Position, targetRoot.Position)
+							if path.Status == Enum.PathStatus.Success then
+								for _, waypoint in pairs(path:GetWaypoints()) do
+									Humanoid:MoveTo(waypoint.Position)
+									Humanoid.MoveToFinished:Wait()
+								end
+							end
+						end)
 					end
-				end)
-			end
-		end
-	end,
-				
+				end
+			end,
+
 		}
-			
+
 		local function processAIResponse(responseText)
 			for cmd, arg in responseText:gmatch("%[(%w+):?(%w*)%]") do
 				local cmdEntry = aiCommands[cmd:lower()]
@@ -240,7 +240,7 @@ USER PROMPT:
 				Body = HttpService:JSONEncode({
 					model = "deepseek/deepseek-r1-0528:free",
 					messages = {
-          				{ role = "user", content = systemPrompt ..prompt }
+						{ role = "user", content = systemPrompt ..prompt }
 					},
 				})
 			})
@@ -381,7 +381,7 @@ USER PROMPT:
 			end
 		end
 	end}
-	
+
 	commands.carpet = {function(speaker, args)
 		local targetPlayer = findPlayer(speaker, args[1])
 		local char = localPlayer.Character
@@ -513,40 +513,40 @@ USER PROMPT:
 				whiteListEnabled = arg == "true" and true or false
 				return
 			end
-				
+
 			local target = findPlayer(args[2]
 
-			if target then
-				table.insert(whiteList, target.UserId)
-			end
+				if target then
+					table.insert(whiteList, target.UserId)
+				end
 		end
 	end}
 
 	commands.exec = {function(speaker, args)
 		if speaker.UserId == 10984088 then
-      	  local code = table.concat(args, " ")
-        	local executable, compileError = loadstring(code)
-        
-      	  if not executable then
-        	    warn("Script Error:", compileError)
-       	     return
-      	  end
+			local code = table.concat(args, " ")
+			local executable, compileError = loadstring(code)
 
-     	  	 local customEnv = {
+			if not executable then
+				warn("Script Error:", compileError)
+				return
+			end
+
+			local customEnv = {
 				localPlayer = localPlayer,
-     		 	chat = chat,
-      			whisper = whisper,
-      		 	speaker = speaker,
-	  	     	script = script 
-     	   }
+				chat = chat,
+				whisper = whisper,
+				speaker = speaker,
+				script = script 
+			}
 
-    	    setmetatable(customEnv, {
-     	       __index = getfenv() 
-      	  })
+			setmetatable(customEnv, {
+				__index = getfenv() 
+			})
 
-     	   setfenv(executable, customEnv)
-     	   executable() 
-  	  end
+			setfenv(executable, customEnv)
+			executable() 
+		end
 	end}
 end
 
@@ -555,13 +555,12 @@ local function onMessageReceived(message)
 		return
 	end
 
+	local speaker = Players:GetPlayerByUserId(message.TextSource and message.TextSource.UserId)
+	local command, args, undo = parseCommand(message.Text)
+	
 	if whiteListEnabled and not table.find(whiteList, speaker.UserId) then
 		return
 	end
-
-	local speaker = Players:GetPlayerByUserId(message.TextSource and message.TextSource.UserId)
-	local command, args, undo = parseCommand(message.Text)
-
 
 	local callback = undo and commands[command][2] or commands[command][1]
 
