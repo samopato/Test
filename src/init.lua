@@ -259,6 +259,7 @@ USER PROMPT:
 		local function processAIResponse(responseText)
 			for cmd, arg in responseText:gmatch("%[(%w+):?(%w*)%]") do
 				local cmdEntry = aiCommands[cmd:lower()]
+				chat(cmd ..":".. arg)
 				if cmdEntry then
 					cmdEntry(arg:lower())
 				end
@@ -300,7 +301,7 @@ USER PROMPT:
 			end
 		end
 
-		local prompt = table.concat(args, " ")
+		local prompt = speaker.Name .. ": " ..table.concat(args, " ")
 		if #prompt > 0 then
 			local response = askGemini(prompt)
 			chat(string.sub(response, 0, 163))
