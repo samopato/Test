@@ -187,7 +187,7 @@ local commands do
 					sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge)
 					for _, Part in next, Network.BaseParts do
 						if Part:IsDescendantOf(workspace) then
-							Part.Velocity = Network.Velocity
+							--Part.Velocity = Network.Velocity
 						end
 					end
 				end)
