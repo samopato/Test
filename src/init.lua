@@ -144,7 +144,7 @@ local commands do
 
 			v.Parent = Backpack
 		end
-	end)
+	end}
 
 	commands.equiptools = {function()
 		for _,v in next, localPlayer:FindFirstChildOfClass("Backpack"):GetChildren() do
