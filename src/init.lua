@@ -182,10 +182,9 @@ local commands do
 			end
 
 			local function EnablePartControl()
-				LocalPlayer:AddReplicationFocus(RootPart)
-				LocalPlayer.ReplicationFocus = workspace
-				LocalPlayer:AddReplicationFocus(RootPart)
 				RunService.Heartbeat:Connect(function()
+					LocalPlayer.ReplicationFocus = workspace
+					LocalPlayer.ReplicationFocus = nil
 					sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge)
 					for _, Part in next, Network.BaseParts do
 						if Part:IsDescendantOf(workspace) then
