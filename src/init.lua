@@ -114,7 +114,7 @@ local commands do
 	local track
 	local flingConn
 
-	commands.drop = {function()
+	commands.dropTools = {function()
 		for _,v in next, localPlayer.Character:GetChildren() do
 			if v:IsA("Tool") then
 				if v.CanBeDropped then
@@ -125,6 +125,23 @@ local commands do
 			end
 		end
 	end}
+
+	commands.useTools = {function(speaker, args)
+		local Backpack = localPlayer:FindFirstChildOfClass("Backpack")
+		local amount = tonumber(args[1]) or 1
+		local delay_ = tonumber(args[2]) or false
+		for _, v in next, Backpack:GetChildren() do
+			v.Parent = speaker.Character
+			task.spawn(function()
+				for _ = 1, amount do
+					v:Activate()
+					if delay_ then
+						task.wait(delay_)
+					end
+				end
+			end)
+		end
+	end)
 
 	commands.equiptools = {function()
 		for _,v in next, localPlayer:FindFirstChildOfClass("Backpack"):GetChildren() do
