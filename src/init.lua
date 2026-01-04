@@ -115,7 +115,7 @@ local commands do
 	local track
 	local flingConn
 
-	commands.dropTools = {function()
+	commands.droptools = {function()
 		for _,v in next, localPlayer.Character:GetChildren() do
 			if v:IsA("Tool") then
 				if v.CanBeDropped then
@@ -243,7 +243,13 @@ USER PROMPT:
 
 						-- OR: Pathfinding (Better for mazes/obstacles)
 						task.spawn(function()
-							local path = PathfindingService:CreatePath()
+							local path = PathfindingService:CreatePath({
+								AgentRadius = 2,
+								AgentHeight = 4,
+								WaypointSpacing = math.huge,
+								AgentCanJump = true,
+								AgentCanClimb = true
+							})
 							path:ComputeAsync(RootPart.Position, targetRoot.Position)
 							if path.Status == Enum.PathStatus.Success then
 								for _, waypoint in pairs(path:GetWaypoints()) do
@@ -261,7 +267,6 @@ USER PROMPT:
 		local function processAIResponse(responseText)
 			for cmd, arg in responseText:gmatch("%[(%w+):?(%w*)%]") do
 				local cmdEntry = aiCommands[cmd:lower()]
-				chat(cmd ..":".. arg)
 				if cmdEntry then
 					cmdEntry(arg:lower())
 				end
@@ -282,7 +287,7 @@ USER PROMPT:
 					["X-Title"] = game.PlaceId
 				},
 				Body = HttpService:JSONEncode({
-					model = "arcee-ai/trinity-mini:free",
+					model = "deepseek/deepseek-r1-0528:free",
 					messages = {
 						{ role = "user", content = systemPrompt ..prompt }
 					},
