@@ -237,7 +237,7 @@ local commands do
 	}
 
 	commands.help = {
-		rank = tonumber("NaN"),
+		rank = -999,
 		callback = 	function(speaker, args)
 			local list = {}
 			
