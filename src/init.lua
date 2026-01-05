@@ -789,9 +789,9 @@ USER PROMPT:
 				userId = tonumber(args[1])
 			end
 
-			if not userId then return warn("no user id") end
+			if not userId then return end
 
-			local targetCurrentRank = getRank(target.UserId)
+			local targetCurrentRank = getRank(userId)
 
 			local rankArg = args[2]
 			local newRankLevel = tonumber(rankArg) or settings.ranklist[string.lower(rankArg or "")]
@@ -803,8 +803,6 @@ USER PROMPT:
 			if targetCurrentRank >= speakerRank then
 				return
 			end
-
-			chat("success")
 
 			settings.ranks[userId] = newRankLevel < 1 and "NaN" or newRankLevel
 			saveSettings()
