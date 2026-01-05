@@ -119,6 +119,14 @@ local commands do
 	local track
 	local flingConn
 
+	commands.god = {function()
+		for _,v in pairs(localPlayer.Character:GetChildren()) do
+			if v:IsA("BasePart") then
+				v.AssemblyMass = "inf"
+			end
+		end
+	end}
+
 	commands.droptools = {function()
 		for _,v in next, localPlayer.Character:GetChildren() do
 			if v:IsA("Tool") then
