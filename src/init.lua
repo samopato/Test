@@ -134,14 +134,14 @@ if localPlayer.Character then
 	for name, id in pairs(AnimationIds) do
 		local anim = Instance.new("Animation")
 		anim.AnimationId = id
-		EmoteTracks[name] = localPlayer.Character.Humanoid:LoadAnimation(anim)
+		EmoteTracks[name] = localPlayer.Character:WaitForChild("Humanoid"):LoadAnimation(anim)
 	end
 end
 localPlayer.CharacterAdded:Connect(function(char)
 	for name, id in pairs(AnimationIds) do
 		local anim = Instance.new("Animation")
 		anim.AnimationId = id
-		EmoteTracks[name] = char.Humanoid:LoadAnimation(anim)
+		EmoteTracks[name] = char:WaitForChild("Humanoid"):LoadAnimation(anim)
 	end
 end)
 
