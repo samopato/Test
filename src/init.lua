@@ -30,7 +30,7 @@ local defaultSettings = {
 }
 
 local path = "vex/data/AdminSettings.json"
-local settings = isfile(path) and readfile(path) or defaultSettings
+local settings = isfile(path) and HttpService:JSONDecode(readfile(path)) or defaultSettings
 
 local EmoteTracks = {}
 local AnimationIds = {
@@ -803,7 +803,7 @@ USER PROMPT:
 			if targetCurrentRank >= speakerRank then
 				return
 			end
-			
+
 			chat("success")
 
 			settings.ranks[userId] = newRankLevel < 1 and "NaN" or newRankLevel
