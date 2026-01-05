@@ -209,7 +209,7 @@ local commands do
 
 			if part.Anchored == true then return false end
 
-			if part.AssemblyMass == "inf" then
+			if part.AssemblyMass == tonumber("inf") then
 				return false
 			end
 					
