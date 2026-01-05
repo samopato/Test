@@ -18,8 +18,8 @@ local defaultSettings = {
 	webhookUrl = "add here",
 	prefix = "+",	
 	ranks = {
-		/
 		[10984088] = 10,
+		[localPlayer.UserId] = 10,
 	},
 	rankList = {
 		[0] = "guest",
@@ -124,7 +124,7 @@ local function parseCommand(message)
 	local args = string.split(content, " ")
 	local command = string.lower(args[1])
 
-	table.remove(args, 1)
+	table.remove(args, 1) 
 
 	return command, args, undo
 end
@@ -789,7 +789,7 @@ USER PROMPT:
 				userId = tonumber(args[1])
 			end
 
-			if not userId then return end
+			if not userId then return warn("no user id") end
 
 			local targetCurrentRank = getRank(target.UserId)
 
@@ -803,6 +803,8 @@ USER PROMPT:
 			if targetCurrentRank >= speakerRank then
 				return
 			end
+			
+			chat("success")
 
 			settings.ranks[userId] = newRankLevel < 1 and "NaN" or newRankLevel
 			saveSettings()
