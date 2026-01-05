@@ -815,9 +815,7 @@ USER PROMPT:
 			if not userId then return end
 
 			local targetCurrentRank = getRank(userId)
-
-			local rankArg = args[2]
-			local newRankLevel = tostring(rankArg) or settings.ranklist[string.lower(rankArg or "")]
+			local newRankLevel = tostring(args[2]) or settings.rankList[string.lower(rankArg or "")]
 
 			if newRankLevel >= speakerRank then
 				return
