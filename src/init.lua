@@ -18,7 +18,7 @@ local defaultSettings = {
 	webhookUrl = "add here",
 	prefix = "+",	
 	ranks = {
-		[localPlayer.UserId] = 10,
+		/
 		[10984088] = 10,
 	},
 	rankList = {
@@ -124,7 +124,7 @@ local function parseCommand(message)
 	local args = string.split(content, " ")
 	local command = string.lower(args[1])
 
-	table.remove(args, 1) 
+	table.remove(args, 1)
 
 	return command, args, undo
 end
