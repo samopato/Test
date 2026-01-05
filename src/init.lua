@@ -765,7 +765,7 @@ USER PROMPT:
 	commands.rank = {
 		rank = 0,
 		callback = function(speaker, args)
-			local target = findPlayer(speaker, args[2])
+			local target = findPlayer(speaker, args[1])
 			local rank = getRank(target)
 			local name = settings.rankList[rank] or "nil"
 			
