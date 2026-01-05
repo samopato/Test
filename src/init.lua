@@ -49,7 +49,7 @@ local function saveSettings()
 end
 
 local function getRank(userId)
-	return settings.Ranks[userId] or 0
+	return settings.ranks[userId] or 0
 end
 
 local function bypass(text)
