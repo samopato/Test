@@ -790,7 +790,7 @@ USER PROMPT:
 		rank = 0,
 		callback = function(speaker, args)
 			local target = findPlayer(speaker, args[1])
-			local rank = getRank(target.UserId)
+			local rank = tostring(getRank(target.UserId))
 			local name = settings.rankList[rank] or "nil"
 
 			if target then
