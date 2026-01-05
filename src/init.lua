@@ -174,7 +174,7 @@ local commands do
 		if not getgenv().Network then
 			getgenv().Network = {
 				BaseParts = {},
-				Velocity = Vector3.new(14.46262424, 14.46262424, 14.46262424)
+				Velocity = Vector3.new(30.46262424, 30.46262424, 30.46262424)
 			}
 
 			Network.RetainPart = function(Part)
@@ -186,9 +186,8 @@ local commands do
 			end
 
 			local function EnablePartControl()
+				LocalPlayer.ReplicationFocus = workspace
 				RunService.Heartbeat:Connect(function()
-					LocalPlayer.ReplicationFocus = workspace
-					LocalPlayer.ReplicationFocus = nil
 					sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge)
 					for _, Part in next, Network.BaseParts do
 						if Part:IsDescendantOf(workspace) then
@@ -210,6 +209,7 @@ local commands do
 			if part.Anchored == true then return false end
 
 			if part.AssemblyMass == tonumber("inf") then
+				print(part.AssemblyMass)
 				return false
 			end
 					
