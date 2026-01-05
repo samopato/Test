@@ -219,8 +219,6 @@ local commands do
 		end
 
 		-- Collect parts from Workspace
-		task.spawn(function()
-			while task.wait(0.5) do
 				for _, part in next, workspace:GetDescendants() do
 					if isValidPart(part) then
 						table.insert(orbitingParts, part)
@@ -233,9 +231,7 @@ local commands do
 							table.remove(orbitingParts, i)
 						end
 					end
-				end
 			end
-		end)
 
 		RunService.RenderStepped:Connect(function()
 			local currentTime = tick() * SPEED
