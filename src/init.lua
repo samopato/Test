@@ -18,14 +18,14 @@ local defaultSettings = {
 	webhookUrl = "add here",
 	prefix = "+",	
 	ranks = {
-		[10984088] = 10,
-		[localPlayer.UserId] = 10,
+		["10984088"] = 10,
+		[tostring(localPlayer.UserId)] = 10,
 	},
 	rankList = {
-		[0] = "guest",
-		[1] = "user",
-		[2] = "admin",
-		[3] = "owner",
+		["0"] = "guest",
+		["1"] = "user",
+		["2"] = "admin",
+		["3"] = "owner",
 	}
 }
 
@@ -51,7 +51,7 @@ end
 saveSettings()
 
 local function getRank(userId)
-	return tonumber(settings.ranks[userId]) or 0
+	return tonumber(settings.ranks[tostring(userId)]) or 0
 end
 
 local function bypass(text)
@@ -795,7 +795,7 @@ USER PROMPT:
 			local targetCurrentRank = getRank(userId)
 
 			local rankArg = args[2]
-			local newRankLevel = tonumber(rankArg) or settings.ranklist[string.lower(rankArg or "")]
+			local newRankLevel = tostring(rankArg) or settings.ranklist[string.lower(rankArg or "")]
 
 			if newRankLevel >= speakerRank then
 				return
@@ -805,7 +805,7 @@ USER PROMPT:
 				return
 			end
 
-			settings.ranks[userId] = newRankLevel < 1 and "NaN" or newRankLevel
+			settings.ranks[tostring(userId)] = newRankLevel < 1 and nil or newRankLevel
 			saveSettings()
 		end
 	}
