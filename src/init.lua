@@ -48,6 +48,7 @@ local function saveSettings()
 	local json = HttpService:JSONEncode(settings)
 	writefile(path, json)
 end
+saveSettings()
 
 local function getRank(userId)
 	return settings.ranks[userId] or 0
