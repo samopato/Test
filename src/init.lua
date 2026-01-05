@@ -237,13 +237,19 @@ local commands do
 	}
 
 	commands.help = {
-		rank = 0,
+		rank = tonumber("NaN"),
 		callback = 	function(speaker, args)
 			local list = {}
+			
 			for name, data in next, commands do
-				table.insert(list, prefix .. name)
+				if speaker.UserId < data.rank then
+					continue
+				end
+				
+				table.insert(list, name)
 			end
-			whisper(speaker, "VEX: all commands: " .. table.concat(list, ", "))
+			
+			whisper(speaker, "Avaliable commands: " .. table.concat(list, ", "))
 		end
 	}
 
@@ -763,7 +769,23 @@ USER PROMPT:
 	-----------------------------
 	-- Internal
 	-----------------------------
+	
+	commands.ranks = {
+		rank = 0,
+		callback = function(speaker, args)
+			local message = "Available Ranks: "
+			local items = {}
 
+			for level, name in pairs(settings.rankList) do
+				table.insert(items, string.format("%s (%d) ", level, name))
+			end
+
+			message = message .. table.concat(items, ", ")
+
+			whisper(speaker, message)
+		end
+	}
+	
 	commands.rank = {
 		rank = 0,
 		callback = function(speaker, args)
@@ -772,7 +794,7 @@ USER PROMPT:
 			local name = settings.rankList[rank] or "nil"
 
 			if target then
-				chat(`{target.DisplayName}'s rank is: {name} ({rank})`)
+				whisper(speaker, `{target.DisplayName}'s rank is: {name} ({rank})`)
 			end
 		end
 	}
@@ -805,8 +827,13 @@ USER PROMPT:
 				return
 			end
 
-			settings.ranks[tostring(userId)] = newRankLevel < 1 and nil or newRankLevel
+			settings.ranks[tostring(userId)] = newRankLevel < 1 and nil or tostring(newRankLevel)
 			saveSettings()
+			
+			if target then
+				local name = settings.rankList[newRankLevel] or "nil"
+				whisper(target, `You've been ranked to: {newRankLevel}`)
+			end
 		end
 	}
 
