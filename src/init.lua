@@ -452,7 +452,7 @@ USER PROMPT:
 				movel = -movel
 			end)
 		end,
-		
+
 		undo = function()
 			localPlayer.Character.HumanoidRootPart.Anchored = true
 
@@ -761,24 +761,24 @@ USER PROMPT:
 	-----------------------------
 	-- Internal
 	-----------------------------
-	
+
 	commands.rank = {
 		rank = 0,
 		callback = function(speaker, args)
 			local target = findPlayer(speaker, args[1])
-			local rank = getRank(target.UserId)
+			local rank = getRank(target)
 			local name = settings.rankList[rank] or "nil"
-			
+
 			if target then
 				chat(`{target.DisplayName}'s rank is: {name} ({rank})`)
 			end
 		end
 	}
-	
+
 	commands.setrank = {
 		rank = 3,
 		callback = function(speaker, args)
-			local speakerRank = getRank(speaker)
+			local speakerRank = getRank(speaker.UserId)
 			local target = findPlayer(speaker, args[1])
 			local userId
 
@@ -803,7 +803,7 @@ USER PROMPT:
 				return
 			end
 
-			settings.ranks[userId] = newRankLevel
+			settings.ranks[userId] = newRankLevel < 1 and "NaN" or newRankLevel
 			saveSettings()
 		end
 	}
