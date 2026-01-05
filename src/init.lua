@@ -770,7 +770,7 @@ USER PROMPT:
 			local name = settings.rankList[rank] or "nil"
 			
 			if target then
-				chat(speaker, `{target.DisplayName}'s rank is: ({rank}){name}`)
+				chat(`{target.DisplayName}'s rank is: ({rank}){name}`)
 			end
 		end
 	}
