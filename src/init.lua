@@ -51,7 +51,7 @@ end
 saveSettings()
 
 local function getRank(userId)
-	return settings.ranks[userId] or 0
+	return tonumber(settings.ranks[userId]) or 0
 end
 
 local function bypass(text)
@@ -878,13 +878,8 @@ local function onMessageReceived(message)
 
 	local speaker = Players:GetPlayerByUserId(message.TextSource and message.TextSource.UserId)
 	local name, args, undo = parseCommand(message.Text)
-	
 	local cmd = commands[name]
 
-	if not cmd then
-		return
-	end
-		
 	local rank = getRank(speaker.UserId)
 
 	if rank < cmd.rank then return end
