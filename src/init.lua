@@ -761,9 +761,21 @@ USER PROMPT:
 	-----------------------------
 	-- Internal
 	-----------------------------
-
+	
 	commands.rank = {
 		rank = 0,
+		callback = function(speaker, args)
+			local target = findPlayer(args[2])
+			local rank = getRank(target)
+			
+			if target then
+				whisper(speaker, `{target.DisplayName}'s rank is: {rank}`)
+			end
+		end
+	}
+	
+	commands.setrank = {
+		rank = 3,
 		callback = function(speaker, args)
 			local speakerRank = getRank(speaker)
 			local target = findPlayer(speaker, args[1])
@@ -791,28 +803,6 @@ USER PROMPT:
 			end
 
 			settings.ranks[userId] = newRankLevel
-			saveSettings()
-		end,
-		undo = function(speaker, args)
-			local speakerRank = getRank(speaker.UserId)
-			local target = findPlayer(args[1])
-			local userId
-
-			if target then
-				userId = target.UserId
-			else
-				userId = tonumber(args[1])
-			end
-
-			if not userId then return end
-
-			local targetCurrentRank = getRank(userId)
-
-			if targetCurrentRank >= speakerRank then
-				return
-			end
-
-			settings.ranks[userId] = 0
 			saveSettings()
 		end
 	}
