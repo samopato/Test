@@ -127,7 +127,7 @@ local function parseCommand(message)
 
 	table.remove(args, 1) 
 
-	return command, args, undo
+	return command, args
 end
 
 if localPlayer.Character then
@@ -879,7 +879,9 @@ local function onMessageReceived(message)
 	local speaker = Players:GetPlayerByUserId(message.TextSource and message.TextSource.UserId)
 	local name, args, undo = parseCommand(message.Text)
 	local cmd = commands[name]
-
+	
+	chat(name)
+	
 	local rank = getRank(speaker.UserId)
 
 	if rank < cmd.rank then return end
