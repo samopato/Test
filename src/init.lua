@@ -767,9 +767,10 @@ USER PROMPT:
 		callback = function(speaker, args)
 			local target = findPlayer(args[2])
 			local rank = getRank(target)
+			local name = settings.rankList[rank] or "nil"
 			
 			if target then
-				whisper(speaker, `{target.DisplayName}'s rank is: {rank}`)
+				chat(speaker, `{target.DisplayName}'s rank is: ({rank}){name}`)
 			end
 		end
 	}
