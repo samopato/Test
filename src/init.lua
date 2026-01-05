@@ -880,10 +880,10 @@ local function onMessageReceived(message)
 	local name, args, undo = parseCommand(message.Text)
 	local cmd = commands[name]
 	
-	chat(name)
-	
 	local rank = getRank(speaker.UserId)
-
+	
+	warn(cmd)
+	
 	if rank < cmd.rank then return end
 
 	local callback = not undo and cmd.callback or cmd.undo
