@@ -122,7 +122,7 @@ local commands do
 	commands.god = {function()
 		for _,v in pairs(localPlayer.Character:GetChildren()) do
 			if v:IsA("BasePart") then
-				v.AssemblyMass = "inf"
+				sethiddenproperty(v, "AssemblyMass", "inf")
 			end
 		end
 	end}
