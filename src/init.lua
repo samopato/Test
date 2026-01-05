@@ -18,6 +18,7 @@ local defaultSettings = {
 	webhookUrl = "add here",
 	prefix = "+",	
 	ranks = {
+		[localPlayer.UserId] = 10,
 		[10984088] = 10,
 	},
 	rankList = {
