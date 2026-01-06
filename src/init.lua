@@ -548,6 +548,10 @@ commands.fling = {
 				return
 			end
 
+			if root then
+				sethiddenproperty(localPlayer.Character.PrimaryPart, "PhysicsRepRootPart", target)
+			end
+
 			hrp.Parent.Humanoid.Sit = true
 
 			for _,v in pairs(hrp.Parent:GetDescendants()) do
