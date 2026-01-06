@@ -191,9 +191,6 @@ local commands do
 			glueConn = RunService.Heartbeat:Connect(function()
 				if root and hrp then
 					sethiddenproperty(hrp, "PhysicsRepRootPart", root)
-				else
-					warn("stop")
-					break
 				end
 			end)
 		end,
