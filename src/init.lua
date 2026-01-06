@@ -55,17 +55,25 @@ local function getRank(userId)
 end
 
 local function bypass(text)
+	local text = text:lower()
+	
 	local dictionary = {
 		["@n"] = "nigga",
 		["@c"] = "cock",
 		["@f"] = "fuck",
 		["@dc"] = "discord"
 	}
-
+	
+	local conversionTableLower = {
+		a = "ạ", b = "ḅ", c = "с", d = "ḍ", e = "ẹ",
+		f = "f", g = "ɡ", h = "ḥ", i = "ị", j = "ј",
+		k = "ḳ", l = "ḷ", m = "ṃ", n = "ṇ", o = "ọ",
+		p = "р", q = "q", r = "ṛ", s = "ṣ", t = "ṭ",
+		u = "ụ", v = "ṿ", w = "ẉ", x = "х", y = "ỵ", z = "ẓ", [" "] = "\r",
+	}
+	
 	local translated = string.gsub(text, "@%w+", dictionary)
-	local bypassed = string.gsub(translated, ".", "%0\xDB\x94\xD8\x8D")
-
-	warn(bypassed)
+	local bypassed = string.gsub(string.gsub(translated, ".", "%0\xD8\x9B"), ".", conversionTableLower)
 
 	return bypassed
 end
