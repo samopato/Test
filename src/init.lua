@@ -655,7 +655,7 @@ commands.carpet = {
 					end
 				end
 
-				local targetPos = targetRoot.Position + Vector3.new(0, -5.25, 0)
+				local targetPos = targetRoot.Position + Vector3.new(0, -5.5, 0)
 
 				local targetLook = targetRoot.CFrame.LookVector
 				local flatLook = Vector3.new(targetLook.X, 0, targetLook.Z).Unit
