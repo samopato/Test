@@ -105,9 +105,9 @@ end
 
 local function findPlayer(speaker, nameHint)
 	local children = Players:GetPlayers()
-	local lowerHint = string.lower(nameHint)
+	local lowerHint = string.lower(tostring(nameHint))
 
-	if nameHint == "" or nil then
+	if nameHint == "" or nameHint == nil then
 		return speaker
 	end
 
@@ -236,6 +236,12 @@ local commands do
 		end
 	}
 
+	commands.follow = {
+		rank = 1,
+		callback = function(speaker, args)
+		end
+	}
+
 	commands.whisper = {
 		rank = 1,
 		callback = function(speaker, args)
@@ -246,7 +252,7 @@ local commands do
 		end
 	}
 
-	commands.help = {
+	commands.cmds = {
 		rank = -999,
 		callback = 	function(speaker, args)
 			local list = {}			
@@ -841,8 +847,8 @@ USER PROMPT:
 			saveSettings()
 			
 			if target then
-				local name = settings.rankList[newRankLevel] or "nil"
-				whisper(target, `You've been ranked to: {newRankLevel}`)
+				local name = settings.rankList[rank] or "nil"
+				whisper(target, `You've been ranked to: {name} ({newRankLevel})`)
 			end
 		end
 	}
