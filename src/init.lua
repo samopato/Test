@@ -655,11 +655,13 @@ commands.carpet = {
 					end
 				end
 
+				local targetPos = targetRoot.Position + Vector3.new(0, -2.5, 0)
 
-				local rawLook = targetRoot.CFrame.LookVector
-				local flattenedLook = Vector3.new(rawLook.X, 0, rawLook.Z).Unit
+				local targetLook = targetRoot.CFrame.LookVector
+				local flatLook = Vector3.new(targetLook.X, 0, targetLook.Z).Unit
 
-				root.CFrame *= CFrame.Angles(math.rad(90), 0, 0)
+				root.CFrame = CFrame.lookAt(targetPos, targetPos + flatLook)
+				root.CFrame = CFrame.Angles(math.rad(90), 0, 0)
 
 				targetRoot.AssemblyLinearVelocity = Vector3.zero	
 				targetRoot.AssemblyAngularVelocity = Vector3.zero
