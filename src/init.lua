@@ -176,6 +176,7 @@ local commands do
 		callback = function(speaker, args)
 			local target = findPlayer(speaker, args[1])
 			local root = target.Character.PrimaryPart
+			chat("glue test")
 			
 			task.spawn(function()
 				while RunService.Heartbeat:Wait() do
