@@ -659,8 +659,7 @@ commands.carpet = {
 				local rawLook = targetRoot.CFrame.LookVector
 				local flattenedLook = Vector3.new(rawLook.X, 0, rawLook.Z).Unit
 
-				root.CFrame = CFrame.lookAt(root.CFRame, flattenedLook) 
-					* CFrame.Angles(math.rad(90), 0, 0)
+				root.CFrame *= CFrame.Angles(math.rad(90), 0, 0)
 
 				targetRoot.AssemblyLinearVelocity = Vector3.zero	
 				targetRoot.AssemblyAngularVelocity = Vector3.zero
