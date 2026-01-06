@@ -173,14 +173,19 @@ local commands do
 	-----------------------------
 	commands.test = {
 		rank = 1,
-		callback = function()
-			for i,v in next, localPlayer.Character:GetDescendants() do
-				if v:IsA("BasePart") and v.Name ~= "HumanoidRootPart" then 
-					game:GetService("RunService").Heartbeat:connect(function()
-						v.Velocity = Vector3.new(-16000,0,0)
-					end)
+		callback = function(speaker, args)
+			local target = findPlayer(args[1])
+			local root = target.Character.PrimaryPart
+			
+			task.spawn(function()
+				while Heartbeat:Wait() do
+					if root then
+						sethiddenproperty(localPlayer.Character.PrimaryPart, "PhysicsRepRootPart", root)
+					else
+						break
+					end
 				end
-			end
+			end)
 		end
 	}
 	
