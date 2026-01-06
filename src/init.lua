@@ -550,7 +550,7 @@ commands.fling = {
 
 			hrp.Parent.Humanoid.Sit = true
 			hrp.CFrame = target.CFrame
-			hrp.Velocity = vel * 1000000 + Vector3.new(1000000, 1000000, 1000000)
+			hrp.Velocity = Vector3.new(1000000, 1000000, 1000000)
 					
 			sethiddenproperty(hrp, "PhysicsRepRootPart", target)
 		end)
