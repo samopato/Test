@@ -248,12 +248,12 @@ local commands do
 				followConn = nil
 			end
 
-			local targetPlayer = findPlayer(nil, args[1])
+			local targetPlayer = findPlayer(speaker, args[1])
 			if targetPlayer and targetPlayer.Character then
 				local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
 				if targetRoot then
 
-					followConn = RunService.HeartBeat:Connect(function()
+					followConn = RunService.Heartbeat:Connect(function()
 						task.spawn(function()
 							local path = PathfindingService:CreatePath({
 								AgentRadius = 2,
