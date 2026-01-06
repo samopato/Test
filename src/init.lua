@@ -278,7 +278,7 @@ local commands do
 							path:ComputeAsync(localRoot.Position, targetRoot.Position)
 						end)
 
-						if success and path.Status == Enum.PathStatus.Success then
+						if success  then
 							local waypoints = path:GetWaypoints()
 
 							if waypoints[3] then
