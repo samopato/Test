@@ -557,9 +557,9 @@ commands.fling = {
 				end
 			end
 
-			hrp.CFrame = target.CFrame * CFrame.new(0, 0, -10)
+			hrp.CFrame = target.CFrame * CFrame.new(0, 0, 0)
 			vel = hrp.Velocity
-			hrp.Velocity = vel * 1000000 + Vector3.new(0, 1000000, 0)
+			hrp.Velocity = vel * 1000000 + Vector3.new(1000000, 1000000, 1000000)
 			RunService.RenderStepped:Wait()
 			hrp.Velocity = vel
 			RunService.Stepped:Wait()
