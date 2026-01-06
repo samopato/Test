@@ -638,7 +638,7 @@ commands.carpet = {
 		local hum = char.Humanoid
 		local root = char.HumanoidRootPart
 
-		carpetConn = RunService.Heartbeat:Connect(function()
+		carpetConn = RunService.Stepped:Connect(function()
 			local targetChar = targetPlayer.Character
 			local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
 
