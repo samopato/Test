@@ -196,7 +196,7 @@ local commands do
 					break
 				end
 			end)
-		end
+		end,
 
 		undo = function()
 			if glueConn then
