@@ -171,6 +171,12 @@ local commands do
 	-----------------------------
 	-- Tools
 	-----------------------------
+	commands.ping = {
+	callback = function()
+			chat(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue() .."ms")
+		end
+	}
+	
 	commands.glue = {
 		rank = 1,
 		callback = function(speaker, args)
