@@ -174,7 +174,13 @@ local commands do
 	commands.test = {
 		rank = 1,
 		callback = function()
-			localPlayer.Character.HumanoidRootPart.CFrame *= CFrame.new(0, 0, 0 -1, 0, 0, 0, 1, 0, 0, 0, 1)
+			for i,v in next, localPlayer.Character:GetDescendants() do
+				if v:IsA("BasePart") and v.Name ~= "HumanoidRootPart" then 
+					game:GetService("RunService").Heartbeat:connect(function()
+						v.Velocity = Vector3.new(-16000,0,0)
+					end)
+				end
+			end
 		end
 	}
 	
