@@ -182,6 +182,7 @@ local commands do
 					if root then
 						sethiddenproperty(localPlayer.Character.PrimaryPart, "PhysicsRepRootPart", root)
 					else
+						warn("stop")
 						break
 					end
 				end
