@@ -549,26 +549,10 @@ commands.fling = {
 			end
 
 			hrp.Parent.Humanoid.Sit = true
-
-			for _,v in pairs(hrp.Parent:GetDescendants()) do
-				if v:IsA("BasePart") then
-					v.CanCollide = false
-					v.Massless = true
-				end
-			end
-
-			hrp.CFrame = target.CFrame * CFrame.new(0, 0, 0)
-			vel = hrp.Velocity
+			hrp.CFrame = target.CFrame
 			hrp.Velocity = vel * 1000000 + Vector3.new(1000000, 1000000, 1000000)
-			RunService.RenderStepped:Wait()
-			hrp.Velocity = vel
-			RunService.Stepped:Wait()
-			hrp.Velocity = vel + Vector3.new(0, movel, 0)
-			movel = -movel
-
-			if root then
-				sethiddenproperty(localPlayer.Character.PrimaryPart, "PhysicsRepRootPart", target)
-			end
+					
+			sethiddenproperty(hrp, "PhysicsRepRootPart", target)
 		end)
 	end,
 
