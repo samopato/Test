@@ -172,7 +172,7 @@ local commands do
 	-- Tools
 	-----------------------------
 	commands.ping = {
-		rank = 1
+		rank = 1,
 	callback = function()
 			chat(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue() .."ms")
 		end
