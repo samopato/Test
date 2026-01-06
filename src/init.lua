@@ -261,14 +261,13 @@ local commands do
 					if localRoot and localHumanoid and targetRoot then
 						local distance = (localRoot.Position - targetRoot.Position).Magnitude
 
-						if distance > 3 then
 							localHumanoid.Sit = false
-
 
 								local path = PathfindingService:CreatePath({
 									AgentRadius = 2,
 									AgentHeight = 5,
 									AgentCanJump = true,
+									AgentCanClimb = true,
 									WaypointSpacing = math.huge,
 									Costs = {
 										Water = 20
@@ -290,8 +289,6 @@ local commands do
 								else
 									localHumanoid:MoveTo(targetRoot.Position)
 								end
-						else
-							localHumanoid:MoveTo(localRoot.Position)
 						end
 					end
 
