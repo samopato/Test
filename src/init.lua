@@ -638,12 +638,6 @@ commands.carpet = {
 		local hum = char.Humanoid
 		local root = char.HumanoidRootPart
 
-		local SETTINGS = {
-			OFFSET = Vector3.new(0, -4, 0),
-			PREDICTION_TIME = 0.12,
-		}
-
-		-- Inside your +carpet elseif:
 		carpetConn = RunService.Heartbeat:Connect(function()
 			local targetChar = targetPlayer.Character
 			local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
@@ -656,20 +650,20 @@ commands.carpet = {
 					if v:IsA("BasePart") then
 						v.CanCollide = false
 						v.Massless = true
+						v.AssemblyLinearVelocity = Vector3.zero	
+						v.AssemblyAngularVelocity = Vector3.zero
 					end
 				end
 
-				local predictedPos = targetRoot.Position + (targetRoot.AssemblyLinearVelocity * SETTINGS.PREDICTION_TIME)
-				local finalPos = predictedPos + SETTINGS.OFFSET
 
 				local rawLook = targetRoot.CFrame.LookVector
 				local flattenedLook = Vector3.new(rawLook.X, 0, rawLook.Z).Unit
 
-
-				root.CFrame = CFrame.lookAt(finalPos, finalPos + flattenedLook) 
+				root.CFrame = CFrame.lookAt(root.CFRame, flattenedLook) 
 					* CFrame.Angles(math.rad(90), 0, 0)
 
-				root.AssemblyLinearVelocity = targetRoot.AssemblyLinearVelocity
+				targetRoot.AssemblyLinearVelocity = Vector3.zero	
+				targetRoot.AssemblyAngularVelocity = Vector3.zero
 			end
 		end)
 	end,
