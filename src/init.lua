@@ -267,11 +267,12 @@ local commands do
 	commands.ai = {
 		rank = 1,
 		callback = function(speaker, args)
-			local KEY = isfile("vex/plugins/key.lua") and readfile("vex/plugins/key.lua")
+			local raw = settings.openrouteKey
+			local KEY = raw == "add here" and nil or raw
 			local URL = "https://openrouter.ai/api/v1/chat/completions"
 
 			if not KEY then
-				chat("VEX: OpenRouter API key is missing from vex/plugins/key.lua")
+				chat(`VEX: OpenRouter API key is missing from {path}`)
 				return
 			end
 
