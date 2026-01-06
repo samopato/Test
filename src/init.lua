@@ -173,9 +173,9 @@ local commands do
 	-----------------------------
 	commands.ping = {
 		rank = 1,
-	callback = function()
+		callback = function(speaker)
 			local ping = math.round(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue())
-			chat(ping .."ms")
+			whisper(speaker, ping .."ms")
 		end
 	}
 	
