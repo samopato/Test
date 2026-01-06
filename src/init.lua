@@ -548,10 +548,6 @@ commands.fling = {
 				return
 			end
 
-			if root then
-				sethiddenproperty(localPlayer.Character.PrimaryPart, "PhysicsRepRootPart", target)
-			end
-
 			hrp.Parent.Humanoid.Sit = true
 
 			for _,v in pairs(hrp.Parent:GetDescendants()) do
@@ -569,6 +565,10 @@ commands.fling = {
 			RunService.Stepped:Wait()
 			hrp.Velocity = vel + Vector3.new(0, movel, 0)
 			movel = -movel
+
+			if root then
+				sethiddenproperty(localPlayer.Character.PrimaryPart, "PhysicsRepRootPart", target)
+			end
 		end)
 	end,
 
