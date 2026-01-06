@@ -847,7 +847,7 @@ USER PROMPT:
 			saveSettings()
 			
 			if target then
-				local name = settings.rankList[rank] or "nil"
+				local name = settings.rankList[tostring(newRankLevel)] or "nil"
 				whisper(target, `You've been ranked to: {name} ({newRankLevel})`)
 			end
 		end
