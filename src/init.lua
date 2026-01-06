@@ -137,7 +137,7 @@ local function parseCommand(message)
 
 	table.remove(args, 1) 
 
-	return command, args
+	return command, args, undo
 end
 
 if localPlayer.Character then
