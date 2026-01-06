@@ -174,7 +174,7 @@ local commands do
 	commands.test = {
 		rank = 1,
 		callback = function(speaker, args)
-			local target = findPlayer(args[1])
+			local target = findPlayer(speaker, args[1])
 			local root = target.Character.PrimaryPart
 			
 			task.spawn(function()
