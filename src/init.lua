@@ -161,6 +161,7 @@ end)
 
 local conn
 local carpetConn
+local followConn
 local track
 local flingConn
 
@@ -223,14 +224,14 @@ local commands do
 	-- Chat
 	-----------------------------
 	commands.bypass = {
-		rank = 1,
+		rank = 2,
 		callback = function(speaker, args)
 			chat(bypass(table.concat(args, " ")))
 		end
 	}
 
 	commands.chat = {
-		rank = 1,
+		rank = 2,
 		callback = function(speaker, args)
 			chat(table.concat(args, " "))
 		end
@@ -239,11 +240,44 @@ local commands do
 	commands.follow = {
 		rank = 1,
 		callback = function(speaker, args)
+					local Humanoid = localPlayer.Character:FindFirstChild("Humanoid")
+					local RootPart = localPlayer.Character:FindFirstChild("HumanoidRootPart")
+
+					if followConn then
+						followConn:Disconnect()
+						followConn = nil
+					end
+			
+					local targetPlayer = findPlayer(nil, targetName)
+					if targetPlayer and targetPlayer.Character then
+						local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+						if targetRoot then
+
+							followConn = RunService.HeartBeat:Connect(function()
+							task.spawn(function()
+								local path = PathfindingService:CreatePath({
+									AgentRadius = 2,
+									AgentHeight = 4,
+									WaypointSpacing = math.huge,
+									AgentCanJump = true,
+									AgentCanClimb = true
+								})
+								path:ComputeAsync(RootPart.Position, targetRoot.Position)
+								if path.Status == Enum.PathStatus.Success then
+									for _, waypoint in pairs(path:GetWaypoints()) do
+										Humanoid:MoveTo(waypoint.Position)
+										Humanoid.MoveToFinished:Wait()
+									end
+								end
+							end)
+						end
+					end)
+				end
 		end
 	}
 
 	commands.whisper = {
-		rank = 1,
+		rank = 2,
 		callback = function(speaker, args)
 			local target = findPlayer(speaker, args[1])
 			table.remove(args, 1)
@@ -271,7 +305,7 @@ local commands do
 	}
 
 	commands.ai = {
-		rank = 1,
+		rank = 2,
 		callback = function(speaker, args)
 			local raw = settings.openrouteKey
 			local KEY = raw == "add here" and nil or raw
@@ -335,6 +369,11 @@ USER PROMPT:
 					local Humanoid = localPlayer.Character:FindFirstChild("Humanoid")
 					local RootPart = localPlayer.Character:FindFirstChild("HumanoidRootPart")
 
+					if followConn then
+						followConn:Disconnect()
+						followConn = nil
+					end
+					
 					local targetPlayer = findPlayer(nil, targetName)
 					if targetPlayer and targetPlayer.Character then
 						local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -409,7 +448,7 @@ USER PROMPT:
 
 			local prompt = speaker.Name .. ": " ..table.concat(args, " ")
 			if #prompt > 0 then
-				chat("/e cheer ")
+				chat("Loading...")
 				local response = askAI(prompt)
 				chat(string.sub(response, 0, 163))
 			end
@@ -657,7 +696,7 @@ USER PROMPT:
 	}
 
 	commands.orbit = {
-		rank = 1,
+		rank = 3,
 		callback = function()
 			local RunService = game:GetService("RunService")
 			local Players = game:GetService("Players")
