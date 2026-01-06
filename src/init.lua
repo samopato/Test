@@ -631,6 +631,7 @@ commands.carpet = {
 	rank = 1,
 	callback = function(speaker, args)
 		local targetPlayer = findPlayer(speaker, args[1])
+		local offset = tonumber(args[2])
 		local char = localPlayer.Character
 		local hum = char.Humanoid
 		local root = char.HumanoidRootPart
@@ -652,7 +653,7 @@ commands.carpet = {
 					end
 				end
 
-				local targetPos = targetRoot.Position + Vector3.new(0, -5.55, 0)
+				local targetPos = targetRoot.Position + Vector3.new(0, offset, 0)
 
 				local targetLook = targetRoot.CFrame.LookVector
 				local flatLook = Vector3.new(targetLook.X, 0, targetLook.Z).Unit
