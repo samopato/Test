@@ -240,40 +240,67 @@ local commands do
 	commands.follow = {
 		rank = 1,
 		callback = function(speaker, args)
-			local Humanoid = localPlayer.Character:FindFirstChild("Humanoid")
-			local RootPart = localPlayer.Character:FindFirstChild("HumanoidRootPart")
-
-			if followConn then
-				followConn:Disconnect()
-				followConn = nil
+			if _G.FollowLoop then
+				task.cancel(_G.FollowLoop)
+				_G.FollowLoop = nil
 			end
 
 			local targetPlayer = findPlayer(speaker, args[1])
-			if targetPlayer and targetPlayer.Character then
-				local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-				if targetRoot then
 
-					followConn = RunService.Heartbeat:Connect(function()
-						task.spawn(function()
-							local path = PathfindingService:CreatePath({
-								AgentRadius = 2,
-								AgentHeight = 4,
-								WaypointSpacing = math.huge,
-								AgentCanJump = true,
-								AgentCanClimb = true
-							})
-							path:ComputeAsync(RootPart.Position, targetRoot.Position)
-							if path.Status == Enum.PathStatus.Success then
-								for _, waypoint in pairs(path:GetWaypoints()) do
-									Humanoid:MoveTo(waypoint.Position)
-									Humanoid.MoveToFinished:Wait()
+			if not targetPlayer then return end
+
+			_G.FollowLoop = task.spawn(function()
+				while true do
+					local localChar = localPlayer.Character
+					local localRoot = localChar and localChar:FindFirstChild("HumanoidRootPart")
+					local localHumanoid = localChar and localChar:FindFirstChild("Humanoid")
+
+					local targetChar = targetPlayer.Character
+					local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
+
+					if localRoot and localHumanoid and targetRoot then
+						local distance = (localRoot.Position - targetRoot.Position).Magnitude
+
+						if distance > 3 then
+							localHumanoid.Sit = false
+
+							if distance < 20 then
+								localHumanoid:MoveTo(targetRoot.Position)
+							else
+								local path = PathfindingService:CreatePath({
+									AgentRadius = 2,
+									AgentHeight = 5,
+									AgentCanJump = true,
+									WaypointSpacing = math.huge,
+									Costs = {
+										Water = 20
+									}
+								})
+
+								local success, errorMessage = pcall(function()
+									path:ComputeAsync(localRoot.Position, targetRoot.Position)
+								end)
+
+								if success and path.Status == Enum.PathStatus.Success then
+									local waypoints = path:GetWaypoints()
+
+									if waypoints[3] then
+										localHumanoid:MoveTo(waypoints[3].Position)
+									elseif waypoints[2] then
+										localHumanoid:MoveTo(waypoints[2].Position)
+									end
+								else
+									localHumanoid:MoveTo(targetRoot.Position)
 								end
 							end
-						end)
-					end)
-				end
-			end
+						else
+							localHumanoid:MoveTo(localRoot.Position)
+						end
+					end
 
+					task.wait(0.1) 
+				end
+			end)
 		end
 	}
 
