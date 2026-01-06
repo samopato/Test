@@ -778,7 +778,7 @@ USER PROMPT:
 			local items = {}
 
 			for level, name in pairs(settings.rankList) do
-				table.insert(items, string.format("%s (%d) ", level, name))
+				table.insert(items, string.format("%s (%d) ", name, level))
 			end
 
 			message = message .. table.concat(items, ", ")
