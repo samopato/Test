@@ -239,10 +239,11 @@ local commands do
 	commands.help = {
 		rank = -999,
 		callback = 	function(speaker, args)
-			local list = {}
+			local list = {}			
+			local rank = getRank(speaker.UserId)
 			
 			for name, data in next, commands do
-				if speaker.UserId < data.rank then
+				if rank < data.rank then
 					continue
 				end
 				
