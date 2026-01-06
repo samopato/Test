@@ -178,7 +178,7 @@ local commands do
 			local root = target.Character.PrimaryPart
 			
 			task.spawn(function()
-				while Heartbeat:Wait() do
+				while RunService.Heartbeat:Wait() do
 					if root then
 						sethiddenproperty(localPlayer.Character.PrimaryPart, "PhysicsRepRootPart", root)
 					else
