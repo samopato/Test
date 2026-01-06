@@ -184,12 +184,13 @@ local commands do
 		callback = function(speaker, args)
 			local target = findPlayer(speaker, args[1])
 			local root = target.Character.PrimaryPart
+			local hrp = localPlayer.Character.PrimaryPart
 			chat("glue test")
 			
 			task.spawn(function()
 				while RunService.Heartbeat:Wait() do
-					if root then
-						sethiddenproperty(localPlayer.Character.PrimaryPart, "PhysicsRepRootPart", root)
+					if root and hrp then
+						sethiddenproperty(hrp, "PhysicsRepRootPart", root)
 					else
 						warn("stop")
 						break
@@ -651,7 +652,7 @@ commands.carpet = {
 					end
 				end
 
-				local targetPos = targetRoot.Position + Vector3.new(0, -5.6, 0)
+				local targetPos = targetRoot.Position + Vector3.new(0, -5.55, 0)
 
 				local targetLook = targetRoot.CFrame.LookVector
 				local flatLook = Vector3.new(targetLook.X, 0, targetLook.Z).Unit
