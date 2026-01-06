@@ -56,14 +56,14 @@ end
 
 local function bypass(text)
 	local text = text:lower()
-	
+
 	local dictionary = {
 		["@n"] = "nigga",
 		["@c"] = "cock",
 		["@f"] = "fuck",
 		["@dc"] = "discord"
 	}
-	
+
 	local conversionTableLower = {
 		a = "ạ", b = "ḅ", c = "с", d = "ḍ", e = "ẹ",
 		f = "f", g = "ɡ", h = "ḥ", i = "ị", j = "ј",
@@ -71,7 +71,7 @@ local function bypass(text)
 		p = "р", q = "q", r = "ṛ", s = "ṣ", t = "ṭ",
 		u = "ụ", v = "ṿ", w = "ẉ", x = "х", y = "ỵ", z = "ẓ", [" "] = "\r",
 	}
-	
+
 	local translated = string.gsub(text, "@%w+", dictionary)
 	local bypassed = string.gsub(string.gsub(translated, ".", "%0\xD8\x8D\b"), ".", conversionTableLower)
 
@@ -240,41 +240,43 @@ local commands do
 	commands.follow = {
 		rank = 1,
 		callback = function(speaker, args)
-					local Humanoid = localPlayer.Character:FindFirstChild("Humanoid")
-					local RootPart = localPlayer.Character:FindFirstChild("HumanoidRootPart")
+			local Humanoid = localPlayer.Character:FindFirstChild("Humanoid")
+			local RootPart = localPlayer.Character:FindFirstChild("HumanoidRootPart")
 
-					if followConn then
-						followConn:Disconnect()
-						followConn = nil
-					end
-			
-					local targetPlayer = findPlayer(nil, targetName)
-					if targetPlayer and targetPlayer.Character then
-						local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-						if targetRoot then
+			if followConn then
+				followConn:Disconnect()
+				followConn = nil
+			end
 
-							followConn = RunService.HeartBeat:Connect(function()
-							task.spawn(function()
-								local path = PathfindingService:CreatePath({
-									AgentRadius = 2,
-									AgentHeight = 4,
-									WaypointSpacing = math.huge,
-									AgentCanJump = true,
-									AgentCanClimb = true
-								})
-								path:ComputeAsync(RootPart.Position, targetRoot.Position)
-								if path.Status == Enum.PathStatus.Success then
-									for _, waypoint in pairs(path:GetWaypoints()) do
-										Humanoid:MoveTo(waypoint.Position)
-										Humanoid.MoveToFinished:Wait()
-									end
+			local targetPlayer = findPlayer(nil, args[1])
+			if targetPlayer and targetPlayer.Character then
+				local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+				if targetRoot then
+
+					followConn = RunService.HeartBeat:Connect(function()
+						task.spawn(function()
+							local path = PathfindingService:CreatePath({
+								AgentRadius = 2,
+								AgentHeight = 4,
+								WaypointSpacing = math.huge,
+								AgentCanJump = true,
+								AgentCanClimb = true
+							})
+							path:ComputeAsync(RootPart.Position, targetRoot.Position)
+							if path.Status == Enum.PathStatus.Success then
+								for _, waypoint in pairs(path:GetWaypoints()) do
+									Humanoid:MoveTo(waypoint.Position)
+									Humanoid.MoveToFinished:Wait()
 								end
-							end)
-						end
+							end
+						end)
 					end)
 				end
+			end
+
 		end
 	}
+
 
 	commands.whisper = {
 		rank = 2,
@@ -291,15 +293,15 @@ local commands do
 		callback = 	function(speaker, args)
 			local list = {}			
 			local rank = getRank(speaker.UserId)
-			
+
 			for name, data in next, commands do
 				if rank < data.rank then
 					continue
 				end
-				
+
 				table.insert(list, name)
 			end
-			
+
 			whisper(speaker, "Avaliable commands: " .. table.concat(list, ", "))
 		end
 	}
@@ -373,7 +375,7 @@ USER PROMPT:
 						followConn:Disconnect()
 						followConn = nil
 					end
-					
+
 					local targetPlayer = findPlayer(nil, targetName)
 					if targetPlayer and targetPlayer.Character then
 						local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -826,7 +828,7 @@ USER PROMPT:
 	-----------------------------
 	-- Internal
 	-----------------------------
-	
+
 	commands.ranks = {
 		rank = 0,
 		callback = function(speaker, args)
@@ -842,7 +844,7 @@ USER PROMPT:
 			whisper(speaker, message)
 		end
 	}
-	
+
 	commands.rank = {
 		rank = 0,
 		callback = function(speaker, args)
@@ -884,7 +886,7 @@ USER PROMPT:
 
 			settings.ranks[tostring(userId)] = newRankLevel < 1 and nil or tostring(newRankLevel)
 			saveSettings()
-			
+
 			if target then
 				local name = settings.rankList[tostring(newRankLevel)] or "nil"
 				whisper(target, `You've been ranked to: {name} ({newRankLevel})`)
@@ -961,9 +963,9 @@ local function onMessageReceived(message)
 	local speaker = Players:GetPlayerByUserId(message.TextSource and message.TextSource.UserId)
 	local name, args, undo = parseCommand(message.Text)
 	local cmd = commands[name]
-	
+
 	local rank = getRank(speaker.UserId)
-	
+
 	if rank < cmd.rank then return end
 
 	local callback = not undo and cmd.callback or cmd.undo
