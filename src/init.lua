@@ -171,6 +171,13 @@ local commands do
 	-----------------------------
 	-- Tools
 	-----------------------------
+	commands.test = {
+		rank = 1,
+		callback = function()
+			localPlayer.Character.HumanoidRootPart.CFrame *= CFrame.new(0, 0, 0 -1, 0, 0, 0, 1, 0, 0, 0, 1)
+		end
+	}
+	
 	commands.droptools = {
 		rank = 1,
 		callback = function()
