@@ -187,6 +187,12 @@ local commands do
 			local target = findPlayer(speaker, args[1])
 			local root = target.Character.PrimaryPart
 			local hrp = localPlayer.Character.PrimaryPart
+
+			for _,v in pairs(target.Character) do
+				if v:IsA("BasePart") then					
+					v.Massless = true
+				end
+			end
 			
 			glueConn = RunService.Heartbeat:Connect(function()
 				if root and hrp then
