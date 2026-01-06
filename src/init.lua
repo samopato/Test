@@ -631,7 +631,7 @@ commands.carpet = {
 	rank = 1,
 	callback = function(speaker, args)
 		local targetPlayer = findPlayer(speaker, args[1])
-		local offset = tonumber(args[2])
+		local offset = tonumber(args[2]) or 5.45
 		local char = localPlayer.Character
 		local hum = char.Humanoid
 		local root = char.HumanoidRootPart
@@ -671,8 +671,8 @@ commands.carpet = {
 			carpetConn = nil
 		end
 
-		char.Torso.CanCollide = true
-		hum.PlatformStand = false
+		localPlayer.Character.Torso.CanCollide = true
+		localPlayer.Character.Humanoid.PlatformStand = false
 	end
 }
 
