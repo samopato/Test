@@ -174,7 +174,9 @@ local commands do
 	commands.ping = {
 		rank = 1,
 	callback = function()
-			chat(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue() .."ms")
+			local ping = game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue()
+			warn(ping)
+			chat(ping .."ms")
 		end
 	}
 	
