@@ -63,7 +63,9 @@ local function bypass(text)
 	}
 
 	local translated = string.gsub(text, "@%w+", dictionary)
-	local bypassed = string.gsub(translated, ".", "%0\xD8\x8D ")
+	local bypassed = string.gsub(translated, ".", "%0 \xD8\x8D ")
+
+	warn(bypassed)
 
 	return bypassed
 end
