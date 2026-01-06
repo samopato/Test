@@ -171,7 +171,7 @@ local commands do
 	-----------------------------
 	-- Tools
 	-----------------------------
-	commands.test = {
+	commands.glue = {
 		rank = 1,
 		callback = function(speaker, args)
 			local target = findPlayer(speaker, args[1])
