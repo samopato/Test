@@ -178,6 +178,8 @@ local commands do
 			whisper(speaker, ping .."ms")
 		end
 	}
+
+	local glueConn
 	
 	commands.glue = {
 		rank = 1,
@@ -185,18 +187,22 @@ local commands do
 			local target = findPlayer(speaker, args[1])
 			local root = target.Character.PrimaryPart
 			local hrp = localPlayer.Character.PrimaryPart
-			chat("glue test")
 			
-			task.spawn(function()
-				while RunService.Heartbeat:Wait() do
-					if root and hrp then
-						sethiddenproperty(hrp, "PhysicsRepRootPart", root)
-					else
-						warn("stop")
-						break
-					end
+			glueConn = RunService.Heartbeat:Connect(function()
+				if root and hrp then
+					sethiddenproperty(hrp, "PhysicsRepRootPart", root)
+				else
+					warn("stop")
+					break
 				end
 			end)
+		end
+
+		undo = function()
+			if glueConn then
+				glueConn:Disconnect()
+				glueConn = nil
+			end
 		end
 	}
 	
@@ -408,7 +414,6 @@ USER PROMPT:
 
 				if track then
 					track:Play()
-					-- Optional: Stop after 2 seconds so it doesn't loop forever
 					task.delay(5, function() track:Stop() end) 
 				else
 					warn("Animation not found:", name)
