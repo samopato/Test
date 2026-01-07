@@ -907,6 +907,8 @@ USER PROMPT:
 		end,
 	}
 
+
+	local orbitConn = nil
 	commands.orbit = {
 		rank = 1,
 		callback = function(speaker, args)
@@ -914,6 +916,11 @@ USER PROMPT:
 			local speed = tonumber(args[2]) or 20
 			local root = localPlayer.Character:FindFirstChild("HumanoidRootPart")
 			local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
+
+			if orbitConn then
+				orbitConn:Disconnect()
+				orbitConn = nil
+			end
 			
 			orbitConn = RunService.Heartbeat:Connect(function()
 				if not root then return end
