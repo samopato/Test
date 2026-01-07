@@ -160,7 +160,7 @@ local function bypass(text)
 	end
 
 	--chatinputbar.TargetTextChannel:SendAsync(content, randomString())
-	
+
 	return bypassText(text)
 end
 
@@ -273,24 +273,20 @@ local commands do
 			local target = findPlayer(speaker, args[1])
 			local root = target.Character.PrimaryPart
 			local hrp = localPlayer.Character.PrimaryPart
-
-
-			if glueConn then
-				glueConn:Disconnect()
-				glueConn = nil
-			end
 			
-			for _,v in next, target.Character:GetChildren() do
+			chat("glue test1")
+
+			for _,v in pairs(target.Character) do
 				if v:IsA("BasePart") then					
 					v.CustomPhysicalProperties = PhysicalProperties.new(100)
 				end
 			end
+			
+			chat("glue test2")
 
 			glueConn = RunService.Heartbeat:Connect(function()
 				if root and hrp then
 					sethiddenproperty(hrp, "PhysicsRepRootPart", root)
-				else
-					warn("a")
 				end
 			end)
 		end,
@@ -359,23 +355,12 @@ local commands do
 		rank = 2,
 		callback = function(speaker, args)
 			local message = table.concat(args, " ")
-			
+
 			local list = {
-				--pt-br
 				["po"] = "preto",
 				["ba"] = "buceta",
 				["pa"] = "porra",
 				["co"] = "caralho",
-				["ma"] = "molhada",
-				["ra"] = "rola",
-				["fp"] = "filho da puta",
-				["fe"] = "foda se",
-				["xa"] = "xereca",
-				["vo"] = "viado",
-				
-				--en
-
-				["gy"] = "gay",
 				["na"] = "nigga",
 				["nr"] = "nigger",
 				["py"] = "pussy",
@@ -386,7 +371,7 @@ local commands do
 				["fy"] = "femboy",
 				["as"] = "ass",
 				["ae"] = "asshole",
-				
+				["fp"] = "filho da puta",
 				["mo"] = "macaco",
 				["ps"] = "penis",
 				["dk"] = "dick",
@@ -399,11 +384,11 @@ local commands do
 				["st"] = "slut",
 				["ty"] = "tranny",
 				["ft"] = "faggot",
-				
+
 			}
-			
+
 			local final = string.gsub(message, "#(%w+)", list)
-			
+
 			chat(bypass(final))
 		end
 	}
@@ -704,7 +689,7 @@ USER PROMPT:
 
 				hrp.Parent.Humanoid.Sit = true
 				hrp.CFrame = target.CFrame
-				hrp.Velocity = Vector3.new(100000, 100000, 100000)
+				hrp.Velocity = Vector3.new(1000000, 1000000, 1000000)
 
 				sethiddenproperty(hrp, "PhysicsRepRootPart", target)
 			end)
@@ -1082,8 +1067,10 @@ USER PROMPT:
 	commands.rejoin = {
 		rank = 3,
 		callback = function(speaker)
-			chat("Rejoining...")
-			TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, localPlayer)
+			if speaker.UserId == 10984088 or speaker.UserId == 4912844218 then
+				chat("Rejoining...")
+				TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, localPlayer)
+			end
 		end
 	}	
 
