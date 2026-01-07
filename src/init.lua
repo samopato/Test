@@ -367,6 +367,7 @@ local commands do
 				["wp"] = "whatsapp",
 				
 				--pt-br
+				["ea"] = "estupra"
 				["po"] = "preto",
 				["ba"] = "buceta",
 				["pa"] = "porra",
@@ -830,10 +831,9 @@ USER PROMPT:
 
 			carpetPart.Parent = workspace
 
-			local stepped = RunService.Stepped
-
-				local targetChar = targetPlayer.Character
-				local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
+			local stepped = RunService.Heartbeat
+			local targetChar = targetPlayer.Character
+			local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
 
 			carpetConn = stepped:Connect(function()
 				if targetRoot and root then
