@@ -279,7 +279,7 @@ local commands do
 		rank = 1,
 		callback = function(speaker, args)
 			if _G.FollowLoop then
-				task.cancel(_G.FollowLoop)
+				_G.FollowLoop:Disconnect()
 				_G.FollowLoop = nil
 			end
 
@@ -287,8 +287,7 @@ local commands do
 
 			if not targetPlayer then return end
 
-			_G.FollowLoop = task.spawn(function()
-				while true do
+			_G.FollowLoop = RunService.Heartbeat:Connect(function()
 					local localChar = localPlayer.Character
 					local localRoot = localChar and localChar:FindFirstChild("HumanoidRootPart")
 					local localHumanoid = localChar and localChar:FindFirstChild("Humanoid")
@@ -328,10 +327,16 @@ local commands do
 							localHumanoid:MoveTo(targetRoot.Position)
 						end
 					end
-				end
 
 				task.wait(0.05) 			
 			end)
+		end,
+
+		undo = function()
+			if _G.FollowLoop then
+				_G.FollowLoop:Disconnect()
+				_G.FollowLoop = nil
+			end
 		end
 		}
 
