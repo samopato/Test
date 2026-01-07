@@ -824,11 +824,12 @@ USER PROMPT:
 			carpetPart.Size = Vector3.one
 			carpetPart.CFrame = root.CFrame
 			carpetPart.Massless = true
-			carpetPart.Parent = workspace
 			
 			local weld = Instance.new("WeldConstraint")
 			weld.Part0 = carpetPart
 			weld.Part1 = root
+
+			carpetPart.Parent = workspace
 
 			carpetConn = RunService.Heartbeat:Connect(function()
 				local targetChar = targetPlayer.Character
