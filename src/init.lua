@@ -908,8 +908,45 @@ USER PROMPT:
 	}
 
 	commands.orbit = {
+		rank = 1,
+		callback = function(speaker, args)
+			local target = findPlayer(speaker, args[1])
+			local speed = tonumber(args[2]) or 20
+			local root = localPlayer.Character:FindFirstCHild("HumanoidRootPart")
+			local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
+			
+			orbitConn = RunService.Heartbeat:Connect(function()
+				if not root then return end
+					
+				if not targetRoot then
+					targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
+					return
+				end
+					
+				local currentTime = tick() * SPEED
+				local currentAngle = currentTime + (math.pi * 2)
 
+				local x = math.cos(currentAngle) * 10
+				local z = math.sin(currentAngle) * 10
 
+				local newCFrame = CFrame.new(
+					targetRoot.Position.X + x,
+					targetRoot.Position.Y,
+					targetRoot.Position.Z + z
+				)
+
+				sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
+				root.CFrame = newCFrame * CFrame.Angles(currentTime, currentTime, 0)
+				root.AssemblyLinearVelocity = Vector3.zero
+				root.AssemblyAngularVelocity = Vector3.zero
+			end)
+		end,
+		undo = function(speaker, args)
+			if orbitConn then
+				orbitConn:Disconnect()
+				orbitConn = nil
+			end
+		end
 	}
 
 	commands.tornado = {
