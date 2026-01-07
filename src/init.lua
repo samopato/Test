@@ -404,8 +404,9 @@ local commands do
 
 			local final = string.gsub(message, "#(%w+)%f[%W]", function(word)
     	    	local lowercaseWord = string.sub(string.lower(word), 1, 2)
+				local rest = string.sub(word, 3)
 								
-     			return list[lowercaseWord] or ("#" .. word)
+     			return tostring(list[lowercaseWord] or ("#" .. word)) ..rest
   			end)
 
 			chat(bypass(final))
