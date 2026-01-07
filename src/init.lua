@@ -923,31 +923,29 @@ USER PROMPT:
 			end
 			
 			orbitConn = RunService.Heartbeat:Connect(function()
-				if not root then return end
-					
-				if not targetRoot then
-					targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
-					return
-				end
-					
-				local currentTime = tick() * speed
-				local currentAngle = currentTime + (math.pi * 2)
+    			if not root then return end
+        
+    			if not targetRoot then
+        			targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
+       				return
+   			 	end
+        
+    			local currentTime = tick() * speed
+    			local currentAngle = currentTime 
+    			local offset = Vector3.new(math.cos(currentAngle) * 10, 0, math.sin(currentAngle) * 10)
 
-				local x = math.cos(currentAngle) * 10
-				local z = math.sin(currentAngle) * 10
+   				local orbitCenter = targetRoot.CFrame * CFrame.new(offset)
 
-				local newCFrame = CFrame.new(
-					targetRoot.Position.X + x,
-					targetRoot.Position.Y,
-					targetRoot.Position.Z + z
-				)
-					
+    			local selfSpinSpeed = currentTime * (speed * 2)
+    			local selfRotation = CFrame.Angles(selfSpinSpeed, selfSpinSpeed, selfSpinSpeed)
+
 				localPlayer.Character.Humanoid.Sit = false
-				--sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
-					
-				root.CFrame = newCFrame * CFrame.Angles(currentTime, currentTime, 0)
-				root.AssemblyLinearVelocity = Vector3.zero
-				root.AssemblyAngularVelocity = Vector3.zero
+   				sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
+        
+  				root.CFrame = orbitCenter * selfRotation
+    
+  				root.AssemblyLinearVelocity = Vector3.zero
+    			root.AssemblyAngularVelocity = Vector3.zero
 			end)
 		end,
 		undo = function(speaker, args)
