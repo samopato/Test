@@ -938,7 +938,7 @@ USER PROMPT:
     
     			local orbitCFrame = targetRoot.CFrame * CFrame.new(offset)
     
-    			local selfRotation = CFrame.Angles(0, math.rad(spinAngle), 0)
+    			local selfRotation = CFrame.Angles(0, spinAngle, 0)
 
     			localPlayer.Character.Humanoid.Sit = false
 				localPlayer.Character.Humanoid.PlatformStand = true
