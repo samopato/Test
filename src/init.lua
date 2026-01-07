@@ -385,7 +385,7 @@ local commands do
 			
 			local final = string.gsub(message, "#(%w+)", list)
 			
-			chat(bypass(message))
+			chat(bypass(final))
 		end
 	}
 
