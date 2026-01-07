@@ -847,7 +847,8 @@ USER PROMPT:
 
 					root.CFrame = CFrame.lookAt(targetPos, targetPos + flatLook) * CFrame.Angles(math.rad(90), 0, 0)
 						
-					root.AssemblyLinearVelocity = targetRoot.AssemblyLinearVelocity * -1
+					root.AssemblyLinearVelocity = Vector3.zero --targetRoot.AssemblyLinearVelocity * -1
+						
 					root.AssemblyAngularVelocity = targetRoot.AssemblyAngularVelocity * -1
 						
 					targetRoot.AssemblyLinearVelocity = Vector3.zero
