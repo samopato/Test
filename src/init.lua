@@ -907,7 +907,7 @@ USER PROMPT:
 		end,
 	}
 
-
+	local rotationTime = 0
 	local orbitConn = nil
 	commands.orbit = {
 		rank = 1,
@@ -921,26 +921,26 @@ USER PROMPT:
             orbitConn = nil
         end
         
-       orbitConn = RunService.Heartbeat:Connect(function()
+		rotationTime = 0 -- Reset rotation tracker
+        
+        orbitConn = RunService.Heartbeat:Connect(function(deltaTime)
             if not root then return end
             if not targetRoot then
                 targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
                 return
             end
-            local t = tick()
-            local orbitAngle = t * speed
-            local spinAngle = t * (speed * 3)
+            
+            rotationTime = rotationTime + deltaTime -- Increment by frame time
+            
+            local orbitAngle = rotationTime * speed
+            local spinAngle = rotationTime * (speed * 3)
             
             -- 1. Calculate Orbit Position
             local offset = Vector3.new(math.cos(orbitAngle) * 10, 0, math.sin(orbitAngle) * 10)
             local orbitPosition = (targetRoot.CFrame * CFrame.new(offset)).Position
             
-            -- 2. Self-rotation (planet spinning on its own axis)
-            local selfRotation = CFrame.Angles(
-                spinAngle * 0.5,
-                spinAngle,
-                spinAngle * 0.3
-            )
+            -- 2. Self-rotation (continuous spin)
+            local selfRotation = CFrame.Angles(0, spinAngle, 0) -- Simple upright spin
             
             localPlayer.Character.Humanoid.Sit = false
             localPlayer.Character.Humanoid.PlatformStand = true
@@ -957,6 +957,8 @@ USER PROMPT:
 				orbitConn:Disconnect()
 				orbitConn = nil
 			end
+
+			rotationTime = 0
 		end
 	}
 
