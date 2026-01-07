@@ -360,6 +360,14 @@ local commands do
 			local message = table.concat(args, " ")
 
 			local list = {
+				--sites
+				["dd"] = "discord",
+				["ph"] = "pornhub",
+				["im"] = "instagram",
+				["xs"] = "xvideos",
+				["ye"] = "youtube",
+				["wp"] = "whatsapp",
+				
 				--pt-br
 				["po"] = "preto",
 				["ba"] = "buceta",
@@ -398,7 +406,7 @@ local commands do
 				["st"] = "slut",
 				["ty"] = "tranny",
 				["ft"] = "faggot",
-
+				["wt"] = "wet",
 			}
 
 			local final = string.gsub(message, "#(%w+)%f[%W]", function(word)
