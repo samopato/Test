@@ -274,6 +274,12 @@ local commands do
 			local root = target.Character.PrimaryPart
 			local hrp = localPlayer.Character.PrimaryPart
 
+
+			if glueConn then
+				glueConn:Disconnect()
+				glueConn = nil
+			end
+			
 			for _,v in next, target.Character:GetChildren() do
 				if v:IsA("BasePart") then					
 					v.CustomPhysicalProperties = PhysicalProperties.new(100)
@@ -283,8 +289,8 @@ local commands do
 			glueConn = RunService.Heartbeat:Connect(function()
 				if root and hrp then
 					sethiddenproperty(hrp, "PhysicsRepRootPart", root)
-					else
-						warn("a")
+				else
+					warn("a")
 				end
 			end)
 		end,
@@ -698,7 +704,7 @@ USER PROMPT:
 
 				hrp.Parent.Humanoid.Sit = true
 				hrp.CFrame = target.CFrame
-				hrp.Velocity = Vector3.new(1000000, 1000000, 1000000)
+				hrp.Velocity = Vector3.new(100000, 100000, 100000)
 
 				sethiddenproperty(hrp, "PhysicsRepRootPart", target)
 			end)
