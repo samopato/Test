@@ -923,7 +923,7 @@ USER PROMPT:
 					return
 				end
 					
-				local currentTime = tick() * SPEED
+				local currentTime = tick() * speed
 				local currentAngle = currentTime + (math.pi * 2)
 
 				local x = math.cos(currentAngle) * 10
