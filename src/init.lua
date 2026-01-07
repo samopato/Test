@@ -813,6 +813,13 @@ USER PROMPT:
 				carpetConn = nil
 			end
 
+			for _,v in pairs(char:GetChildren()) do
+				if v:IsA("BasePart") then
+					v.CanCollide = false
+					v.Massless = true
+				end
+			end
+
 			carpetConn = RunService.Heartbeat:Connect(function()
 				local targetChar = targetPlayer.Character
 				local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
@@ -821,23 +828,15 @@ USER PROMPT:
 					hum.Sit = false
 					hum.PlatformStand = true
 
-					for _,v in pairs(char:GetChildren()) do
-						if v:IsA("BasePart") then
-							v.CanCollide = false
-							v.AssemblyLinearVelocity = Vector3.zero	
-							v.AssemblyAngularVelocity = Vector3.zero
-						end
-					end
-
 					local targetPos = targetRoot.Position + Vector3.new(0, offset, 0)
 
 					local targetLook = targetRoot.CFrame.LookVector
 					local flatLook = Vector3.new(targetLook.X, 0, targetLook.Z).Unit
 
 					root.CFrame = CFrame.lookAt(targetPos, targetPos + flatLook)
-
-					targetRoot.AssemblyLinearVelocity = Vector3.zero	
-					targetRoot.AssemblyAngularVelocity = Vector3.zero
+						
+					root.AssemblyLinearVelocity = Vector3.zero
+					root.AssemblyAngularVelocity = Vector3.zero	
 				end
 			end)
 		end,
@@ -848,7 +847,7 @@ USER PROMPT:
 				carpetConn = nil
 			end
 
-			localPlayer.Character.Torso.CanCollide = true
+			localPlayer.Character.PrimaryPart.CanCollide = true
 			localPlayer.Character.Humanoid.PlatformStand = false
 		end
 	}
