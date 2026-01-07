@@ -934,7 +934,8 @@ USER PROMPT:
 					targetRoot.Position.Y,
 					targetRoot.Position.Z + z
 				)
-
+					
+				localPlayer.Character.Humanoid.Sit = false
 				sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
 				root.CFrame = newCFrame * CFrame.Angles(currentTime, currentTime, 0)
 				root.AssemblyLinearVelocity = Vector3.zero
