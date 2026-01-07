@@ -362,7 +362,7 @@ local commands do
 			local list = {
 				--sites
 				["dd"] = "discord",
-				["ph"] = "pornhub",
+				["pb"] = "pornhub",
 				["im"] = "instagram",
 				["xs"] = "xvideos",
 				["ye"] = "youtube",
