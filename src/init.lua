@@ -956,6 +956,7 @@ USER PROMPT:
             
             -- 3. Apply position and rotation
             root.CFrame = CFrame.new(orbitPosition) * selfRotation
+			root.AssemblyLinearVelocity = Vector3.one
         end)
 		end,
 		undo = function(speaker, args)
