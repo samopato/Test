@@ -826,6 +826,7 @@ USER PROMPT:
 			carpetPart.Massless = true
 			
 			local weld = Instance.new("WeldConstraint")
+			weld.Parent = carpetPart
 			weld.Part0 = carpetPart
 			weld.Part1 = root
 
