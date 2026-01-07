@@ -372,6 +372,7 @@ local commands do
 				["po"] = "preto",
 				["ba"] = "buceta",
 				["pa"] = "porra",
+				["ma"] = "merda",
 				["co"] = "caralho",
 				["ma"] = "molhada",
 				["ra"] = "rola",
