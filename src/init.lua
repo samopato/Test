@@ -288,8 +288,6 @@ local commands do
 			glueConn = RunService.Heartbeat:Connect(function()
 				if root and hrp then
 					sethiddenproperty(hrp, "PhysicsRepRootPart", root)
-				else
-					warn("a")
 				end
 			end)
 		end,
@@ -841,6 +839,7 @@ USER PROMPT:
 				if targetRoot and root then
 					hum.Sit = false
 					hum.PlatformStand = true
+					sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
 
 					local targetPos = targetRoot.Position + Vector3.new(0, offset, 0)
 
@@ -857,8 +856,8 @@ USER PROMPT:
 						
 					stepped:Wait()
 						
-					root.AssemblyLinearVelocity = Vector3.zero					
-					root.AssemblyAngularVelocity = Vector3.zero
+					targetRoot.AssemblyLinearVelocity = Vector3.zero					
+					targetRoot.AssemblyAngularVelocity = Vector3.zero
 				end
 			end)
 		end,
