@@ -832,10 +832,10 @@ USER PROMPT:
 
 			local stepped = RunService.Stepped
 
-			carpetConn = stepped:Connect(function()
 				local targetChar = targetPlayer.Character
 				local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
 
+			carpetConn = stepped:Connect(function()
 				if targetRoot and root then
 					hum.Sit = false
 					hum.PlatformStand = true
@@ -847,11 +847,16 @@ USER PROMPT:
 
 					root.CFrame = CFrame.lookAt(targetPos, targetPos + flatLook) --* CFrame.Angles(math.rad(90), 0, 0)
         
-       				warn(root.AssemblyLinearVelocity) -- = Vector3.new(tVel.X * -1, 0, tVel.Z * -1)
+       				warn(root.AssemblyLinearVelocity)
 
 					sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
+					root.AssemblyLinearVelocity = Vector3.zero	
+					root.AssemblyAngularVelocity = Vector3.zero
 					targetRoot.AssemblyLinearVelocity = Vector3.zero	
 					targetRoot.AssemblyAngularVelocity = Vector3.zero
+				else
+					carpetConn:Disconnect()
+					carpetConn = nil
 				end
 			end)
 		end,
