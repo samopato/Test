@@ -851,11 +851,11 @@ USER PROMPT:
 					local tVel = targetRoot.AssemblyLinearVelocity
        				local tRot = targetRoot.AssemblyAngularVelocity
         
-       				root.AssemblyLinearVelocity = Vector3.new(tVel.X * -1, 0, tVel.Z * -1)
+       				warn(root.AssemblyLinearVelocity) -- = Vector3.new(tVel.X * -1, 0, tVel.Z * -1)
 						
 					stepped:Wait()
-						
-					targetRoot.AssemblyLinearVelocity = Vector3.zero					
+					
+					targetRoot.AssemblyLinearVelocity = Vector3.zero	
 					targetRoot.AssemblyAngularVelocity = Vector3.zero
 				end
 			end)
