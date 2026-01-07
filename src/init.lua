@@ -274,7 +274,7 @@ local commands do
 			local root = target.Character.PrimaryPart
 			local hrp = localPlayer.Character.PrimaryPart
 
-			for _,v in pairs(target.Character) do
+			for _,v in next, target.Character:GetChildren() do
 				if v:IsA("BasePart") then					
 					v.CustomPhysicalProperties = PhysicalProperties.new(100)
 				end
