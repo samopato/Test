@@ -402,7 +402,11 @@ local commands do
 
 			}
 
-			local final = string.gsub(message, "#(%w+)", list)
+			local final = string.gsub(message, "#(%w+)%f[%W]", function(word)
+    	    	local lowercaseWord = string.lower(word)
+	
+     		   return list[lowercaseWord] or ("#" .. word)
+  			end)
 
 			chat(bypass(final))
 		end
