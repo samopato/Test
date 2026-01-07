@@ -923,31 +923,33 @@ USER PROMPT:
 			end
 			
 			orbitConn = RunService.Heartbeat:Connect(function()
-				if not root then return end
-        
-  				if not targetRoot then
-        			targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
-        			return
-    			end
-        
-   				local t = tick()
-    			local orbitAngle = t * speed
-    			local spinAngle = t * (speed * 20)
+if not root then return end
 
-    			local offset = Vector3.new(math.cos(orbitAngle) * 10, 0, math.sin(orbitAngle) * 10)
-    
-    			local orbitCFrame = targetRoot.CFrame * CFrame.new(offset)
-    
-    			local selfRotation = CFrame.Angles(0, spinAngle, 0)
+	if not targetRoot then
+		targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
+		return
+	end
 
-    			localPlayer.Character.Humanoid.Sit = false
-				localPlayer.Character.Humanoid.PlatformStand = true
-   			 	--sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
-        
-    			root.CFrame = orbitCFrame * selfRotation
-    
-    			root.AssemblyLinearVelocity = Vector3.zero
-    			root.AssemblyAngularVelocity = Vector3.zero
+	local t = tick()
+	local orbitAngle = t * speed
+	local spinAngle = t * (speed * 5)
+
+	-- 1. Calculate Orbit Position (Respects target rotation for location)
+	local offset = Vector3.new(math.cos(orbitAngle) * 10, 0, math.sin(orbitAngle) * 10)
+	local currentOrbitPosition = (targetRoot.CFrame * CFrame.new(offset)).Position
+
+	-- 2. Calculate Spin (Independent of target tilt)
+	local spinRotation = CFrame.Angles(0, spinAngle, 0)
+
+	localPlayer.Character.Humanoid.Sit = false
+	localPlayer.Character.Humanoid.PlatformStand = true
+	sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
+
+	-- 3. Combine Position and Rotation
+	root.CFrame = CFrame.new(currentOrbitPosition) * spinRotation
+
+	root.AssemblyLinearVelocity = Vector3.zero
+	root.AssemblyAngularVelocity = Vector3.zero
 			end)
 		end,
 		undo = function(speaker, args)
