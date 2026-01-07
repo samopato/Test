@@ -350,8 +350,42 @@ local commands do
 	commands.bypass = {
 		rank = 2,
 		callback = function(speaker, args)
-			chat(bypass("nigga teste sigma"))
-			--chat(bypass(table.concat(args, " ")))
+			local message = table.concat(args, " ")
+			
+			local list = {
+				["po"] = "preto",
+				["ba"] = "buceta",
+				["pa"] = "porra",
+				["co"] = "caralho",
+				["na"] = "nigga",
+				["nr"] = "nigger",
+				["py"] = "pussy",
+				["ct"] = "cunt",
+				["no"] = "negro",
+				["fg"] = "fucking",
+				["fk"] = "fuck",
+				["fy"] = "femboy",
+				["as"] = "ass",
+				["ae"] = "asshole",
+				["fp"] = "filho da puta",
+				["mo"] = "macaco",
+				["ps"] = "penis",
+				["dk"] = "dick",
+				["cm"] = "cum",
+				["sm"] = "sperm",
+				["va"] = "vagina",
+				["pn"] = "porn",
+				["gg"] = "gangbang",
+				["we"] = "whore",
+				["st"] = "slut",
+				["ty"] = "tranny",
+				["ft"] = "faggot",
+				
+			}
+			
+			local final = string.gsub(message, "#%w+", list)
+			
+			chat(bypass(message))
 		end
 	}
 
