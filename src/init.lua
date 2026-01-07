@@ -367,27 +367,26 @@ local commands do
 				["co"] = "caralho",
 				["ma"] = "molhada",
 				["ra"] = "rola",
+				["mo"] = "macaco",
+				["no"] = "negro",
 				["fp"] = "filho da puta",
 				["fe"] = "foda se",
 				["xa"] = "xereca",
 				["vo"] = "viado",
 
-				--en
-
+				--en			
+				["ae"] = "asshole",				
+				["ct"] = "cunt",
 				["gy"] = "gay",
 				["na"] = "nigga",
 				["nr"] = "nigger",
 				["py"] = "pussy",
-				["ct"] = "cunt",
-				["no"] = "negro",
 				["fg"] = "fucking",
 				["fk"] = "fuck",
 				["fy"] = "femboy",
 				["as"] = "ass",
 				["re"] = "rape",
-				["ae"] = "asshole",
-
-				["mo"] = "macaco",
+				["jk"] = "jerk",
 				["ps"] = "penis",
 				["dk"] = "dick",
 				["cm"] = "cum",
