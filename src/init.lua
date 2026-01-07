@@ -385,6 +385,8 @@ local commands do
 				--en			
 				["ae"] = "asshole",				
 				["ct"] = "cunt",
+				["db"] = "dumb",
+				["sd"] = "stupid",
 				["cc"] = "coc",
 				["fa"] = "fat",
 				["fc"] = "fuc",
