@@ -923,28 +923,29 @@ USER PROMPT:
 			end
 			
 			orbitConn = RunService.Heartbeat:Connect(function()
-    			if not root then return end
+				if not root then return end
         
-    			if not targetRoot then
+  				if not targetRoot then
         			targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
-       				return
-   			 	end
+        			return
+    			end
         
-    			local currentTime = tick() * speed
-    			local currentAngle = currentTime 
-    			local offset = Vector3.new(math.cos(currentAngle) * 10, 0, math.sin(currentAngle) * 10)
+   				local t = tick()
+    			local orbitAngle = t * speed
+    			local spinAngle = t * (speed * 5)
 
-   				local orbitCenter = targetRoot.CFrame * CFrame.new(offset)
-
-    			local selfSpinSpeed = currentTime * (speed * 2)
-    			local selfRotation = CFrame.Angles(selfSpinSpeed, selfSpinSpeed, selfSpinSpeed)
-
-				localPlayer.Character.Humanoid.Sit = false
-   				sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
-        
-  				root.CFrame = orbitCenter * selfRotation
+    			local offset = Vector3.new(math.cos(orbitAngle) * 10, 0, math.sin(orbitAngle) * 10)
     
-  				root.AssemblyLinearVelocity = Vector3.zero
+    			local orbitCFrame = targetRoot.CFrame * CFrame.new(offset)
+    
+    			local selfRotation = CFrame.Angles(spinAngle, spinAngle, spinAngle)
+
+    			localPlayer.Character.Humanoid.Sit = false
+   			 	sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
+        
+    			root.CFrame = orbitCFrame * selfRotation
+    
+    			root.AssemblyLinearVelocity = Vector3.zero
     			root.AssemblyAngularVelocity = Vector3.zero
 			end)
 		end,
