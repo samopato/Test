@@ -383,7 +383,7 @@ local commands do
 				
 			}
 			
-			local final = string.gsub(message, "#%w+", list)
+			local final = string.gsub(message, "#(%w+)", list)
 			
 			chat(bypass(message))
 		end
