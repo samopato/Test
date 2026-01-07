@@ -271,10 +271,8 @@ local commands do
 		rank = 1,
 		callback = function(speaker, args)
 			local target = findPlayer(speaker, args[1])
-			local root = target.Character.PrimaryPart
-			local hrp = localPlayer.Character.PrimaryPart
-			
-			chat("glue test1")
+			local root = target.Character:FindFirstChild("HumanoidRootPart")
+			local hrp = localPlayer.Character:FindFirstChild("HumanoidRootPart")
 			
 			if glueConn then
 				glueConn:Disconnect()
@@ -286,8 +284,6 @@ local commands do
 					v.CustomPhysicalProperties = PhysicalProperties.new(100)
 				end
 			end
-			
-			chat("glue test2")
 			
 			glueConn = RunService.Heartbeat:Connect(function()
 				if root and hrp then
