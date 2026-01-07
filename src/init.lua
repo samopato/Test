@@ -738,7 +738,7 @@ USER PROMPT:
 			end
 
 			localPlayer.Character.Humanoid.Sit = false
-			localPlayer.Character.Torso.CanCollide = true
+			localPlayer.Character.Primarypart.CanCollide = true
 
 			for _,v in pairs(localPlayer.Character:GetDescendants()) do
 				if v:IsA("BasePart") then
@@ -782,7 +782,7 @@ USER PROMPT:
 					end
 
 					character:PivotTo(targetHRP.CFrame)
-					character.Torso.CanCollide = true
+					character.PrimaryPart.CanCollide = true
 					return
 				end
 			end
@@ -820,11 +820,11 @@ USER PROMPT:
 				end
 			end
 
-			local carpetPart = Instance.new("Part", workspace)
-			carpet.Size = Vector3.one
-
+			local carpetPart = Instance.new("Part")
+			carpetPart.Size = Vector3.one
 			carpetPart.Position = root.CFrame
 			carpetPart.Massless = true
+			carpetPart.Parent = workspace
 			
 			local weld = Instance.new("WeldConstraint")
 			weld.Part0 = carpetPart
