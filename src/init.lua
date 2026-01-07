@@ -275,18 +275,25 @@ local commands do
 			local hrp = localPlayer.Character.PrimaryPart
 			
 			chat("glue test1")
+			
+			if glueConn then
+				glueConn:Disconnect()
+				glueConn = nil
+			end
 
-			for _,v in pairs(target.Character) do
+			for _,v in next, target.Character:GetChildren() do
 				if v:IsA("BasePart") then					
 					v.CustomPhysicalProperties = PhysicalProperties.new(100)
 				end
 			end
 			
 			chat("glue test2")
-
+			
 			glueConn = RunService.Heartbeat:Connect(function()
 				if root and hrp then
 					sethiddenproperty(hrp, "PhysicsRepRootPart", root)
+				else
+					warn("a")
 				end
 			end)
 		end,
@@ -357,10 +364,21 @@ local commands do
 			local message = table.concat(args, " ")
 
 			local list = {
+				--pt-br
 				["po"] = "preto",
 				["ba"] = "buceta",
 				["pa"] = "porra",
 				["co"] = "caralho",
+				["ma"] = "molhada",
+				["ra"] = "rola",
+				["fp"] = "filho da puta",
+				["fe"] = "foda se",
+				["xa"] = "xereca",
+				["vo"] = "viado",
+
+				--en
+
+				["gy"] = "gay",
 				["na"] = "nigga",
 				["nr"] = "nigger",
 				["py"] = "pussy",
@@ -371,7 +389,7 @@ local commands do
 				["fy"] = "femboy",
 				["as"] = "ass",
 				["ae"] = "asshole",
-				["fp"] = "filho da puta",
+
 				["mo"] = "macaco",
 				["ps"] = "penis",
 				["dk"] = "dick",
@@ -689,8 +707,10 @@ USER PROMPT:
 
 				hrp.Parent.Humanoid.Sit = true
 				hrp.CFrame = target.CFrame
-				hrp.Velocity = Vector3.new(1000000, 1000000, 1000000)
-
+				hrp.Velocity = Vector3.new(100000, 100000, 100000)
+				RunService.Heartbeat:Wait()
+				hrp.Velocity = -hrp.Velocity
+				
 				sethiddenproperty(hrp, "PhysicsRepRootPart", target)
 			end)
 		end,
@@ -868,7 +888,7 @@ USER PROMPT:
 	}
 
 	commands.orbit = {
-		rank = 3,
+		rank = 10,
 		callback = function()
 			local RunService = game:GetService("RunService")
 			local Players = game:GetService("Players")
@@ -1067,10 +1087,8 @@ USER PROMPT:
 	commands.rejoin = {
 		rank = 3,
 		callback = function(speaker)
-			if speaker.UserId == 10984088 or speaker.UserId == 4912844218 then
-				chat("Rejoining...")
-				TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, localPlayer)
-			end
+			chat("Rejoining...")
+			TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, localPlayer)
 		end
 	}	
 
