@@ -824,7 +824,6 @@ USER PROMPT:
 					for _,v in pairs(char:GetChildren()) do
 						if v:IsA("BasePart") then
 							v.CanCollide = false
-							v.Massless = true
 							v.AssemblyLinearVelocity = Vector3.zero	
 							v.AssemblyAngularVelocity = Vector3.zero
 						end
