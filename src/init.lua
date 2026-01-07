@@ -912,45 +912,48 @@ USER PROMPT:
 	commands.orbit = {
 		rank = 1,
 		callback = function(speaker, args)
-			local target = findPlayer(speaker, args[1])
-			local speed = tonumber(args[2]) or 20
-			local root = localPlayer.Character:FindFirstChild("HumanoidRootPart")
-			local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
-
-			if orbitConn then
-				orbitConn:Disconnect()
-				orbitConn = nil
-			end
-			
-			orbitConn = RunService.Heartbeat:Connect(function()
-if not root then return end
-
-	if not targetRoot then
-		targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
-		return
-	end
-
-	local t = tick()
-	local orbitAngle = t * speed
-	local spinAngle = t * (speed * 5)
-
-	-- 1. Calculate Orbit Position (Respects target rotation for location)
-	local offset = Vector3.new(math.cos(orbitAngle) * 10, 0, math.sin(orbitAngle) * 10)
-	local currentOrbitPosition = (targetRoot.CFrame * CFrame.new(offset)).Position
-
-	-- 2. Calculate Spin (Independent of target tilt)
-	local spinRotation = CFrame.Angles(0, spinAngle, 0)
-
-	localPlayer.Character.Humanoid.Sit = false
-	localPlayer.Character.Humanoid.PlatformStand = true
-	sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
-
-	-- 3. Combine Position and Rotation
-	root.CFrame = CFrame.new(currentOrbitPosition) * spinRotation
-
-	root.AssemblyLinearVelocity = Vector3.zero
-	root.AssemblyAngularVelocity = Vector3.zero
-			end)
+ local target = findPlayer(speaker, args[1])
+        local speed = tonumber(args[2]) or 20
+        local root = localPlayer.Character:FindFirstChild("HumanoidRootPart")
+        local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
+        if orbitConn then
+            orbitConn:Disconnect()
+            orbitConn = nil
+        end
+        
+        orbitConn = RunService.Heartbeat:Connect(function()
+            if not root then return end
+            if not targetRoot then
+                targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
+                return
+            end
+            local t = tick()
+            local orbitAngle = t * speed
+            local spinAngle = t * (speed * 3) -- Adjusted spin speed
+            
+            -- 1. Calculate Orbit Position (around target)
+            local offset = Vector3.new(math.cos(orbitAngle) * 10, 0, math.sin(orbitAngle) * 10)
+            local orbitPosition = (targetRoot.CFrame * CFrame.new(offset)).Position
+            
+            -- 2. Calculate planet-like spin (rotates on multiple axes)
+            local selfRotation = CFrame.Angles(
+                math.rad(spinAngle * 50), -- X-axis tilt/rotation
+                math.rad(spinAngle * 100), -- Y-axis spin (main rotation)
+                math.rad(spinAngle * 30)  -- Z-axis tilt
+            )
+            
+            -- 3. Look at target while spinning (optional, remove if you want pure spin)
+            local lookAtTarget = CFrame.lookAt(orbitPosition, targetRoot.Position)
+            
+            localPlayer.Character.Humanoid.Sit = false
+            localPlayer.Character.Humanoid.PlatformStand = true
+            sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
+            
+            -- 4. Combine: Position + Self-Rotation
+            root.CFrame = CFrame.new(orbitPosition) * selfRotation
+            root.AssemblyLinearVelocity = Vector3.zero
+            root.AssemblyAngularVelocity = Vector3.zero
+        end)
 		end,
 		undo = function(speaker, args)
 			if orbitConn then
