@@ -662,7 +662,7 @@ USER PROMPT:
 	-- Character
 	-----------------------------
 	commands.die = {
-		rank = 1,
+		rank = 2,
 		callback = function()
 			replicatesignal(localPlayer.ConnectDiedSignalBackend)
 			task.wait(Players.RespawnTime + 0.20)
@@ -790,7 +790,12 @@ USER PROMPT:
 			local hum = char.Humanoid
 			local root = char.HumanoidRootPart
 
-			carpetConn = RunService.Stepped:Connect(function()
+			if carpetConn then
+				carpetConn:Disconnect()
+				carpetConn = nil
+			end
+
+			carpetConn = RunService.Heartbeat:Connect(function()
 				local targetChar = targetPlayer.Character
 				local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
 
@@ -819,7 +824,8 @@ USER PROMPT:
 				end
 			end)
 		end,
-		undo = function(speaker, args)
+		
+		undo = function()
 			if carpetConn then
 				carpetConn:Disconnect()
 				carpetConn = nil
