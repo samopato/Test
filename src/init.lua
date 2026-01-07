@@ -832,7 +832,7 @@ USER PROMPT:
 
 			carpetPart.Parent = workspace
 
-			carpetConn = RunService.Heartbeat:Connect(function()
+			carpetConn = RunService.Stepped:Connect(function()
 				local targetChar = targetPlayer.Character
 				local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
 
@@ -847,7 +847,7 @@ USER PROMPT:
 
 					root.CFrame = CFrame.lookAt(targetPos, targetPos + flatLook) * CFrame.Angles(math.rad(90), 0, 0)
 						
-					root.AssemblyLinearVelocity = Vector3.zero
+					root.AssemblyLinearVelocity *= -1 			
 					root.AssemblyAngularVelocity = Vector3.zero
 					targetRoot.AssemblyLinearVelocity = Vector3.zero
 					targetRoot.AssemblyAngularVelocity = Vector3.zero
