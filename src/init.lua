@@ -914,12 +914,20 @@ USER PROMPT:
 		callback = function(speaker, args)
  local target = findPlayer(speaker, args[1])
         local speed = tonumber(args[2]) or 20
-        local root = localPlayer.Character:FindFirstChild("HumanoidRootPart")
+		local char = localPlayer.Character
+        local root = char:FindFirstChild("HumanoidRootPart")
         local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
+			
         if orbitConn then
             orbitConn:Disconnect()
             orbitConn = nil
         end
+
+					for _,v in pairs(char:GetChildren()) do
+						if v:IsA("BasePart") then
+							v.CanCollide = false
+						end
+					end
         
 		rotationTime = 0 -- Reset rotation tracker
         
@@ -940,7 +948,7 @@ USER PROMPT:
             local orbitPosition = (targetRoot.CFrame * CFrame.new(offset)).Position
             
             -- 2. Self-rotation (continuous spin)
-            local selfRotation = CFrame.Angles(0, spinAngle, 0) -- Simple upright spin
+            local selfRotation = CFrame.Angles(spinAngle, spinAngle, spinAngle)
             
             localPlayer.Character.Humanoid.Sit = false
             localPlayer.Character.Humanoid.PlatformStand = true
@@ -948,8 +956,6 @@ USER PROMPT:
             
             -- 3. Apply position and rotation
             root.CFrame = CFrame.new(orbitPosition) * selfRotation
-            root.AssemblyLinearVelocity = Vector3.zero
-            root.AssemblyAngularVelocity = Vector3.zero
         end)
 		end,
 		undo = function(speaker, args)
