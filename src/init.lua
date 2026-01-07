@@ -1106,6 +1106,18 @@ USER PROMPT:
 	commands.god = {
 		rank = 1,
 		callback = function()
+			task.spawn(function()
+				while task.wait() do
+					local character = player.Character or player.CharacterAdded:Wait()
+					local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+					local parts = workspace:GetPartBoundsInRadius(humanoidRootPart.Position, 10)
+						
+					for _, part in next, parts do
+						part.CanTouch = false
+					end
+				end
+			end)
+			
 			local oldNamecall
 			oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
 				local method = getnamecallmethod()
