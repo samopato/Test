@@ -384,6 +384,7 @@ local commands do
 				["fk"] = "fuck",
 				["fy"] = "femboy",
 				["as"] = "ass",
+				["re"] = "rape",
 				["ae"] = "asshole",
 
 				["mo"] = "macaco",
