@@ -55,27 +55,113 @@ local function getRank(userId)
 end
 
 local function bypass(text)
-	local text = text:lower()
-
-	local dictionary = {
-		["@n"] = "nigga",
-		["@c"] = "cock",
-		["@f"] = "fuck",
-		["@dc"] = "discord"
+	local replace = {
+		[" "] = "\x0A",
+		["~"] = "\xe2\x81\x93",
 	}
 
-	local conversionTableLower = {
-		a = "ạ", b = "ḅ", c = "с", d = "ḍ", e = "ẹ",
-		f = "f", g = "ɡ", h = "ḥ", i = "ị", j = "ј",
-		k = "ḳ", l = "ḷ", m = "ṃ", n = "ṇ", o = "ọ",
-		p = "р", q = "q", r = "ṛ", s = "ṣ", t = "ṭ",
-		u = "ụ", v = "ṿ", w = "ẉ", x = "х", y = "ỵ", z = "ẓ", [" "] = "\r",
+	local replace2 = {
+		[" "] = "\x0A",
+		["~"] = "\xe2\x81\x93",
+		["("] = ")",
+		[")"] = "(",
+		["<"] = ">",
+		[">"] = "<",
+		["["] = "]",
+		["]"] = "[",
+		["{"] = "}",
+		["}"] = "{",
+		["!"] = "\xc7\x83",
+		["\""] = "\xe2\x80\x9c",
 	}
 
-	local translated = string.gsub(text, "@%w+", dictionary)
-	local bypassed = string.gsub(string.gsub(translated, ".", "%0\xD8\x8D\b"), ".", conversionTableLower)
+	local swears = {
+		"fuck", "shit", "bitch", "dick",
+		"kill urself", "kill yourself", "backshot",
+		"kys", "faggot", "nigg", "cig",
+		"slave", "slut", "bastard", "republican",
+		"democrat", "kill myself", "self harm",
+		"moron", "hitler", "nazi", "pedophile",
+		"kill himself", "cum", "condo", "rule 34",
+		"pussy", "ass", "gay", "balls", "horny",
+		"sex", "porn", "twink", "sybau", "stfu",
+		"discord", "ignore", "job", "bust", "nut",
+		"deez", "goon", "rape", "groom", "predator",
+		"furry", "femboy", "hoe", "retard",
+		"instagram", "yt", "youtube", "alcohol",
+		"addict", "wine", "vagina", "penis",
+	}
 
-	return bypassed
+	local splitthis = {
+		"fu", "ck", "uc", "ni", "ig", "dc", "po", "di",
+		"ci", "cg", "na", "az", "sh", "it", "hi", "bi",
+		"ch", "tc", "ky", "ys", "sl", "la", "ve", "cu",
+		"um", "pu", "ga", "as", "ss", "mo", "le", "ba",
+		"ur", "se", "ex", "ho", "co", "ig", "is", "sc",
+		"or", "rd",
+	}
+
+	local function randomString()
+		local s = ""
+		for _=1, math.random(32, 128) do s ..= string.char(math.random(32, 126)) end
+		return s
+	end
+
+	local patternmatch = ""
+	for k,_ in pairs(replace) do
+		if k == "." then
+			patternmatch ..= "%."
+		elseif k == "%" then
+			patternmatch ..= "%%"
+		elseif k == "(" then
+			patternmatch ..= "%("
+		elseif k == ")" then
+			patternmatch ..= "%)"
+		elseif k == "[" then
+			patternmatch ..= "%["
+		elseif k == "]" then
+			patternmatch ..= "%]"
+		else
+			patternmatch ..= k
+		end
+	end
+
+	patternmatch = "[" .. patternmatch .. "]"
+	local function bypassText(content: string)
+
+		local kys = ({"\xef\xb9\xb6", "\xef\xb9\xb8", "\xef\xb9\xba"})[math.random(1, 3)]
+		local first = content:sub(1, 1)
+		local reverses = ""
+		local woah = {utf8.codepoint(content, 1, -1)}
+
+		for i=1, math.floor(#woah / 2) do
+			local j = #woah - i + 1
+			woah[i], woah[j] = woah[j], woah[i]
+		end
+		local i = 1
+
+		while i <= #woah do
+			local a = utf8.char(woah[i])
+			if i < #woah then
+				local b = utf8.char(woah[i + 1])
+				local c = b .. a
+				if not table.find(splitthis, c:lower()) and not c:find("[^%a+]") then
+					i += 2
+					reverses ..= kys .. c
+					continue
+				end
+			end
+			a = replace2[a] or a
+			i += 1
+			reverses ..= kys .. a
+		end
+
+		return reverses .. kys
+	end
+
+	--chatinputbar.TargetTextChannel:SendAsync(content, randomString())
+	
+	return bypassText(text)
 end
 
 local function chat(text)	
@@ -180,7 +266,7 @@ local commands do
 	}
 
 	local glueConn
-	
+
 	commands.glue = {
 		rank = 1,
 		callback = function(speaker, args)
@@ -190,10 +276,10 @@ local commands do
 
 			for _,v in pairs(target.Character) do
 				if v:IsA("BasePart") then					
-					v.Massless = true
+					v.CustomPhysicalProperties = PhysicalProperties.new(100)
 				end
 			end
-			
+
 			glueConn = RunService.Heartbeat:Connect(function()
 				if root and hrp then
 					sethiddenproperty(hrp, "PhysicsRepRootPart", root)
@@ -208,7 +294,7 @@ local commands do
 			end
 		end
 	}
-	
+
 	commands.droptools = {
 		rank = 1,
 		callback = function()
@@ -264,7 +350,8 @@ local commands do
 	commands.bypass = {
 		rank = 2,
 		callback = function(speaker, args)
-			chat(bypass(table.concat(args, " ")))
+			chat(bypass("nigga teste sigma"))
+			--chat(bypass(table.concat(args, " ")))
 		end
 	}
 
@@ -288,45 +375,45 @@ local commands do
 			if not targetPlayer then return end
 
 			_G.FollowLoop = RunService.Heartbeat:Connect(function()
-					local localChar = localPlayer.Character
-					local localRoot = localChar and localChar:FindFirstChild("HumanoidRootPart")
-					local localHumanoid = localChar and localChar:FindFirstChild("Humanoid")
+				local localChar = localPlayer.Character
+				local localRoot = localChar and localChar:FindFirstChild("HumanoidRootPart")
+				local localHumanoid = localChar and localChar:FindFirstChild("Humanoid")
 
-					local targetChar = targetPlayer.Character
-					local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
+				local targetChar = targetPlayer.Character
+				local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
 
-					if localRoot and localHumanoid and targetRoot then
-						local distance = (localRoot.Position - targetRoot.Position).Magnitude
+				if localRoot and localHumanoid and targetRoot then
+					local distance = (localRoot.Position - targetRoot.Position).Magnitude
 
-						localHumanoid.Sit = false
+					localHumanoid.Sit = false
 
-						local path = PathfindingService:CreatePath({
-							AgentRadius = 2,
-							AgentHeight = 5,
-							AgentCanJump = true,
-							AgentCanClimb = true,
-							WaypointSpacing = math.huge,
-							Costs = {
-								Water = 20
-							}
-						})
+					local path = PathfindingService:CreatePath({
+						AgentRadius = 2,
+						AgentHeight = 5,
+						AgentCanJump = true,
+						AgentCanClimb = true,
+						WaypointSpacing = math.huge,
+						Costs = {
+							Water = 20
+						}
+					})
 
-						local success, errorMessage = pcall(function()
-							path:ComputeAsync(localRoot.Position, targetRoot.Position)
-						end)
+					local success, errorMessage = pcall(function()
+						path:ComputeAsync(localRoot.Position, targetRoot.Position)
+					end)
 
-						if success  then
-							local waypoints = path:GetWaypoints()
+					if success  then
+						local waypoints = path:GetWaypoints()
 
-							if waypoints[3] then
-								localHumanoid:MoveTo(waypoints[3].Position)
-							elseif waypoints[2] then
-								localHumanoid:MoveTo(waypoints[2].Position)
-							end
-						else
-							localHumanoid:MoveTo(targetRoot.Position)
+						if waypoints[3] then
+							localHumanoid:MoveTo(waypoints[3].Position)
+						elseif waypoints[2] then
+							localHumanoid:MoveTo(waypoints[2].Position)
 						end
+					else
+						localHumanoid:MoveTo(targetRoot.Position)
 					end
+				end
 
 				task.wait(0.05) 			
 			end)
@@ -338,50 +425,50 @@ local commands do
 				_G.FollowLoop = nil
 			end
 		end
-		}
+	}
 
 
-		commands.whisper = {
-	rank = 2,
-	callback = function(speaker, args)
-		local target = findPlayer(speaker, args[1])
-		table.remove(args, 1)
+	commands.whisper = {
+		rank = 2,
+		callback = function(speaker, args)
+			local target = findPlayer(speaker, args[1])
+			table.remove(args, 1)
 
-		whisper(target, table.concat(args, " "))
-	end
-}
+			whisper(target, table.concat(args, " "))
+		end
+	}
 
-commands.cmds = {
-	rank = -999,
-	callback = 	function(speaker, args)
-		local list = {}			
-		local rank = getRank(speaker.UserId)
+	commands.cmds = {
+		rank = -999,
+		callback = 	function(speaker, args)
+			local list = {}			
+			local rank = getRank(speaker.UserId)
 
-		for name, data in next, commands do
-			if rank < data.rank then
-				continue
+			for name, data in next, commands do
+				if rank < data.rank then
+					continue
+				end
+
+				table.insert(list, name)
 			end
 
-			table.insert(list, name)
+			whisper(speaker, "Avaliable commands: " .. table.concat(list, ", "))
 		end
+	}
 
-		whisper(speaker, "Avaliable commands: " .. table.concat(list, ", "))
-	end
-}
+	commands.ai = {
+		rank = 2,
+		callback = function(speaker, args)
+			local raw = settings.openrouteKey
+			local KEY = raw == "add here" and nil or raw
+			local URL = "https://openrouter.ai/api/v1/chat/completions"
 
-commands.ai = {
-	rank = 2,
-	callback = function(speaker, args)
-		local raw = settings.openrouteKey
-		local KEY = raw == "add here" and nil or raw
-		local URL = "https://openrouter.ai/api/v1/chat/completions"
+			if not KEY then
+				chat(`VEX: OpenRouter API key is missing from {path}`)
+				return
+			end
 
-		if not KEY then
-			chat(`VEX: OpenRouter API key is missing from {path}`)
-			return
-		end
-
-		local systemPrompt = [[
+			local systemPrompt = [[
 SYSTEM PROMPT:
 Role: Roblox bot. Reply directly to the user with the chat message ONLY. Do not use filler like "Here is the response".
 
@@ -415,587 +502,587 @@ Assistant: Thats way too long for roblox chat lol.
 USER PROMPT:
 ]]
 
-		local aiCommands = {
+			local aiCommands = {
 
-			emote = function(name)
-				local track = EmoteTracks[name]
+				emote = function(name)
+					local track = EmoteTracks[name]
 
-				if track then
-					track:Play()
-					task.delay(5, function() track:Stop() end) 
-				else
-					warn("Animation not found:", name)
-				end
-			end,
+					if track then
+						track:Play()
+						task.delay(5, function() track:Stop() end) 
+					else
+						warn("Animation not found:", name)
+					end
+				end,
 
-			-- Usage: [walkTo:PlayerName]
-			walkto = function(targetName)
-				local Humanoid = localPlayer.Character:FindFirstChild("Humanoid")
-				local RootPart = localPlayer.Character:FindFirstChild("HumanoidRootPart")
+				-- Usage: [walkTo:PlayerName]
+				walkto = function(targetName)
+					local Humanoid = localPlayer.Character:FindFirstChild("Humanoid")
+					local RootPart = localPlayer.Character:FindFirstChild("HumanoidRootPart")
 
-				if followConn then
-					followConn:Disconnect()
-					followConn = nil
-				end
+					if followConn then
+						followConn:Disconnect()
+						followConn = nil
+					end
 
-				local targetPlayer = findPlayer(nil, targetName)
-				if targetPlayer and targetPlayer.Character then
-					local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-					if targetRoot then
+					local targetPlayer = findPlayer(nil, targetName)
+					if targetPlayer and targetPlayer.Character then
+						local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+						if targetRoot then
 
-						-- OR: Pathfinding (Better for mazes/obstacles)
-						task.spawn(function()
-							local path = PathfindingService:CreatePath({
-								AgentRadius = 2,
-								AgentHeight = 4,
-								WaypointSpacing = math.huge,
-								AgentCanJump = true,
-								AgentCanClimb = true
-							})
-							path:ComputeAsync(RootPart.Position, targetRoot.Position)
-							if path.Status == Enum.PathStatus.Success then
-								for _, waypoint in pairs(path:GetWaypoints()) do
-									Humanoid:MoveTo(waypoint.Position)
-									Humanoid.MoveToFinished:Wait()
+							-- OR: Pathfinding (Better for mazes/obstacles)
+							task.spawn(function()
+								local path = PathfindingService:CreatePath({
+									AgentRadius = 2,
+									AgentHeight = 4,
+									WaypointSpacing = math.huge,
+									AgentCanJump = true,
+									AgentCanClimb = true
+								})
+								path:ComputeAsync(RootPart.Position, targetRoot.Position)
+								if path.Status == Enum.PathStatus.Success then
+									for _, waypoint in pairs(path:GetWaypoints()) do
+										Humanoid:MoveTo(waypoint.Position)
+										Humanoid.MoveToFinished:Wait()
+									end
 								end
-							end
-						end)
+							end)
+						end
 					end
-				end
-			end,
+				end,
 
-		}
-
-		local function processAIResponse(responseText)
-			for cmd, arg in responseText:gmatch("%[(%w+):?(%w*)%]") do
-				local cmdEntry = aiCommands[cmd:lower()]
-				if cmdEntry then
-					cmdEntry(arg:lower())
-				end
-			end
-
-			local cleanText = responseText:gsub("%[(.-)%]", "")
-			return cleanText
-		end
-
-
-		local function askAI(prompt)
-			local response = request({
-				Url = URL,
-				Method = "POST",
-				Headers = {
-					["Authorization"] = "Bearer " ..KEY,
-					["Content-Type"] = "application/json",
-					["X-Title"] = game.PlaceId
-				},
-				Body = HttpService:JSONEncode({
-					model = "deepseek/deepseek-r1-0528:free",
-					messages = {
-						{ role = "user", content = systemPrompt ..prompt }
-					},
-				})
-			})
-
-			if response.Success then
-				local data = game:GetService("HttpService"):JSONDecode(response.Body)
-				if data.choices and data.choices[1].message.content then
-					return processAIResponse(data.choices[1].message.content)
-				end
-			else
-				for _,v in pairs(response) do
-					warn(v)
-				end
-
-				chat("Error: Could not reach AI. ")
-			end
-		end
-
-		local prompt = speaker.Name .. ": " ..table.concat(args, " ")
-		if #prompt > 0 then
-			chat("Loading...")
-			local response = askAI(prompt)
-			chat(string.sub(response, 0, 163))
-		end
-	end
-}
-
------------------------------
--- Character
------------------------------
-commands.die = {
-	rank = 1,
-	callback = function()
-		replicatesignal(localPlayer.ConnectDiedSignalBackend)
-		task.wait(Players.RespawnTime + 0.20)
-		replicatesignal(localPlayer.Kill)
-	end
-}
-
-commands.re = {
-	rank = 1,
-	callback = function()
-		replicatesignal(localPlayer.Kill)
-		replicatesignal(localPlayer.ConnectDiedSignalBackend)
-		task.wait(Players.RespawnTime - 0.1)
-		replicatesignal(localPlayer.Kill)	
-	end
-}
-
-commands.fling = {
-	rank = 1,
-	callback = function(speaker, args)
-		local target = findPlayer(speaker, args[1])
-
-		local vel
-		local movel = 10
-
-		if flingConn then
-			flingConn:Disconnect()
-			flingConn = nil
-		end
-
-		flingConn = RunService.Heartbeat:Connect(function()
-			local hrp = localPlayer.Character:FindFirstChild("HumanoidRootPart")
-			local target = target.Character:FindFirstChild("HumanoidRootPart")
-
-			if not hrp or not target then
-				return
-			end
-
-			hrp.Parent.Humanoid.Sit = true
-			hrp.CFrame = target.CFrame
-			hrp.Velocity = Vector3.new(1000000, 1000000, 1000000)
-					
-			sethiddenproperty(hrp, "PhysicsRepRootPart", target)
-		end)
-	end,
-
-	undo = function()
-		localPlayer.Character.HumanoidRootPart.Anchored = true
-
-		if flingConn then
-			flingConn:Disconnect()
-			flingConn = nil
-		end
-
-		localPlayer.Character.Humanoid.Sit = false
-		localPlayer.Character.Torso.CanCollide = true
-
-		for _,v in pairs(localPlayer.Character:GetDescendants()) do
-			if v:IsA("BasePart") then
-				v.AssemblyLinearVelocity = Vector3.zero
-				v.AssemblyAngularVelocity = Vector3.zero
-			end
-		end
-
-		task.wait(0.1)
-
-		for _,v in pairs(localPlayer.Character:GetDescendants()) do
-			if v:IsA("BasePart") then
-				v.AssemblyLinearVelocity = Vector3.zero
-				v.AssemblyAngularVelocity = Vector3.zero
-			end
-		end
-
-		localPlayer.Character.HumanoidRootPart.Anchored = false
-	end
-}
-
-commands.tp = {
-	rank = 1,
-	callback = function(speaker, args) 
-		local character = localPlayer.Character
-
-		if not character then 
-			return 
-		end
-
-		local targetPlayer = findPlayer(speaker, args[1])
-
-		if targetPlayer and targetPlayer.Character then
-			local targetHRP = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-			if targetHRP then
-				for _,v in pairs(character:GetDescendants()) do
-					if v:IsA("BasePart") then
-						v.AssemblyLinearVelocity = Vector3.zero
-						v.AssemblyAngularVelocity = Vector3.zero
-					end
-				end
-
-				character:PivotTo(targetHRP.CFrame)
-				character.Torso.CanCollide = true
-				return
-			end
-		end
-
-		if args[2] and args[3] and args[4] then
-			local x = tonumber(args[2])
-			local y = tonumber(args[3])
-			local z = tonumber(args[4])
-
-			if x and y and z then
-				character:PivotTo(CFrame.new(x, y, z))
-			end
-		end
-	end
-}
-
-commands.carpet = {
-	rank = 1,
-	callback = function(speaker, args)
-		local targetPlayer = findPlayer(speaker, args[1])
-		local offset = tonumber(args[2]) or 5.45
-		local char = localPlayer.Character
-		local hum = char.Humanoid
-		local root = char.HumanoidRootPart
-
-		carpetConn = RunService.Stepped:Connect(function()
-			local targetChar = targetPlayer.Character
-			local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
-
-			if targetRoot and root then
-				hum.Sit = false
-				hum.PlatformStand = true
-
-				for _,v in pairs(char:GetChildren()) do
-					if v:IsA("BasePart") then
-						v.CanCollide = false
-						v.Massless = true
-						v.AssemblyLinearVelocity = Vector3.zero	
-						v.AssemblyAngularVelocity = Vector3.zero
-					end
-				end
-
-				local targetPos = targetRoot.Position + Vector3.new(0, offset, 0)
-
-				local targetLook = targetRoot.CFrame.LookVector
-				local flatLook = Vector3.new(targetLook.X, 0, targetLook.Z).Unit
-
-				root.CFrame = CFrame.lookAt(targetPos, targetPos + flatLook)
-
-				targetRoot.AssemblyLinearVelocity = Vector3.zero	
-				targetRoot.AssemblyAngularVelocity = Vector3.zero
-			end
-		end)
-	end,
-	undo = function(speaker, args)
-		if carpetConn then
-			carpetConn:Disconnect()
-			carpetConn = nil
-		end
-
-		localPlayer.Character.Torso.CanCollide = true
-		localPlayer.Character.Humanoid.PlatformStand = false
-	end
-}
-
-commands.bang = {
-	rank = 1,
-	callback = function(speaker, args)
-		if conn then
-			conn:Disconnect()
-			conn = nil
-		end
-
-		if track then
-			track:Stop()
-		end
-
-		local humanoid = localPlayer.Character:FindFirstChildOfClass("Humanoid")
-
-		local animation = Instance.new("Animation")
-		animation.AnimationId = "rbxassetid://148840371"
-
-		local speed = tonumber(args[2]) or 1
-
-		track = humanoid:LoadAnimation(animation)
-
-		local targetPlayer = findPlayer(speaker, args[1])
-
-		if targetPlayer and targetPlayer.Character then
-			track:Play()
-
-			conn = RunService.Heartbeat:Connect(function()
-				local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
-
-				if not track.IsPlaying then
-					track = humanoid:LoadAnimation(animation)
-				end
-
-				if targetRoot then
-					track:AdjustSpeed(speed)
-					humanoid.Sit = false
-					localPlayer.Character.HumanoidRootPart.CFrame = targetRoot.CFrame * CFrame.new(0, 0, 1)
-				end
-			end)
-		end
-	end,
-	undo = function()
-		if conn then
-			conn:Disconnect()
-			conn = nil
-		end
-
-		if track then
-			track:Stop()
-		end
-	end,
-}
-
-commands.orbit = {
-	rank = 3,
-	callback = function()
-		local RunService = game:GetService("RunService")
-		local Players = game:GetService("Players")
-		local LocalPlayer = Players.LocalPlayer
-		local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-		local RootPart = Character:WaitForChild("HumanoidRootPart")
-
-		-- SETTINGS
-		local RADIUS = 30       -- How far away (in studs)
-		local SPEED = 10         -- How fast they spin
-		local HEIGHT_OFFSET = 5 -- How high off the ground relative to you
-
-		if not getgenv().Network then
-			getgenv().Network = {
-				BaseParts = {},
-				Velocity = Vector3.new(14.46262424, 14.46262424, 14.46262424)
 			}
 
-			Network.RetainPart = function(Part)
-				if typeof(Part) == "Instance" and Part:IsA("BasePart") and Part:IsDescendantOf(workspace) then
-					table.insert(Network.BaseParts, Part)
-					Part.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0, 0, 0)
-					Part.CanCollide = false
+			local function processAIResponse(responseText)
+				for cmd, arg in responseText:gmatch("%[(%w+):?(%w*)%]") do
+					local cmdEntry = aiCommands[cmd:lower()]
+					if cmdEntry then
+						cmdEntry(arg:lower())
+					end
+				end
+
+				local cleanText = responseText:gsub("%[(.-)%]", "")
+				return cleanText
+			end
+
+
+			local function askAI(prompt)
+				local response = request({
+					Url = URL,
+					Method = "POST",
+					Headers = {
+						["Authorization"] = "Bearer " ..KEY,
+						["Content-Type"] = "application/json",
+						["X-Title"] = game.PlaceId
+					},
+					Body = HttpService:JSONEncode({
+						model = "deepseek/deepseek-r1-0528:free",
+						messages = {
+							{ role = "user", content = systemPrompt ..prompt }
+						},
+					})
+				})
+
+				if response.Success then
+					local data = game:GetService("HttpService"):JSONDecode(response.Body)
+					if data.choices and data.choices[1].message.content then
+						return processAIResponse(data.choices[1].message.content)
+					end
+				else
+					for _,v in pairs(response) do
+						warn(v)
+					end
+
+					chat("Error: Could not reach AI. ")
 				end
 			end
 
-			local function EnablePartControl()
-				RunService.Heartbeat:Connect(function()
-					LocalPlayer.ReplicationFocus = workspace
-					LocalPlayer.ReplicationFocus = nil
-					sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge)
-					for _, Part in next, Network.BaseParts do
-						if Part:IsDescendantOf(workspace) then
-							Part.Velocity = Network.Velocity
+			local prompt = speaker.Name .. ": " ..table.concat(args, " ")
+			if #prompt > 0 then
+				chat("Loading...")
+				local response = askAI(prompt)
+				chat(string.sub(response, 0, 163))
+			end
+		end
+	}
+
+	-----------------------------
+	-- Character
+	-----------------------------
+	commands.die = {
+		rank = 1,
+		callback = function()
+			replicatesignal(localPlayer.ConnectDiedSignalBackend)
+			task.wait(Players.RespawnTime + 0.20)
+			replicatesignal(localPlayer.Kill)
+		end
+	}
+
+	commands.re = {
+		rank = 1,
+		callback = function()
+			replicatesignal(localPlayer.Kill)
+			replicatesignal(localPlayer.ConnectDiedSignalBackend)
+			task.wait(Players.RespawnTime - 0.1)
+			replicatesignal(localPlayer.Kill)	
+		end
+	}
+
+	commands.fling = {
+		rank = 1,
+		callback = function(speaker, args)
+			local target = findPlayer(speaker, args[1])
+
+			local vel
+			local movel = 10
+
+			if flingConn then
+				flingConn:Disconnect()
+				flingConn = nil
+			end
+
+			flingConn = RunService.Heartbeat:Connect(function()
+				local hrp = localPlayer.Character:FindFirstChild("HumanoidRootPart")
+				local target = target.Character:FindFirstChild("HumanoidRootPart")
+
+				if not hrp or not target then
+					return
+				end
+
+				hrp.Parent.Humanoid.Sit = true
+				hrp.CFrame = target.CFrame
+				hrp.Velocity = Vector3.new(1000000, 1000000, 1000000)
+
+				sethiddenproperty(hrp, "PhysicsRepRootPart", target)
+			end)
+		end,
+
+		undo = function()
+			localPlayer.Character.HumanoidRootPart.Anchored = true
+
+			if flingConn then
+				flingConn:Disconnect()
+				flingConn = nil
+			end
+
+			localPlayer.Character.Humanoid.Sit = false
+			localPlayer.Character.Torso.CanCollide = true
+
+			for _,v in pairs(localPlayer.Character:GetDescendants()) do
+				if v:IsA("BasePart") then
+					v.AssemblyLinearVelocity = Vector3.zero
+					v.AssemblyAngularVelocity = Vector3.zero
+				end
+			end
+
+			task.wait(0.1)
+
+			for _,v in pairs(localPlayer.Character:GetDescendants()) do
+				if v:IsA("BasePart") then
+					v.AssemblyLinearVelocity = Vector3.zero
+					v.AssemblyAngularVelocity = Vector3.zero
+				end
+			end
+
+			localPlayer.Character.HumanoidRootPart.Anchored = false
+		end
+	}
+
+	commands.tp = {
+		rank = 1,
+		callback = function(speaker, args) 
+			local character = localPlayer.Character
+
+			if not character then 
+				return 
+			end
+
+			local targetPlayer = findPlayer(speaker, args[1])
+
+			if targetPlayer and targetPlayer.Character then
+				local targetHRP = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+				if targetHRP then
+					for _,v in pairs(character:GetDescendants()) do
+						if v:IsA("BasePart") then
+							v.AssemblyLinearVelocity = Vector3.zero
+							v.AssemblyAngularVelocity = Vector3.zero
 						end
+					end
+
+					character:PivotTo(targetHRP.CFrame)
+					character.Torso.CanCollide = true
+					return
+				end
+			end
+
+			if args[2] and args[3] and args[4] then
+				local x = tonumber(args[2])
+				local y = tonumber(args[3])
+				local z = tonumber(args[4])
+
+				if x and y and z then
+					character:PivotTo(CFrame.new(x, y, z))
+				end
+			end
+		end
+	}
+
+	commands.carpet = {
+		rank = 1,
+		callback = function(speaker, args)
+			local targetPlayer = findPlayer(speaker, args[1])
+			local offset = tonumber(args[2]) or 5.45
+			local char = localPlayer.Character
+			local hum = char.Humanoid
+			local root = char.HumanoidRootPart
+
+			carpetConn = RunService.Stepped:Connect(function()
+				local targetChar = targetPlayer.Character
+				local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
+
+				if targetRoot and root then
+					hum.Sit = false
+					hum.PlatformStand = true
+
+					for _,v in pairs(char:GetChildren()) do
+						if v:IsA("BasePart") then
+							v.CanCollide = false
+							v.Massless = true
+							v.AssemblyLinearVelocity = Vector3.zero	
+							v.AssemblyAngularVelocity = Vector3.zero
+						end
+					end
+
+					local targetPos = targetRoot.Position + Vector3.new(0, offset, 0)
+
+					local targetLook = targetRoot.CFrame.LookVector
+					local flatLook = Vector3.new(targetLook.X, 0, targetLook.Z).Unit
+
+					root.CFrame = CFrame.lookAt(targetPos, targetPos + flatLook)
+
+					targetRoot.AssemblyLinearVelocity = Vector3.zero	
+					targetRoot.AssemblyAngularVelocity = Vector3.zero
+				end
+			end)
+		end,
+		undo = function(speaker, args)
+			if carpetConn then
+				carpetConn:Disconnect()
+				carpetConn = nil
+			end
+
+			localPlayer.Character.Torso.CanCollide = true
+			localPlayer.Character.Humanoid.PlatformStand = false
+		end
+	}
+
+	commands.bang = {
+		rank = 1,
+		callback = function(speaker, args)
+			if conn then
+				conn:Disconnect()
+				conn = nil
+			end
+
+			if track then
+				track:Stop()
+			end
+
+			local humanoid = localPlayer.Character:FindFirstChildOfClass("Humanoid")
+
+			local animation = Instance.new("Animation")
+			animation.AnimationId = "rbxassetid://148840371"
+
+			local speed = tonumber(args[2]) or 1
+
+			track = humanoid:LoadAnimation(animation)
+
+			local targetPlayer = findPlayer(speaker, args[1])
+
+			if targetPlayer and targetPlayer.Character then
+				track:Play()
+
+				conn = RunService.Heartbeat:Connect(function()
+					local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+
+					if not track.IsPlaying then
+						track = humanoid:LoadAnimation(animation)
+					end
+
+					if targetRoot then
+						track:AdjustSpeed(speed)
+						humanoid.Sit = false
+						localPlayer.Character.HumanoidRootPart.CFrame = targetRoot.CFrame * CFrame.new(0, 0, 1)
 					end
 				end)
 			end
-
-			EnablePartControl()
-		end
-
-		-- 1. Get valid parts
-		local orbitingParts = {}
-
-		local function isValidPart(part: Instance)			
-			if not part:IsA("BasePart") then return false end
-
-			if part.Anchored == true then return false end
-
-			if part:IsA("Terrain") then return false end
-
-			if part.Parent == LocalPlayer.Character or part:IsDescendantOf(LocalPlayer.Character) then
-				return false
+		end,
+		undo = function()
+			if conn then
+				conn:Disconnect()
+				conn = nil
 			end
 
-			return true
-		end
+			if track then
+				track:Stop()
+			end
+		end,
+	}
 
-		-- Collect parts from Workspace
-		task.spawn(function()
-			while task.wait(0.5) do
-				for _, part in next, workspace:GetDescendants() do
-					if isValidPart(part) then
-						table.insert(orbitingParts, part)
+	commands.orbit = {
+		rank = 3,
+		callback = function()
+			local RunService = game:GetService("RunService")
+			local Players = game:GetService("Players")
+			local LocalPlayer = Players.LocalPlayer
+			local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+			local RootPart = Character:WaitForChild("HumanoidRootPart")
 
-						part.CanCollide = false 
-						part.Massless = true
-					else 
-						local i = table.find(orbitingParts, part)
-						if i then
-							table.remove(orbitingParts, i)
+			-- SETTINGS
+			local RADIUS = 30       -- How far away (in studs)
+			local SPEED = 10         -- How fast they spin
+			local HEIGHT_OFFSET = 5 -- How high off the ground relative to you
+
+			if not getgenv().Network then
+				getgenv().Network = {
+					BaseParts = {},
+					Velocity = Vector3.new(14.46262424, 14.46262424, 14.46262424)
+				}
+
+				Network.RetainPart = function(Part)
+					if typeof(Part) == "Instance" and Part:IsA("BasePart") and Part:IsDescendantOf(workspace) then
+						table.insert(Network.BaseParts, Part)
+						Part.CustomPhysicalProperties = PhysicalProperties.new(0, 0, 0, 0, 0)
+						Part.CanCollide = false
+					end
+				end
+
+				local function EnablePartControl()
+					RunService.Heartbeat:Connect(function()
+						LocalPlayer.ReplicationFocus = workspace
+						LocalPlayer.ReplicationFocus = nil
+						sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge)
+						for _, Part in next, Network.BaseParts do
+							if Part:IsDescendantOf(workspace) then
+								Part.Velocity = Network.Velocity
+							end
+						end
+					end)
+				end
+
+				EnablePartControl()
+			end
+
+			-- 1. Get valid parts
+			local orbitingParts = {}
+
+			local function isValidPart(part: Instance)			
+				if not part:IsA("BasePart") then return false end
+
+				if part.Anchored == true then return false end
+
+				if part:IsA("Terrain") then return false end
+
+				if part.Parent == LocalPlayer.Character or part:IsDescendantOf(LocalPlayer.Character) then
+					return false
+				end
+
+				return true
+			end
+
+			-- Collect parts from Workspace
+			task.spawn(function()
+				while task.wait(0.5) do
+					for _, part in next, workspace:GetDescendants() do
+						if isValidPart(part) then
+							table.insert(orbitingParts, part)
+
+							part.CanCollide = false 
+							part.Massless = true
+						else 
+							local i = table.find(orbitingParts, part)
+							if i then
+								table.remove(orbitingParts, i)
+							end
 						end
 					end
 				end
-			end
-		end)
+			end)
 
-		RunService.RenderStepped:Connect(function()
-			local currentTime = tick() * SPEED
+			RunService.RenderStepped:Connect(function()
+				local currentTime = tick() * SPEED
 
-			if not RootPart then return end
+				if not RootPart then return end
 
-			for index, part in next, orbitingParts do
-				if part and part.Parent then
+				for index, part in next, orbitingParts do
+					if part and part.Parent then
 
-					local angleOffset = (index / #orbitingParts) * (math.pi * 2)
+						local angleOffset = (index / #orbitingParts) * (math.pi * 2)
 
-					local currentAngle = currentTime + angleOffset
+						local currentAngle = currentTime + angleOffset
 
-					-- Calculate X and Z based on angle (Circle Math)
-					local x = math.cos(currentAngle) * RADIUS
-					local z = math.sin(currentAngle) * RADIUS
+						-- Calculate X and Z based on angle (Circle Math)
+						local x = math.cos(currentAngle) * RADIUS
+						local z = math.sin(currentAngle) * RADIUS
 
-					-- Set new position relative to your RootPart
-					local newCFrame = CFrame.new(
-						RootPart.Position.X + x,
-						RootPart.Position.Y + HEIGHT_OFFSET,
-						RootPart.Position.Z + z
-					)
+						-- Set new position relative to your RootPart
+						local newCFrame = CFrame.new(
+							RootPart.Position.X + x,
+							RootPart.Position.Y + HEIGHT_OFFSET,
+							RootPart.Position.Z + z
+						)
 
-					part.CFrame = newCFrame * CFrame.Angles(currentTime, currentTime, 0)
-					part.AssemblyLinearVelocity = Vector3.zero
-					part.AssemblyAngularVelocity = Vector3.zero
-				else
-					table.remove(orbitingParts, index)
+						part.CFrame = newCFrame * CFrame.Angles(currentTime, currentTime, 0)
+						part.AssemblyLinearVelocity = Vector3.zero
+						part.AssemblyAngularVelocity = Vector3.zero
+					else
+						table.remove(orbitingParts, index)
+					end
 				end
+			end)
+		end
+	}
+
+	commands.god = {
+		rank = 1,
+		callback = function()
+			local oldNamecall
+			oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
+				local method = getnamecallmethod()
+				-- If the game tries to fire a touch event or check for one, we block it
+				if method == "FireTouchInterest" then
+					return nil 
+				end
+				return oldNamecall(self, ...)
+			end)
+		end
+	}
+	-----------------------------
+	-- Internal
+	-----------------------------
+
+	commands.ranks = {
+		rank = 0,
+		callback = function(speaker, args)
+			local message = "Available Ranks: "
+			local items = {}
+
+			for level, name in pairs(settings.rankList) do
+				table.insert(items, string.format("%s (%d) ", name, level))
 			end
-		end)
-	end
-}
 
-commands.god = {
-	rank = 1,
-	callback = function()
-		local oldNamecall
-		oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
-			local method = getnamecallmethod()
-			-- If the game tries to fire a touch event or check for one, we block it
-			if method == "FireTouchInterest" then
-				return nil 
+			message = message .. table.concat(items, ", ")
+
+			whisper(speaker, message)
+		end
+	}
+
+	commands.rank = {
+		rank = 0,
+		callback = function(speaker, args)
+			local target = findPlayer(speaker, args[1])
+			local rank = tostring(getRank(target.UserId))
+			local name = settings.rankList[rank] or "nil"
+
+			if target then
+				whisper(speaker, `{target.DisplayName}'s rank is: {name} ({rank})`)
 			end
-			return oldNamecall(self, ...)
-		end)
-	end
-}
------------------------------
--- Internal
------------------------------
-
-commands.ranks = {
-	rank = 0,
-	callback = function(speaker, args)
-		local message = "Available Ranks: "
-		local items = {}
-
-		for level, name in pairs(settings.rankList) do
-			table.insert(items, string.format("%s (%d) ", name, level))
 		end
+	}
 
-		message = message .. table.concat(items, ", ")
+	commands.setrank = {
+		rank = 3,
+		callback = function(speaker, args)
+			local speakerRank = getRank(speaker.UserId)
+			local target = findPlayer(speaker, args[1])
+			local userId
 
-		whisper(speaker, message)
-	end
-}
+			if target then
+				userId = target.UserId
+			else
+				userId = tonumber(args[1])
+			end
 
-commands.rank = {
-	rank = 0,
-	callback = function(speaker, args)
-		local target = findPlayer(speaker, args[1])
-		local rank = tostring(getRank(target.UserId))
-		local name = settings.rankList[rank] or "nil"
+			if not userId then return end
 
-		if target then
-			whisper(speaker, `{target.DisplayName}'s rank is: {name} ({rank})`)
-		end
-	end
-}
+			local targetCurrentRank = getRank(userId)
+			local newRankLevel = tonumber(args[2])
 
-commands.setrank = {
-	rank = 3,
-	callback = function(speaker, args)
-		local speakerRank = getRank(speaker.UserId)
-		local target = findPlayer(speaker, args[1])
-		local userId
-
-		if target then
-			userId = target.UserId
-		else
-			userId = tonumber(args[1])
-		end
-
-		if not userId then return end
-
-		local targetCurrentRank = getRank(userId)
-		local newRankLevel = tonumber(args[2])
-
-		if newRankLevel >= speakerRank then
-			return
-		end
-
-		if targetCurrentRank >= speakerRank then
-			return
-		end
-
-		settings.ranks[tostring(userId)] = newRankLevel < 1 and nil or tostring(newRankLevel)
-		saveSettings()
-
-		if target then
-			local name = settings.rankList[tostring(newRankLevel)] or "nil"
-			whisper(target, `You've been ranked to: {name} ({newRankLevel})`)
-		end
-	end
-}
-
-commands.rejoin = {
-	rank = 3,
-	callback = function(speaker)
-		if speaker.UserId == 10984088 or speaker.UserId == 4912844218 then
-			chat("Rejoining...")
-			TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, localPlayer)
-		end
-	end
-}	
-
-commands.dex = {
-	rank = 3,
-	callback = function(speaker)
-		if speaker.UserId == 10984088 then
-			loadstring(game:HttpGet("https://raw.githubusercontent.com/raelhubfunctions/Save-scripts/refs/heads/main/DexMobile.lua"))()	
-		end
-	end
-}
-
-commands.rspy = {
-	rank = 3,
-	callback = 	function(speaker)
-		if speaker.UserId == 10984088 then
-			loadstring(game:HttpGet("https://github.com/exxtremestuffs/SimpleSpySource/raw/master/SimpleSpy.lua"))()
-		end
-	end
-}
-
-commands.exec = {
-	rank = 3,
-	callback = function(speaker, args)
-		if speaker.UserId == 10984088 then
-			local code = table.concat(args, " ")
-			local executable, compileError = loadstring(code)
-
-			if not executable then
-				warn("Script Error:", compileError)
+			if newRankLevel >= speakerRank then
 				return
 			end
 
-			local customEnv = {
-				localPlayer = localPlayer,
-				chat = chat,
-				whisper = whisper,
-				speaker = speaker,
-				script = script 
-			}
+			if targetCurrentRank >= speakerRank then
+				return
+			end
 
-			setmetatable(customEnv, {
-				__index = getfenv() 
-			})
+			settings.ranks[tostring(userId)] = newRankLevel < 1 and nil or tostring(newRankLevel)
+			saveSettings()
 
-			setfenv(executable, customEnv)
-			executable() 
+			if target then
+				local name = settings.rankList[tostring(newRankLevel)] or "nil"
+				whisper(target, `You've been ranked to: {name} ({newRankLevel})`)
+			end
 		end
-	end
-}
+	}
+
+	commands.rejoin = {
+		rank = 3,
+		callback = function(speaker)
+			if speaker.UserId == 10984088 or speaker.UserId == 4912844218 then
+				chat("Rejoining...")
+				TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, localPlayer)
+			end
+		end
+	}	
+
+	commands.dex = {
+		rank = 3,
+		callback = function(speaker)
+			if speaker.UserId == 10984088 then
+				loadstring(game:HttpGet("https://raw.githubusercontent.com/raelhubfunctions/Save-scripts/refs/heads/main/DexMobile.lua"))()	
+			end
+		end
+	}
+
+	commands.rspy = {
+		rank = 3,
+		callback = 	function(speaker)
+			if speaker.UserId == 10984088 then
+				loadstring(game:HttpGet("https://github.com/exxtremestuffs/SimpleSpySource/raw/master/SimpleSpy.lua"))()
+			end
+		end
+	}
+
+	commands.exec = {
+		rank = 3,
+		callback = function(speaker, args)
+			if speaker.UserId == 10984088 then
+				local code = table.concat(args, " ")
+				local executable, compileError = loadstring(code)
+
+				if not executable then
+					warn("Script Error:", compileError)
+					return
+				end
+
+				local customEnv = {
+					localPlayer = localPlayer,
+					chat = chat,
+					whisper = whisper,
+					speaker = speaker,
+					script = script 
+				}
+
+				setmetatable(customEnv, {
+					__index = getfenv() 
+				})
+
+				setfenv(executable, customEnv)
+				executable() 
+			end
+		end
+	}
 end
 
 local function onMessageReceived(message)
