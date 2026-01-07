@@ -941,6 +941,7 @@ USER PROMPT:
     			local selfRotation = CFrame.Angles(spinAngle, spinAngle, spinAngle)
 
     			localPlayer.Character.Humanoid.Sit = false
+				localPlayer.Character.Humanoid.PlatformStand = true
    			 	sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
         
     			root.CFrame = orbitCFrame * selfRotation
