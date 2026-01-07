@@ -646,7 +646,7 @@ USER PROMPT:
 						["X-Title"] = game.PlaceId
 					},
 					Body = HttpService:JSONEncode({
-						model = "deepseek/deepseek-r1-0528:free",
+						model = "arcee-ai/trinity-mini:free",
 						messages = {
 							{ role = "user", content = systemPrompt ..prompt }
 						},
@@ -908,6 +908,11 @@ USER PROMPT:
 	}
 
 	commands.orbit = {
+
+
+	}
+
+	commands.tornado = {
 		rank = 10,
 		callback = function()
 			local RunService = game:GetService("RunService")
@@ -969,7 +974,6 @@ USER PROMPT:
 			end
 
 			-- Collect parts from Workspace
-			task.spawn(function()
 				while task.wait(0.5) do
 					for _, part in next, workspace:GetDescendants() do
 						if isValidPart(part) then
@@ -985,7 +989,6 @@ USER PROMPT:
 						end
 					end
 				end
-			end)
 
 			RunService.RenderStepped:Connect(function()
 				local currentTime = tick() * SPEED
@@ -993,7 +996,7 @@ USER PROMPT:
 				if not RootPart then return end
 
 				for index, part in next, orbitingParts do
-					if part and part.Parent then
+					if part and part.Parent and part.Parent.Name ~= localPlayer.Character.Name then
 
 						local angleOffset = (index / #orbitingParts) * (math.pi * 2)
 
