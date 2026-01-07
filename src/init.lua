@@ -367,7 +367,7 @@ local commands do
 				["wp"] = "whatsapp",
 				
 				--pt-br
-				["ea"] = "estupra"
+				["ea"] = "estupra",
 				["po"] = "preto",
 				["ba"] = "buceta",
 				["pa"] = "porra",
