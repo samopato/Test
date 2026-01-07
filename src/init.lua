@@ -839,7 +839,6 @@ USER PROMPT:
 				if targetRoot and root then
 					hum.Sit = false
 					hum.PlatformStand = true
-					sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
 
 					local targetPos = targetRoot.Position + Vector3.new(0, offset, 0)
 
@@ -847,12 +846,10 @@ USER PROMPT:
 					local flatLook = Vector3.new(targetLook.X, 0, targetLook.Z).Unit
 
 					root.CFrame = CFrame.lookAt(targetPos, targetPos + flatLook) --* CFrame.Angles(math.rad(90), 0, 0)
-
-					local tVel = targetRoot.AssemblyLinearVelocity
-       				local tRot = targetRoot.AssemblyAngularVelocity
         
        				warn(root.AssemblyLinearVelocity) -- = Vector3.new(tVel.X * -1, 0, tVel.Z * -1)
-						
+
+					sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
 					targetRoot.AssemblyLinearVelocity = Vector3.zero	
 					targetRoot.AssemblyAngularVelocity = Vector3.zero
 				end
