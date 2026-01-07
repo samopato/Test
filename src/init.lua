@@ -921,7 +921,7 @@ USER PROMPT:
             orbitConn = nil
         end
         
-        orbitConn = RunService.Heartbeat:Connect(function()
+       orbitConn = RunService.Heartbeat:Connect(function()
             if not root then return end
             if not targetRoot then
                 targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
@@ -929,27 +929,24 @@ USER PROMPT:
             end
             local t = tick()
             local orbitAngle = t * speed
-            local spinAngle = t * (speed * 3) -- Adjusted spin speed
+            local spinAngle = t * (speed * 3)
             
-            -- 1. Calculate Orbit Position (around target)
+            -- 1. Calculate Orbit Position
             local offset = Vector3.new(math.cos(orbitAngle) * 10, 0, math.sin(orbitAngle) * 10)
             local orbitPosition = (targetRoot.CFrame * CFrame.new(offset)).Position
             
-            -- 2. Calculate planet-like spin (rotates on multiple axes)
+            -- 2. Self-rotation (planet spinning on its own axis)
             local selfRotation = CFrame.Angles(
-                math.rad(spinAngle * 50), -- X-axis tilt/rotation
-                math.rad(spinAngle * 100), -- Y-axis spin (main rotation)
-                math.rad(spinAngle * 30)  -- Z-axis tilt
+                spinAngle * 0.5,
+                spinAngle,
+                spinAngle * 0.3
             )
-            
-            -- 3. Look at target while spinning (optional, remove if you want pure spin)
-            local lookAtTarget = CFrame.lookAt(orbitPosition, targetRoot.Position)
             
             localPlayer.Character.Humanoid.Sit = false
             localPlayer.Character.Humanoid.PlatformStand = true
             sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
             
-            -- 4. Combine: Position + Self-Rotation
+            -- 3. Apply position and rotation
             root.CFrame = CFrame.new(orbitPosition) * selfRotation
             root.AssemblyLinearVelocity = Vector3.zero
             root.AssemblyAngularVelocity = Vector3.zero
