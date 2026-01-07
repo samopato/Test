@@ -387,6 +387,7 @@ local commands do
 				["ct"] = "cunt",
 				["gy"] = "gay",
 				["na"] = "nigga",
+				["rd"] = "retarded",
 				["nr"] = "nigger",
 				["py"] = "pussy",
 				["fg"] = "fucking",
