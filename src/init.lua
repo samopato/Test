@@ -353,10 +353,21 @@ local commands do
 			local message = table.concat(args, " ")
 			
 			local list = {
+				--pt-br
 				["po"] = "preto",
 				["ba"] = "buceta",
 				["pa"] = "porra",
 				["co"] = "caralho",
+				["ma"] = "molhada",
+				["ra"] = "rola",
+				["fp"] = "filho da puta",
+				["fe"] = "foda se",
+				["xa"] = "xereca",
+				["vo"] = "viado",
+				
+				--en
+
+				["gy"] = "gay",
 				["na"] = "nigga",
 				["nr"] = "nigger",
 				["py"] = "pussy",
@@ -367,7 +378,7 @@ local commands do
 				["fy"] = "femboy",
 				["as"] = "ass",
 				["ae"] = "asshole",
-				["fp"] = "filho da puta",
+				
 				["mo"] = "macaco",
 				["ps"] = "penis",
 				["dk"] = "dick",
