@@ -852,7 +852,6 @@ USER PROMPT:
        				local tRot = targetRoot.AssemblyAngularVelocity
         
        				root.AssemblyLinearVelocity = Vector3.new(tVel.X * -1, 0, tVel.Z * -1)
-       				root.AssemblyAngularVelocity = Vector3.new(tRot.X * -1, 0, tRot.Z * -1)
 						
 					stepped:Wait()
 						
