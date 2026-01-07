@@ -820,6 +820,16 @@ USER PROMPT:
 				end
 			end
 
+			local carpetPart = Instance.new("Part", workspace)
+			carpet.Size = Vector3.one
+
+			carpetPart.Position = root.CFrame
+			carpetPart.Massless = true
+			
+			local weld = Instance.new("WeldConstraint")
+			weld.Part0 = carpetPart
+			weld.Part1 = root
+
 			carpetConn = RunService.Heartbeat:Connect(function()
 				local targetChar = targetPlayer.Character
 				local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
