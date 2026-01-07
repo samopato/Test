@@ -932,7 +932,7 @@ USER PROMPT:
         
    				local t = tick()
     			local orbitAngle = t * speed
-    			local spinAngle = t * (speed * 5)
+    			local spinAngle = t * (speed * 20)
 
     			local offset = Vector3.new(math.cos(orbitAngle) * 10, 0, math.sin(orbitAngle) * 10)
     
@@ -942,7 +942,7 @@ USER PROMPT:
 
     			localPlayer.Character.Humanoid.Sit = false
 				localPlayer.Character.Humanoid.PlatformStand = true
-   			 	sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
+   			 	--sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
         
     			root.CFrame = orbitCFrame * selfRotation
     
