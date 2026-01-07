@@ -819,6 +819,7 @@ USER PROMPT:
 				end
 			end
 
+			--[[
 			local carpetPart = Instance.new("Part")
 			carpetPart.Size = Vector3.one
 			carpetPart.CFrame = root.CFrame
@@ -830,6 +831,7 @@ USER PROMPT:
 			weld.Part1 = root
 
 			carpetPart.Parent = workspace
+			]]--
 
 			local stepped = RunService.Heartbeat
 			local targetChar = targetPlayer.Character
