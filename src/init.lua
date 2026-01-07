@@ -912,7 +912,7 @@ USER PROMPT:
 		callback = function(speaker, args)
 			local target = findPlayer(speaker, args[1])
 			local speed = tonumber(args[2]) or 20
-			local root = localPlayer.Character:FindFirstCHild("HumanoidRootPart")
+			local root = localPlayer.Character:FindFirstChild("HumanoidRootPart")
 			local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
 			
 			orbitConn = RunService.Heartbeat:Connect(function()
