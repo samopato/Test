@@ -822,7 +822,7 @@ USER PROMPT:
 
 			local carpetPart = Instance.new("Part")
 			carpetPart.Size = Vector3.one
-			carpetPart.Position = root.CFrame
+			carpetPart.CFrame = root.CFrame
 			carpetPart.Massless = true
 			carpetPart.Parent = workspace
 			
