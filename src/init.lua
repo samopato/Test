@@ -737,26 +737,27 @@ USER PROMPT:
 			end
 
 			local function fling(hrp, hum, targetRoot)
-					hrp.CFrame = targetRoot.CFrame
-					sethiddenproperty(hrp, "PhysicsRepRootPart", targetRoot)
-					sethiddenproperty(hum, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
+				hrp.CFrame = targetRoot.CFrame
+				sethiddenproperty(hrp, "PhysicsRepRootPart", targetRoot)
+				sethiddenproperty(hum, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
 			end
 			
 			flingConn = task.spawn(function()
 				while RunService.Heartbeat:Wait() do
 					for _,target in next, list do
 							
-					if not target then continue end
+						if not target then continue end
 						
-					local hrp = localPlayer.Character:FindFirstChild("HumanoidRootPart")
-					local hum = localPlayer.Character:FindFirstChildOfClass("Humanoid")
-					local targetRoot = target.Character and target.Character:FindFirstChild("HumanoidRootPart")
+						local hrp = localPlayer.Character:FindFirstChild("HumanoidRootPart")
+						local hum = localPlayer.Character:FindFirstChildOfClass("Humanoid")
+						local targetRoot = target.Character and target.Character:FindFirstChild("HumanoidRootPart")
 						
-					if not (hrp and hum and targetRoot) then
-						continue
-					end
+						if not (hrp and hum and targetRoot) then
+							continue
+						end
 
-					repeat fling(hrp, hum, targetRoot) RunService.Heartbeat:Wait() until not targetRoot
+						repeat fling(hrp, hum, targetRoot) RunService.Heartbeat:Wait() until not targetRoot
+					end
 				end
 			end)
 		end,
