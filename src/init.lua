@@ -817,7 +817,7 @@ USER PROMPT:
 			local root = char.HumanoidRootPart
 
 			if carpetConn then
-				carpetConn:Disconnect()
+				task.cancel(carpetConn)
 				carpetConn = nil
 			end
 
@@ -864,6 +864,8 @@ USER PROMPT:
 						targetRoot.AssemblyAngularVelocity = Vector3.zero
 						sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
 					else
+						task.cancel(carpetConn)
+						carpetConn = nil
 						break
 					end
 				end
@@ -873,6 +875,7 @@ USER PROMPT:
 		undo = function()
 			if carpetConn then
 				task.cancel(carpetConn)
+				carpetConn = nil
 			end
 
 			localPlayer.Character.PrimaryPart.CanCollide = true
