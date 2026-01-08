@@ -271,6 +271,7 @@ local commands do
 			task.wait(0.1)
 
 			replicatesignal(hum.ServerBreakJoints)
+			hum:SetStateEnabled(15, false)
 			
 			hrp.Velocity = Vector3.zero
 			localPlayer.Character:PivotTo(original)
