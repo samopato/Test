@@ -787,6 +787,8 @@ USER PROMPT:
 			else
 				list = {target}
 			end
+
+			chat(table.concat(list, " "))
 			
 			if flingConn then
 				task.cancel(flingConn)
