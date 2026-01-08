@@ -296,8 +296,8 @@ local commands do
 			hrp.CFrame = CFrame.new(0, 9e9, 0)
 			wait(0.2)
 
-			--replicatesignal(hum.ServerBreakJoints)
-			replicatesignal(localPlayer.kill)
+			replicatesignal(hum.ServerBreakJoints)
+			--replicatesignal(localPlayer.kill)
 			wait()
 			
 			hrp.Velocity = Vector3.zero
