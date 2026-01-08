@@ -297,7 +297,7 @@ local commands do
 			wait(0.2)
 
 			replicatesignal(hum.ServerBreakJoints)
-			replicatesignal(localPlayer.Kill)
+			--replicatesignal(localPlayer.Kill)
 			wait()
 			
 			hrp.Velocity = Vector3.zero
