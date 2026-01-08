@@ -755,7 +755,8 @@ USER PROMPT:
 							continue
 						end
 
-						repeat fling(hrp, hum, targetRoot) until not targetRoot
+						repeat fling(hrp, hum, targetRoot) RunService.Heartbeat:Wait() until not targetRoot
+						chat("Flinged ".. target.Name)
 					end
 				end
 			end)
