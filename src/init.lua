@@ -270,7 +270,7 @@ local commands do
 			hrp.CFrame = CFrame.new(0, "NaN", 0)
 			task.wait(0.1)
 
-			replicatesignal(localPlayer.kill)
+			replicatesignal(hum.ServerBreakJoints)
 			
 			hrp.Velocity = Vector3.zero
 			hrp.CFrame = original
