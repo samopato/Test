@@ -1205,50 +1205,44 @@ USER PROMPT:
 	}	
 
 	commands.dex = {
-		rank = 3,
+		rank = 4,
 		callback = function(speaker)
-			if speaker.UserId == 10984088 then
-				loadstring(game:HttpGet("https://raw.githubusercontent.com/raelhubfunctions/Save-scripts/refs/heads/main/DexMobile.lua"))()	
-			end
+			loadstring(game:HttpGet("https://raw.githubusercontent.com/raelhubfunctions/Save-scripts/refs/heads/main/DexMobile.lua"))()	
 		end
 	}
 
 	commands.rspy = {
-		rank = 3,
+		rank = 4,
 		callback = 	function(speaker)
-			if speaker.UserId == 10984088 then
-				loadstring(game:HttpGet("https://github.com/exxtremestuffs/SimpleSpySource/raw/master/SimpleSpy.lua"))()
-			end
+			loadstring(game:HttpGet("https://github.com/exxtremestuffs/SimpleSpySource/raw/master/SimpleSpy.lua"))()
 		end
 	}
 
 	commands.exec = {
-		rank = 3,
+		rank = 4,
 		callback = function(speaker, args)
-			if speaker.UserId == 10984088 then
-				local code = table.concat(args, " ")
-				local executable, compileError = loadstring(code)
+			local code = table.concat(args, " ")
+			local executable, compileError = loadstring(code)
 
-				if not executable then
-					warn("Script Error:", compileError)
-					return
-				end
-
-				local customEnv = {
-					localPlayer = localPlayer,
-					chat = chat,
-					whisper = whisper,
-					speaker = speaker,
-					script = script 
-				}
-
-				setmetatable(customEnv, {
-					__index = getfenv() 
-				})
-
-				setfenv(executable, customEnv)
-				executable() 
+			if not executable then
+				warn("Script Error:", compileError)
+				return
 			end
+
+			local customEnv = {
+				localPlayer = localPlayer,
+				chat = chat,
+				whisper = whisper,
+				speaker = speaker,
+				script = script 
+			}
+
+			setmetatable(customEnv, {
+				__index = getfenv() 
+			})
+
+			setfenv(executable, customEnv)
+			executable() 
 		end
 	}
 end
