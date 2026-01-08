@@ -256,7 +256,59 @@ local commands do
 	commands = {}
 
 	-----------------------------
-	-- Tools
+	-- Test
+	-----------------------------
+	commands.test = {
+		rank = 1,
+		callback = function(speaker)
+			local hrp = localPlayer.Character:WaitForChild("HumanoidRootPart")
+			local hum = localPlayer.Character:WaitForChild("Humanoid")
+			local original = hrp.CFrame
+			local void = workspace.FallenPartsDestroyHeight
+			
+			hum:SetStateEnabled(15, false)
+			workspace.FallenPartsDestroyHeight = 0/0			
+			hrp.CFrame = CFrame.new(0, "NaN", 0)
+			task.wait(0.1)
+
+			replicatesignal(localPlayer.kill)
+			
+			hrp.Velocity = Vector3.zero
+			hrp.CFrame = original
+			
+			localPlayer.CharacterAdded:Wait()		
+			workspace.FallenPartsDestroyHeight = void
+		end
+	}
+
+	commands.god2 = {
+		rank = 1,
+		callback = function()
+			local hrp = localPlayer.Character:WaitForChild("HumanoidRootPart")
+			local hum = localPlayer.Character:WaitForChild("Humanoid")
+			local original = hrp.CFrame
+			local void = workspace.FallenPartsDestroyHeight
+			
+			hum:SetStateEnabled(15, false)
+			workspace.FallenPartsDestroyHeight = 0/0
+			wait()
+			
+			hrp.CFrame = CFrame.new(0, "NaN", 0)
+			wait(0.2)
+			
+			--replicatesignal(localPlayer.kill)
+			wait()
+			
+			hrp.Velocity = Vector3.zero
+			hrp.CFrame = original
+			
+			localPlayer.CharacterAdded:Wait()		
+			workspace.FallenPartsDestroyHeight = void
+		end
+	}
+
+	-----------------------------
+	-- BOT
 	-----------------------------
 	commands.fps = {
 		rank = 1,
@@ -273,6 +325,10 @@ local commands do
 			whisper(speaker, ping .."ms")
 		end
 	}
+	
+	-----------------------------
+	-- Tools
+	-----------------------------
 
 	local glueConn
 
@@ -917,32 +973,6 @@ end
 			localPlayer.Character.PrimaryPart.CanCollide = true
 			localPlayer.Character.Humanoid.PlatformStand = false
 			localPlayer.Character.Humanoid.Sit = false
-		end
-	}
-
-	commands.god2 = {
-		rank = 1,
-		callback = function()
-			local hrp = localPlayer.Character:WaitForChild("HumanoidRootPart")
-			local hum = localPlayer.Character:WaitForChild("Humanoid")
-			local original = hrp.CFrame
-			local void = workspace.FallenPartsDestroyHeight
-			
-			hum:SetStateEnabled(15, false)
-			workspace.FallenPartsDestroyHeight = 0/0
-			wait()
-			
-			hrp.CFrame = CFrame.new(0, "NaN", 0)
-			wait(0.2)
-			
-			--replicatesignal(localPlayer.kill)
-			wait()
-			
-			hrp.Velocity = Vector3.zero
-			hrp.CFrame = original
-			
-			localPlayer.CharacterAdded:Wait()		
-			workspace.FallenPartsDestroyHeight = void
 		end
 	}
 
