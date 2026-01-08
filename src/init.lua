@@ -266,7 +266,6 @@ local commands do
 			local original = hrp.CFrame
 			local void = workspace.FallenPartsDestroyHeight
 			
-			hum:SetStateEnabled(15, false)
 			workspace.FallenPartsDestroyHeight = 0/0			
 			hrp.CFrame = CFrame.new(0, "NaN", 0)
 			task.wait(0.1)
