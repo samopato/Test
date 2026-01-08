@@ -734,7 +734,7 @@ USER PROMPT:
 					local targetRoot = target.Character and target.Character:FindFirstChild("HumanoidRootPart")
 						
 					if not (hrp and hum and targetRoot) then
-						return
+						continue
 					end
 						
 					hrp.CFrame = targetRoot.CFrame
