@@ -289,11 +289,11 @@ local commands do
 			local original = hrp.CFrame
 			local void = workspace.FallenPartsDestroyHeight
 			
-			hum:SetStateEnabled(15, false)
+			--hum:SetStateEnabled(15, false)
 			workspace.FallenPartsDestroyHeight = 0/0
 			wait()
 			
-			hrp.CFrame = CFrame.new(0, 9e90, 0)
+			hrp.CFrame = CFrame.new(0, 9e9, 0)
 			wait(0.2)
 
 			--replicatesignal(hum.ServerBreakJoints)
