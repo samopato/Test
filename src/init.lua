@@ -819,8 +819,6 @@ USER PROMPT:
 						end
 
 						repeat fling(hrp, hum, targetRoot) RunService.Heartbeat:Wait() until not target.Character:FindFirstChild("Head")
-
-						chat("matei " ..target.name)
 					end
 				end
 			end)
