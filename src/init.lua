@@ -851,6 +851,14 @@ USER PROMPT:
 					if targetRoot and root then
 						hum.Sit = true
 
+						for _,v in pairs(character:GetChildren()) do
+							if v:IsA("BasePart") then
+								v.CanCollide = false
+								v.CanTouch = false
+								v.CanQuery = false
+							end
+						end
+
 						local targetPos = targetRoot.Position + Vector3.new(0, offset, 0)
 
 						local targetLook = targetRoot.CFrame.LookVector
