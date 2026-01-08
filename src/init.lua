@@ -920,6 +920,26 @@ end
 		end
 	}
 
+	commands.god2 = {
+		rank = 1,
+		callback = function()
+			local hrp = localPlayer.Character.HumanoidRootPart
+			local hum = localPlayer.Character.Humanoid
+
+			local original = hrp.CFrame
+			
+			workspace.FallenPartDestroyHeight = 0/0
+
+			hrp.Position = Vector3.new(0, 9e9, 0)
+
+			wait(0.25)
+
+			replicatesignal(hum.ServerBreakJoints)
+
+			hrp.CFrame = original
+		end
+	}
+
 	commands.bang = {
 		rank = 1,
 		callback = function(speaker, args)
