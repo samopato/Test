@@ -851,7 +851,7 @@ USER PROMPT:
 					if targetRoot and root then
 						hum.Sit = true
 
-						for _,v in pairs(character:GetChildren()) do
+						for _,v in pairs(char:GetChildren()) do
 							if v:IsA("BasePart") then
 								v.CanCollide = false
 								v.CanTouch = false
