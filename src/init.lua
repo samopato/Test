@@ -931,6 +931,7 @@ end
 			hum:SetStateEnabled(15, false)
 			workspace.FallenPartsDestroyHeight = 0/0
 
+			hrp.Velocity = Vector3.zero
 			hrp.Position = Vector3.new(0, 9e9, 0)
 
 			RunService.HeartBeat:Wait()
