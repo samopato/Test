@@ -726,17 +726,19 @@ USER PROMPT:
 			end
 			
 			flingConn = task.spawn(function()
-					while RunService.Heartbeat:Wait() do
+				while RunService.Heartbeat:Wait() do
+					if not target then break end
+						
 					local hrp = localPlayer.Character:FindFirstChild("HumanoidRootPart")
 					local hum = localPlayer.Character:FindFirstChildOfClass("Humanoid")
-					local target = target.Character and target.Character:FindFirstChild("HumanoidRootPart")
-
-					if not (hrp and hum and target) then
+					local targetRoot = target.Character and target.Character:FindFirstChild("HumanoidRootPart")
+						
+					if not (hrp and hum and targetRoot) then
 						return
 					end
 						
 					hrp.CFrame = target.CFrame
-					sethiddenproperty(hrp, "PhysicsRepRootPart", target)
+					sethiddenproperty(hrp, "PhysicsRepRootPart", targetRoot)
 					sethiddenproperty(hum, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
 					hrp.Anchored = true
 				end
