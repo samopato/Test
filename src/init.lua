@@ -724,7 +724,7 @@ USER PROMPT:
 				hrp.CFrame = target.CFrame
 				hrp.Velocity = Vector3.new(100000, 100000, 100000)
 				RunService.Heartbeat:Wait()
-				hrp.Velocity = -hrp.Velocity
+				hrp.Velocity = Vector3.Zero
 				
 				sethiddenproperty(hrp, "PhysicsRepRootPart", target)
 			end)
@@ -850,8 +850,6 @@ USER PROMPT:
 					local flatLook = Vector3.new(targetLook.X, 0, targetLook.Z).Unit
 
 					root.CFrame = CFrame.lookAt(targetPos, targetPos + flatLook) --* CFrame.Angles(math.rad(90), 0, 0)
-        
-       				warn(root.AssemblyLinearVelocity)
 
 					sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
 					root.AssemblyLinearVelocity = Vector3.zero	
