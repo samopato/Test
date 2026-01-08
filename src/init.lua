@@ -260,7 +260,7 @@ local commands do
 	-----------------------------
 	commands.fps = {
 		rank = 1,
-		callback = function(speakear)
+		callback = function(speaker)
 			local fps = math.round(1 / Stats.FrameTime)
 			whisper(speaker, fps .."fps")
 		end
