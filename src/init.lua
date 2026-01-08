@@ -927,8 +927,8 @@ end
 			local hum = localPlayer.Character:WaitForChild("Humanoid")
 			local original = hrp.CFrame
 			local void = workspace.FallenPartsDestroyHeight
-			h:SetStateEnabled(15, false)
-
+			
+			hum:SetStateEnabled(15, false)
 			workspace.FallenPartsDestroyHeight = 0/0
 			wait()
 			
