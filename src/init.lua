@@ -721,22 +721,25 @@ USER PROMPT:
 			local target = findPlayer(speaker, args[1])
 
 			if flingConn then
-				flingConn:Disconnect()
+				task.cancel(flingConn)
 				flingConn = nil
 			end
+			
+			flingConn = task.spawn(function()
+					while RunService.Heartbeat:Wait() do
+					local hrp = localPlayer.Character:FindFirstChild("HumanoidRootPart")
+					local hum = localPlayer.Character:FindFirstChildOfClass("Humanoid")
+					local target = target.Character and target.Character:FindFirstChild("HumanoidRootPart")
 
-			flingConn = RunService.Heartbeat:Connect(function()
-				local hrp = localPlayer.Character:FindFirstChild("HumanoidRootPart")
-				local hum = localPlayer.Character:FindFirstChildOfClass("Humanoid")
-				local target = target.Character and target.Character:FindFirstChild("HumanoidRootPart")
-
-				if not (hrp and hum and target) then
-					return
+					if not (hrp and hum and target) then
+						return
+					end
+						
+					hrp.CFrame = target.CFrame
+					sethiddenproperty(hrp, "PhysicsRepRootPart", target)
+					sethiddenproperty(hum, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
+					hrp.Anchored = true
 				end
-
-				hrp.CFrame = target.CFrame
-				sethiddenproperty(hrp, "PhysicsRepRootPart", target)
-				sethiddenproperty(hum, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
 			end)
 		end,
 
@@ -744,7 +747,7 @@ USER PROMPT:
 			localPlayer.Character.HumanoidRootPart.Anchored = true
 
 			if flingConn then
-				flingConn:Disconnect()
+				task.cancel(flingConn)
 				flingConn = nil
 			end
 
