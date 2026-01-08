@@ -804,7 +804,7 @@ USER PROMPT:
 		rank = 1,
 		callback = function(speaker, args)
 			local targetPlayer = findPlayer(speaker, args[1])
-			local offset = tonumber(args[2]) or 5.45
+			local offset = tonumber(args[2]) or -5.55
 			local char = localPlayer.Character
 			local hum = char.Humanoid
 			local root = char.HumanoidRootPart
