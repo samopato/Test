@@ -737,7 +737,7 @@ USER PROMPT:
 						return
 					end
 						
-					hrp.CFrame = target.CFrame
+					hrp.CFrame = targetRoot.CFrame
 					sethiddenproperty(hrp, "PhysicsRepRootPart", targetRoot)
 					sethiddenproperty(hum, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
 					hrp.Anchored = true
