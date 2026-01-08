@@ -925,14 +925,15 @@ end
 		callback = function()
 			local hrp = localPlayer.Character.HumanoidRootPart
 			local hum = localPlayer.Character.Humanoid
-
 			local original = hrp.CFrame
-			
+
+
+			hum:SetStateEnabled(15, false)
 			workspace.FallenPartsDestroyHeight = 0/0
 
 			hrp.Position = Vector3.new(0, 9e9, 0)
 
-			wait(0.25)
+			RunService.HeartBeat:Wait()
 
 			replicatesignal(hum.ServerBreakJoints)
 
