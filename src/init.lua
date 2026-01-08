@@ -719,15 +719,34 @@ USER PROMPT:
 		rank = 1,
 		callback = function(speaker, args)
 			local target = findPlayer(speaker, args[1])
-
+			local list = {}
+			
+			if args[1] == "nonranked" then
+				for _,v in pairs(Players:GetPlayers()) do
+					if getRank(v.UserId) < 1 then
+						table.insert(list, v)
+					end
+				end
+			else
+				list = {target}
+			end
+			
 			if flingConn then
 				task.cancel(flingConn)
 				flingConn = nil
 			end
+
+			local function fling(hrp, hum, targetRoot)
+					hrp.CFrame = targetRoot.CFrame
+					sethiddenproperty(hrp, "PhysicsRepRootPart", targetRoot)
+					sethiddenproperty(hum, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
+			end
 			
 			flingConn = task.spawn(function()
 				while RunService.Heartbeat:Wait() do
-					if not target then break end
+					for _,target in next, list do
+							
+					if not target then continue end
 						
 					local hrp = localPlayer.Character:FindFirstChild("HumanoidRootPart")
 					local hum = localPlayer.Character:FindFirstChildOfClass("Humanoid")
@@ -736,11 +755,8 @@ USER PROMPT:
 					if not (hrp and hum and targetRoot) then
 						continue
 					end
-						
-					hrp.CFrame = targetRoot.CFrame
-					sethiddenproperty(hrp, "PhysicsRepRootPart", targetRoot)
-					sethiddenproperty(hum, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
-					--hrp.Anchored = true
+
+					repeat fling(hrp, hum, targetRoot) RunService.Heartbeat:Wait() until not targetRoot
 				end
 			end)
 		end,
