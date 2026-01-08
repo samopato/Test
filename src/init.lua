@@ -296,7 +296,7 @@ local commands do
 			hrp.CFrame = CFrame.new(0, "NaN", 0)
 			wait(0.2)
 			
-			--replicatesignal(localPlayer.kill)
+			replicatesignal(localPlayer.kill)
 			wait()
 			
 			hrp.Velocity = Vector3.zero
