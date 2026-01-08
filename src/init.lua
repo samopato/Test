@@ -744,8 +744,7 @@ USER PROMPT:
 			
 			flingConn = task.spawn(function()
 				while RunService.Heartbeat:Wait() do
-					for _,target in next, list do
-							
+					for _,target in next, list do	
 						if not target then continue end
 						
 						local hrp = localPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -756,7 +755,7 @@ USER PROMPT:
 							continue
 						end
 
-						repeat fling(hrp, hum, targetRoot) RunService.Heartbeat:Wait() until not targetRoot
+						repeat fling(hrp, hum, targetRoot) until not targetRoot
 					end
 				end
 			end)
