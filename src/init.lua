@@ -699,6 +699,13 @@ USER PROMPT:
 		end
 	}
 
+	commands.antifling = {
+		rank = 1,
+		callback = function(speaker, args)
+			
+		end
+	}
+
 	commands.fling = {
 		rank = 1,
 		callback = function(speaker, args)
@@ -839,38 +846,39 @@ USER PROMPT:
 			local targetChar = targetPlayer.Character
 			local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
 
-			carpetConn = stepped:Connect(function()
-				if targetRoot and root then
-					hum.Sit = false
-					hum.PlatformStand = true
+			carpetConn = task.spawn(function()
+				while heartbeat:Wait() do
+					if targetRoot and root then
+						hum.Sit = true
+						hum.PlatformStand = true
 
-					local targetPos = targetRoot.Position + Vector3.new(0, offset, 0)
+						local targetPos = targetRoot.Position + Vector3.new(0, offset, 0)
 
-					local targetLook = targetRoot.CFrame.LookVector
-					local flatLook = Vector3.new(targetLook.X, 0, targetLook.Z).Unit
+						local targetLook = targetRoot.CFrame.LookVector
+						local flatLook = Vector3.new(targetLook.X, 0, targetLook.Z).Unit
 
-					root.CFrame = CFrame.lookAt(targetPos, targetPos + flatLook) --* CFrame.Angles(math.rad(90), 0, 0)
+						root.CFrame = CFrame.lookAt(targetPos, targetPos + flatLook) --* CFrame.Angles(math.rad(90), 0, 0)
 
-					sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
-					root.AssemblyLinearVelocity = Vector3.zero	
-					root.AssemblyAngularVelocity = Vector3.zero
-					targetRoot.AssemblyLinearVelocity = Vector3.zero	
-					targetRoot.AssemblyAngularVelocity = Vector3.zero
-				else
-					carpetConn:Disconnect()
-					carpetConn = nil
+						sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
+						root.AssemblyLinearVelocity = Vector3.zero	
+						root.AssemblyAngularVelocity = Vector3.zero
+						targetRoot.AssemblyLinearVelocity = Vector3.zero	
+						targetRoot.AssemblyAngularVelocity = Vector3.zero
+					else
+						break
+					end
 				end
 			end)
 		end,
 		
 		undo = function()
 			if carpetConn then
-				carpetConn:Disconnect()
-				carpetConn = nil
+				task.cancel(carpetConn)
 			end
 
 			localPlayer.Character.PrimaryPart.CanCollide = true
 			localPlayer.Character.Humanoid.PlatformStand = false
+			localPlayer.Character.Humanoid.Sit = false
 		end
 	}
 
