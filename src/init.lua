@@ -925,20 +925,23 @@ end
 		callback = function()
 			local hrp = localPlayer.Character.HumanoidRootPart
 			local hum = localPlayer.Character.Humanoid
+			local void = workspace.FallenPartsDestroyHeight
 			local original = hrp.CFrame
-
 
 			hum:SetStateEnabled(15, false)
 			workspace.FallenPartsDestroyHeight = 0/0
-
+			RunService.Heartbeat:Wait()
+			
 			hrp.Velocity = Vector3.zero
 			hrp.Position = Vector3.new(0, 9e9, 0)
 
-			RunService.Heartbeat:Wait()
+			wait(0.25)
 
 			replicatesignal(hum.ServerBreakJoints)
-
+			RunService.Heartbeat:Wait()
+			
 			hrp.CFrame = original
+			workspace.FallenPartsDestroyHeight = void
 		end
 	}
 
