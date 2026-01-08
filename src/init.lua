@@ -293,11 +293,11 @@ local commands do
 			workspace.FallenPartsDestroyHeight = 0/0
 			wait()
 			
-			hrp.CFrame = CFrame.new(0, "NaN", 0)
+			hrp.CFrame = CFrame.new(0, 9e90, 0)
 			wait(0.2)
 
-			replicatesignal(hum.ServerBreakJoints)
-			--replicatesignal(localPlayer.Kill)
+			--replicatesignal(hum.ServerBreakJoints)
+			replicatesignal(localPlayer.kill)
 			wait()
 			
 			hrp.Velocity = Vector3.zero
