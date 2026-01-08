@@ -779,7 +779,7 @@ USER PROMPT:
 			local list = {}
 			
 			if args[1] == "nonranked" then
-				for _,v in pairs(Players:GetPlayers()) do
+				for _,v in next, Players:GetPlayers() do
 					if getRank(v.UserId) < 1 then
 						table.insert(list, v)
 					end
@@ -788,7 +788,7 @@ USER PROMPT:
 				list = {target}
 			end
 
-			chat(table.concat(list, " "))
+			warn(#list)
 			
 			if flingConn then
 				task.cancel(flingConn)
