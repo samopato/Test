@@ -261,8 +261,7 @@ local commands do
 	commands.fps = {
 		rank = 1,
 		callback = function(speakear)
-			FrameTime
-			local fps = math.round(1 / Stats.Network.FrameTime["Data Ping"]:GetValue())
+			local fps = math.round(1 / Stats.FrameTime)
 			whisper(speaker, fps .."fps")
 		end
 	}
