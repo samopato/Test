@@ -928,7 +928,7 @@ end
 
 			local original = hrp.CFrame
 			
-			workspace.FallenPartDestroyHeight = 0/0
+			workspace.FallenPartsDestroyHeight = 0/0
 
 			hrp.Position = Vector3.new(0, 9e9, 0)
 
