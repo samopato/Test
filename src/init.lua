@@ -749,7 +749,7 @@ USER PROMPT:
 			end
 
 			localPlayer.Character.Humanoid.Sit = false
-			localPlayer.Character.Primarypart.CanCollide = true
+			localPlayer.Character.PrimaryPart.CanCollide = true
 
 			for _,v in pairs(localPlayer.Character:GetDescendants()) do
 				if v:IsA("BasePart") then
