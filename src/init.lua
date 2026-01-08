@@ -273,7 +273,7 @@ local commands do
 			replicatesignal(hum.ServerBreakJoints)
 			
 			hrp.Velocity = Vector3.zero
-			hrp.CFrame = original
+			localPlayer.Character:PivotTo(original)
 			
 			localPlayer.CharacterAdded:Wait()		
 			workspace.FallenPartsDestroyHeight = void
