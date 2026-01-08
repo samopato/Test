@@ -924,20 +924,24 @@ end
 		rank = 1,
 		callback = function()
 			local hrp = localPlayer.Character:WaitForChild("HumanoidRootPart")
-			local h = localPlayer.Character:WaitForChild("Humanoid")
-			local original = hrp.CFrame			
+			local hum = localPlayer.Character:WaitForChild("Humanoid")
+			local original = hrp.CFrame
 			local void = workspace.FallenPartsDestroyHeight
 			h:SetStateEnabled(15, false)
 
 			workspace.FallenPartsDestroyHeight = 0/0
-			Wait()
-			hrp.CFrame = CFrame.new(0, 9e90, 0)
-			Wait(0.2)
-			replicatesignal(localPlayer.kill)
-			Wait()
-			hrp.Velocity = Vector3.new(0,0,0)
+			wait()
+			
+			hrp.CFrame = CFrame.new(0, "NaN", 0)
+			wait(0.2)
+			
+			--replicatesignal(localPlayer.kill)
+			wait()
+			
+			hrp.Velocity = Vector3.zero
 			hrp.CFrame = original
-			localPlayer.CharacterAdded:Wait()
+			
+			localPlayer.CharacterAdded:Wait()		
 			workspace.FallenPartsDestroyHeight = void
 		end
 	}
