@@ -850,7 +850,6 @@ USER PROMPT:
 				while heartbeat:Wait() do
 					if targetRoot and root then
 						hum.Sit = true
-						hum.PlatformStand = true
 
 						local targetPos = targetRoot.Position + Vector3.new(0, offset, 0)
 
@@ -858,12 +857,12 @@ USER PROMPT:
 						local flatLook = Vector3.new(targetLook.X, 0, targetLook.Z).Unit
 
 						root.CFrame = CFrame.lookAt(targetPos, targetPos + flatLook) --* CFrame.Angles(math.rad(90), 0, 0)
-
-						sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
+					
 						root.AssemblyLinearVelocity = Vector3.zero	
 						root.AssemblyAngularVelocity = Vector3.zero
 						targetRoot.AssemblyLinearVelocity = Vector3.zero	
 						targetRoot.AssemblyAngularVelocity = Vector3.zero
+						sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
 					else
 						break
 					end
