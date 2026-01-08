@@ -727,12 +727,8 @@ USER PROMPT:
 					return
 				end
 
-				hrp.Parent.Humanoid.Sit = true
 				hrp.CFrame = target.CFrame
-				hrp.Velocity = Vector3.new(100000, 100000, 100000)
-				RunService.Heartbeat:Wait()
-				hrp.Velocity = Vector3.Zero
-				
+				sethiddenproperty(Humanoid, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
 				sethiddenproperty(hrp, "PhysicsRepRootPart", target)
 			end)
 		end,
