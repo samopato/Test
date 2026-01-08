@@ -925,7 +925,7 @@ end
 		callback = function()
 			local hrp = localPlayer.Character:WaitForChild("HumanoidRootPart")
 			local h = localPlayer.Character:WaitForChild("Humanoid")
-			local originalCF = hrp.CFrame			
+			local original = hrp.CFrame			
 			local void = workspace.FallenPartsDestroyHeight
 			h:SetStateEnabled(15, false)
 
@@ -936,7 +936,7 @@ end
 			replicatesignal(localPlayer.kill)
 			Wait()
 			hrp.Velocity = Vector3.new(0,0,0)
-			hrp.CFrame = CFrame.new(0,50,0)
+			hrp.CFrame = original
 			localPlayer.CharacterAdded:Wait()
 			workspace.FallenPartsDestroyHeight = void
 		end
