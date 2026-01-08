@@ -1,3 +1,4 @@
+local Stats = game:GetService("Stats")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
@@ -257,10 +258,19 @@ local commands do
 	-----------------------------
 	-- Tools
 	-----------------------------
+	commands.fps = {
+		rank = 1,
+		callback = function(speakear)
+			FrameTime
+			local fps = math.round(1 / Stats.Network.FrameTime["Data Ping"]:GetValue())
+			whisper(speaker, fps .."fps")
+		end
+	}
+	
 	commands.ping = {
 		rank = 1,
 		callback = function(speaker)
-			local ping = math.round(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue())
+			local ping = math.round(Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
 			whisper(speaker, ping .."ms")
 		end
 	}
