@@ -842,7 +842,7 @@ USER PROMPT:
 			carpetPart.Parent = workspace
 			]]--
 
-			local stepped = RunService.Heartbeat
+			local heartbeat = RunService.Heartbeat
 			local targetChar = targetPlayer.Character
 			local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
 
