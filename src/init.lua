@@ -721,8 +721,8 @@ USER PROMPT:
 
 			flingConn = RunService.Heartbeat:Connect(function()
 				local hrp = localPlayer.Character:FindFirstChild("HumanoidRootPart")
+				local hum = localPlayer.Character:FindFirstChildOfClass("Huumanoid")
 				local target = target.Character:FindFirstChild("HumanoidRootPart")
-				local hum = target.Character:FindFirstChildOfClass("Huumanoid")
 
 				if not (hrp and hum and target) then
 					return
