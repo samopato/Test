@@ -711,9 +711,6 @@ USER PROMPT:
 		callback = function(speaker, args)
 			local target = findPlayer(speaker, args[1])
 
-			local vel
-			local movel = 10
-
 			if flingConn then
 				flingConn:Disconnect()
 				flingConn = nil
@@ -721,7 +718,7 @@ USER PROMPT:
 
 			flingConn = RunService.Heartbeat:Connect(function()
 				local hrp = localPlayer.Character:FindFirstChild("HumanoidRootPart")
-				local hum = localPlayer.Character:FindFirstChildOfClass("Huumanoid")
+				local hum = localPlayer.Character:FindFirstChildOfClass("Humanoid")
 				local target = target.Character:FindFirstChild("HumanoidRootPart")
 
 				if not (hrp and hum and target) then
