@@ -722,13 +722,14 @@ USER PROMPT:
 			flingConn = RunService.Heartbeat:Connect(function()
 				local hrp = localPlayer.Character:FindFirstChild("HumanoidRootPart")
 				local target = target.Character:FindFirstChild("HumanoidRootPart")
+				local hum = target.Character:FindFirstChildOfClass("Huumanoid")
 
-				if not hrp or not target then
+				if not (hrp and hum and target) then
 					return
 				end
 
 				hrp.CFrame = target.CFrame
-				sethiddenproperty(Humanoid, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
+				sethiddenproperty(hum, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
 				sethiddenproperty(hrp, "PhysicsRepRootPart", target)
 			end)
 		end,
