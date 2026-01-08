@@ -1,4 +1,4 @@
-7local Stats = game:GetService("Stats")
+local Stats = game:GetService("Stats")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
@@ -756,7 +756,7 @@ USER PROMPT:
 						end
 
 if not (hrp and hum) then
-localPlayer.CharacterAdded:Wait()
+repeat RunService.Heartbeat:Wait() until localPlayer.Character:FindFirstChild("HumanoidRootPart")
 end
 
 						repeat fling(hrp, hum, targetRoot) RunService.Heartbeat:Wait() until not target.Character:FindFirstChild("Head")
