@@ -934,7 +934,7 @@ end
 			hrp.Velocity = Vector3.zero
 			hrp.Position = Vector3.new(0, 9e9, 0)
 
-			RunService.HeartBeat:Wait()
+			RunService.Heartbeat:Wait()
 
 			replicatesignal(hum.ServerBreakJoints)
 
