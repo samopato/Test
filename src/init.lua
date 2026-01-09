@@ -291,7 +291,9 @@ local commands do
 			end
 			end
 
-			scan()
+			local placeId, gameId = scan()
+
+			warn(placeId, gameId)
 		end	
 	}
 	
