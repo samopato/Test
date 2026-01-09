@@ -262,41 +262,40 @@ local commands do
 	commands.autojoin = {
 		rank = 5,
 		callback = function(speaker)
-
 		local userId = speaker.UserId
 			
-		local function scan()
-			local response = request({
-       			Url = "https://presence.roblox.com/v1/presence/users",
-       			Method = "POST",
-        		Headers = {
-           			["Content-Type"] = "application/json",
-           			["Cookie"] = ".ROBLOSECURITY=" .. settings.robloxCookie
-				},				
-				Body = HttpService:JSONEncode({
-           			userIds = {userId}
-       			})
-   			})
+			local function scan(userId)				
+				local response = request({
+       				Url = "https://presence.roblox.com/v1/presence/users",
+       				Method = "POST",
+        			Headers = {
+           				["Content-Type"] = "application/json",
+           				["Cookie"] = ".ROBLOSECURITY=" .. settings.robloxCookie
+					},				
+					Body = HttpService:JSONEncode({
+           				userIds = {userId}
+       				})
+   				})
 
-			if response.Success then
-       			local data = HttpService:JSONDecode(response.Body)
-       			local user = data.userPresences[1]
+				if response.Success then
+       				local data = HttpService:JSONDecode(response.Body)
+       				local user = data.userPresences[1]
         
-       			if user and user.userPresenceType == 2 then
-            		return user.placeId, user.gameId
-       			end
-   			else
-       			warn("Failed: " .. response.StatusCode)
+       				if user and user.userPresenceType == 2 then
+            			return user.placeId, user.gameId
+       				end
+   				else
+       				warn("Failed: " ..response.StatusCode)
+				end
 			end
 
 			chat("Enabled auto-joiner")
 				
 			task.spawn(function()
 				while task.wait(3) do
-					local placeId, gameId = scan()
-					local player = Players:GetPlayerByUserId(userId)
+					local placeId, gameId = scan(userId)
 
-					if placeId and jobId and not player then
+					if placeId and jobId and not speaker then
            				chat("Auto-Joining server...")
             			TeleportService:TeleportToPlaceInstance(placeId, jobId, localPlayer)
             			break
