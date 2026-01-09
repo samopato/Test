@@ -258,6 +258,40 @@ local commands do
 	-----------------------------
 	-- Test
 	-----------------------------
+
+	commands.autojoin = {
+		rank = 5,
+		callback = function(speaker)
+
+		local function scan()
+			local response = request({
+       			Url = "https://presence.roblox.com/v1/presence/users",
+       			Method = "POST",
+        		Headers = {
+           			["Content-Type"] = "application/json",
+           			["Cookie"] = ".ROBLOSECURITY=" .. settings.robloxCookie
+				},				
+				Body = game:GetService("HttpService"):JSONEncode({
+           			userIds = {speaker.UserId}
+       			})
+   			})
+
+			if response.Success then
+       			local data = game:GetService("HttpService"):JSONDecode(response.Body)
+       			local user = data.userPresences[1]
+        
+       			if user and user.userPresenceType == 2 then
+            		return user.placeId, user.gameId
+       			end
+   			else
+       			chat("Failed: " .. response.StatusCode)
+			end
+			end
+
+			scan()
+		end	
+	}
+	
 	commands.test = {
 		rank = 1,
 		callback = function(speaker)
