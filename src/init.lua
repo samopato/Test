@@ -278,12 +278,14 @@ local commands do
 				if response.Success then
        				local data = HttpService:JSONDecode(response.Body)
        				local user = data.userPresences[1]
+
+					if not user then return end
         
-       				if user and user.userPresenceType == 2 then
-						warn("Found")
-            			return user.placeId, user.gameId
-					else
-						warn("User is: " ..user.userPresenceType)
+       				if user.userPresenceType == 2 then
+						warn(`placeId: {user.placeId} gameId: {user.gameId}`)
+            			return user.placeId, user.gameId					
+					elseif user.userPResenceType == 1 then
+						warn("User is on website ")
        				end
    				else
        				warn("Failed: " ..response.StatusCode)
