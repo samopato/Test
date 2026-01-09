@@ -273,13 +273,13 @@ local commands do
            			["Content-Type"] = "application/json",
            			["Cookie"] = ".ROBLOSECURITY=" .. settings.robloxCookie
 				},				
-				Body = game:GetService("HttpService"):JSONEncode({
+				Body = HttpService:JSONEncode({
            			userIds = {userId}
        			})
    			})
 
 			if response.Success then
-       			local data = HttpService":JSONDecode(response.Body)
+       			local data = HttpService:JSONDecode(response.Body)
        			local user = data.userPresences[1]
         
        			if user and user.userPresenceType == 2 then
