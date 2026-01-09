@@ -298,7 +298,7 @@ local commands do
 				while task.wait(3) do
 					local placeId, gameId = scan(speaker.UserId)
 
-					if placeId and jobId and not speaker.Parent then
+					if placeId and jobId and not Players:FindFirstChild(speaker.Name) then
            				chat("Auto-Joining server...")
             			TeleportService:TeleportToPlaceInstance(placeId, jobId, localPlayer)
             			break
