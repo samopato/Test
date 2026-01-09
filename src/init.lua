@@ -260,7 +260,7 @@ local commands do
 	-----------------------------
 
 	commands.autojoin = {
-		rank = 5,
+		rank = 4,
 		callback = function(speaker)
 			local function scan(userId)
 				if Players:GetPlayerByUserId(userId) then
@@ -305,7 +305,7 @@ local commands do
 
 					if placeId and gameId then
            				chat("Auto-Joining server...")
-            			TeleportService:TeleportToPlaceInstance(placeId, jobId, localPlayer)
+            			TeleportService:TeleportToPlaceInstance(placeId, gameId, localPlayer)
             			break			
         			end
 				end
