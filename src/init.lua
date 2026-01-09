@@ -281,7 +281,10 @@ local commands do
        			local user = data.userPresences[1]
         
        			if user and user.userPresenceType == 2 then
+					chat("success")
             		return user.placeId, user.gameId
+				else
+					chat("user is offline")
        			end
    			else
        			chat("Failed: " .. response.StatusCode)
