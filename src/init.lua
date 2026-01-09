@@ -294,21 +294,19 @@ local commands do
 				end
 			end
 
-			chat("Enabled auto-joiner")
-		
 			task.spawn(function()
-				local userId = speaker.UserId
-					
 				while task.wait(3) do
-					local placeId, gameId = scan(userId)
+					local placeId, gameId = scan(speaker.UserId)
 
-					if placeId and jobId and not speaker then
+					if placeId and jobId and not speaker.Parent then
            				chat("Auto-Joining server...")
             			TeleportService:TeleportToPlaceInstance(placeId, jobId, localPlayer)
             			break
         			end
 				end
 			end)
+
+			chat("Enabled auto-joiner")
 		end	
 	}
 	
