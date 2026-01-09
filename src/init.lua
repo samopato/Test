@@ -262,8 +262,6 @@ local commands do
 	commands.autojoin = {
 		rank = 5,
 		callback = function(speaker)
-		local userId = speaker.UserId
-			
 			local function scan(userId)				
 				local response = request({
        				Url = "https://presence.roblox.com/v1/presence/users",
@@ -282,7 +280,10 @@ local commands do
        				local user = data.userPresences[1]
         
        				if user and user.userPresenceType == 2 then
+						warn("Found")
             			return user.placeId, user.gameId
+					else
+						warn("User is: " ..user.userPresenceType)
        				end
    				else
        				warn("Failed: " ..response.StatusCode)
@@ -290,8 +291,10 @@ local commands do
 			end
 
 			chat("Enabled auto-joiner")
-				
+		
 			task.spawn(function()
+				local userId = speaker.UserId
+					
 				while task.wait(3) do
 					local placeId, gameId = scan(userId)
 
