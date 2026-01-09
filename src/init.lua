@@ -262,7 +262,13 @@ local commands do
 	commands.autojoin = {
 		rank = 5,
 		callback = function(speaker)
-			local function scan(userId)				
+			local function scan(userId)
+
+				if Players:GetPlayerByUserId(userId) then
+					warn("Player is on server')
+					return
+				end
+				
 				local response = request({
        				Url = "https://presence.roblox.com/v1/presence/users",
        				Method = "POST",
@@ -298,10 +304,10 @@ local commands do
 				while task.wait(3) do
 					local placeId, gameId = scan(speaker.UserId)
 
-					if placeId and jobId and not Players:FindFirstChild(speaker.Name) then
+					if placeId and gameId then
            				chat("Auto-Joining server...")
             			TeleportService:TeleportToPlaceInstance(placeId, jobId, localPlayer)
-            			break
+            			break			
         			end
 				end
 			end)
