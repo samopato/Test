@@ -291,11 +291,10 @@ local commands do
    			else
        			chat("Failed: " .. response.StatusCode)
 			end
-			end
 
 
 			task.spawn(function()
-				while task.wait() do
+				while task.wait(3) do
 					local placeId, gameId = scan()
 
 					if placeId and jobId then
