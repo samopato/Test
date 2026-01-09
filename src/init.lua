@@ -2,10 +2,10 @@ local Stats = game:GetService("Stats")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
+local TextService = game:GetService("TextService")
 local TextChatService = game:GetService("TextChatService")
 local TeleportService = game:GetService("TeleportService")
 local PathfindingService = game:GetService("PathfindingService")
-local TextService = game:GetService("TextService")
 local localPlayer = Players.LocalPlayer
 
 
@@ -263,6 +263,8 @@ local commands do
 		rank = 5,
 		callback = function(speaker)
 
+		local userId = speaker.UserId
+			
 		local function scan()
 			local response = request({
        			Url = "https://presence.roblox.com/v1/presence/users",
@@ -272,7 +274,7 @@ local commands do
            			["Cookie"] = ".ROBLOSECURITY=" .. settings.robloxCookie
 				},				
 				Body = game:GetService("HttpService"):JSONEncode({
-           			userIds = {speaker.UserId}
+           			userIds = {userId}
        			})
    			})
 
@@ -291,9 +293,18 @@ local commands do
 			end
 			end
 
-			local placeId, gameId = scan()
 
-			warn(placeId, gameId)
+			task.spawn(function()
+				while task.wait() do
+					local placeId, gameId = scan()
+
+					if placeId and jobId then
+           				chat("Auto-Joining server")
+            			TeleportService:TeleportToPlaceInstance(placeId, jobId, localPlayer)
+            			break
+        			end
+				end
+			end)
 		end	
 	}
 	
