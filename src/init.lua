@@ -284,8 +284,10 @@ local commands do
        				if user.userPresenceType == 2 then
 						warn(`placeId: {user.placeId} gameId: {user.gameId}`)
             			return user.placeId, user.gameId					
-					elseif user.userPResenceType == 1 then
-						warn("User is on website ")
+					elseif user.userPresenceType == 1 then
+						warn("User is on the website")
+					elseif user.userPresenceType == 3 then
+						warn("User is on Roblox Studio")
        				end
    				else
        				warn("Failed: " ..response.StatusCode)
