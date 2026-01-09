@@ -279,26 +279,25 @@ local commands do
    			})
 
 			if response.Success then
-       			local data = game:GetService("HttpService"):JSONDecode(response.Body)
+       			local data = HttpService":JSONDecode(response.Body)
        			local user = data.userPresences[1]
         
        			if user and user.userPresenceType == 2 then
-					chat("success")
             		return user.placeId, user.gameId
-				else
-					chat("user is offline")
        			end
    			else
-       			chat("Failed: " .. response.StatusCode)
+       			warn("Failed: " .. response.StatusCode)
 			end
 
-
+			chat("Enabled auto-joiner")
+				
 			task.spawn(function()
 				while task.wait(3) do
 					local placeId, gameId = scan()
+					local player = Players:GetPlayerByUserId(userId)
 
-					if placeId and jobId then
-           				chat("Auto-Joining server")
+					if placeId and jobId and not player then
+           				chat("Auto-Joining server...")
             			TeleportService:TeleportToPlaceInstance(placeId, jobId, localPlayer)
             			break
         			end
