@@ -263,9 +263,8 @@ local commands do
 		rank = 5,
 		callback = function(speaker)
 			local function scan(userId)
-
 				if Players:GetPlayerByUserId(userId) then
-					warn("Player is on server')
+					warn("Player is on server")
 					return
 				end
 				
