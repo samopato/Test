@@ -1381,7 +1381,7 @@ USER PROMPT:
 	}
 
 	commands.exec = {
-		rank = 4,
+		rank = 3,
 		callback = function(speaker, args)
 			local code = table.concat(args, " ")
 			local executable, compileError = loadstring(code)
