@@ -12,4 +12,5 @@ def download_file(path, filename):
         print(f"Successfully updated {filename}")
 
 download_file("bot", "bot.py")
+
 download_file("bot", "requirements.txt")
