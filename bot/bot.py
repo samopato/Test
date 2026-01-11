@@ -123,9 +123,11 @@ async def panel(ctx):
         }
     ]
 
-    # IMPORTANT: You must use the 'flags' to tell Discord this is a v2 message
-    # Flag 32768 (1 << 15) is 'IS_COMPONENTS_V2'
-    await ctx.send(components=component_data, flags=discord.MessageFlags(value=32768))
+    flags = discord.MessageFlags()
+    
+    flags.value = 32768 
+
+    await ctx.send(components=component_data, flags=flags)
 
 @bot.command(name="ping")
 async def ping(ctx):
