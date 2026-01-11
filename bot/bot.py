@@ -90,11 +90,10 @@ async def on_interaction(interaction: discord.Interaction):
 
 @bot.command()
 async def panel(ctx):
-    # Your JSON structure converted to a Python Dictionary
     component_data = [
         {
-            "type": 17,
-            "accent_color": 3447003, # Optional: Blue color
+            "type": 17, # Container
+            "accent_color": 3447003, 
             "components": [
                 {"type": 12, "items": [{"media": {"url": "https://cdn.discohook.app/tenor/trump-laugh-gif-16069436437887441139.gif"}}]},
                 {"type": 14, "divider": True},
@@ -123,11 +122,17 @@ async def panel(ctx):
         }
     ]
 
-    flags = discord.MessageFlags()
-    
-    flags.value = 32768 
+    payload = {
+        "content": "",
+        "components": component_data,
+        "flags": 32768
+    }
 
-    await ctx.send(components=component_data, flags=flags)
+    route = discord.http.Route("POST", f"/channels/{ctx.channel.id}/messages")
+    try:
+        await bot.http.request(route, json=payload)
+    except Exception as e:
+        await ctx.send(f"Failed to send V2 components: {e}")
 
 @bot.command(name="ping")
 async def ping(ctx):
@@ -175,3 +180,4 @@ if __name__ == "__main__":
         bot.run(TOKEN)
     except Exception as e:
         print(f"Failed to start bot: {e}")
+
