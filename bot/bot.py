@@ -141,7 +141,7 @@ async def ping(ctx):
 
 @bot.command(name="test")
 async def test(ctx: commands.Context):
-	url = "https://www.discord.com"
+	url = "https://google.com/"
 	os.system(f"am start -a android.intent.action.VIEW -d {url}")
 	await ctx.send("Teste pra abrir o chrome")
 
@@ -180,4 +180,5 @@ if __name__ == "__main__":
         bot.run(TOKEN)
     except Exception as e:
         print(f"Failed to start bot: {e}")
+
 
