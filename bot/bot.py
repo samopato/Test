@@ -153,6 +153,13 @@ async def status(ctx):
     else:
         await ctx.send(f"Could not find settings file at: `{SETTINGS_FILE}`")
 
+@bot.command()
+@commands.is_owner()
+async def restart(ctx):
+    await ctx.send("Restarting bot...")
+	
+    os.execv(sys.executable, [sys.executable] + sys.argv)
+
 # -----------------------------------
 # 5. ERROR HANDLING
 # -----------------------------------
@@ -180,6 +187,7 @@ if __name__ == "__main__":
         bot.run(TOKEN)
     except Exception as e:
         print(f"Failed to start bot: {e}")
+
 
 
 
