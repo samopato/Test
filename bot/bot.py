@@ -10,18 +10,23 @@ from dotenv import load_dotenv
 #-- Setup
 #-----------------------------------
 
-# Setup logging (Makes debugging much easier on Pydroid)
 logging.basicConfig(level=logging.INFO)
 
-# Load environment variables from .env file
-load_dotenv()
-TOKEN = os.getenv('DISCORD_TOKEN')
+ROBLOX_VEX_PATH = "/sdcard/Android/data/com.roblox.client/files/gloop/external/Workspace/vex"
 
-# Define paths to other important folders
-# (This allows the bot to find 'data/settings.json' easily)
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.join(ROBLOX_VEX_PATH, "bot")
+
+print(BASE_DIR)
+
 DATA_DIR = os.path.join(BASE_DIR, '..', 'data')
 SETTINGS_FILE = os.path.join(DATA_DIR, 'settings.json')
+
+env_path = os.path.join(BASE_DIR, '.env')
+
+load_dotenv(dotenv_path=env_path)
+TOKEN = os.getenv('DISCORD_TOKEN')
+
+print(env_path)
 
 #-----------------------------------
 #-- Bot class
@@ -29,7 +34,6 @@ SETTINGS_FILE = os.path.join(DATA_DIR, 'settings.json')
 
 class VexBot(commands.Bot):
     def __init__(self):
-        # Define Intents (Permissions)
         intents = discord.Intents.default()
         intents.message_content = True 
 
@@ -56,11 +60,10 @@ class VexBot(commands.Bot):
         print(f"Bot ID:      {self.user.id}")
         print(f"Latency:     {round(self.latency * 1000)}ms")
         print("="*30 + "\n")
-        
-        # Set a custom status (e.g., "Watching Vex Admin")
+
         await self.change_presence(activity=discord.Activity(
             type=discord.ActivityType.watching, 
-            name="Vex Admin Panel"
+            name="VEX"
         ))
 
 # -----------------------------------
@@ -73,10 +76,67 @@ bot = VexBot()
 # 4. COMMANDS
 # -----------------------------------
 
+
+@bot.event
+async def on_interaction(interaction: discord.Interaction):
+    if interaction.type == discord.InteractionType.component:
+        cid = interaction.data.get("custom_id")
+        
+        if cid == "start_btn":
+            await interaction.response.send_message("Starting...", ephemeral=True)
+        elif cid == "player_select":
+            selected = interaction.data.get("values")[0]
+            await interaction.response.send_message(f"Selected: {selected}", ephemeral=True)
+
+@bot.command()
+async def panel(ctx):
+    # Your JSON structure converted to a Python Dictionary
+    component_data = [
+        {
+            "type": 17,
+            "accent_color": 3447003, # Optional: Blue color
+            "components": [
+                {"type": 12, "items": [{"media": {"url": "https://cdn.discohook.app/tenor/trump-laugh-gif-16069436437887441139.gif"}}]},
+                {"type": 14, "divider": True},
+                {"type": 10, "content": "**Player to join**"},
+                {
+                    "type": 1,
+                    "components": [
+                        {
+                            "type": 3,
+                            "custom_id": "player_select",
+                            "placeholder": "Choose a player...",
+                            "options": [
+                                {"label": "JustinBiever79070", "value": "justin_id"}
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": 1,
+                    "components": [
+                        {"type": 2, "style": 1, "label": "Start", "custom_id": "start_btn"},
+                        {"type": 2, "style": 1, "label": "Rejoin", "custom_id": "rejoin_btn"}
+                    ]
+                }
+            ]
+        }
+    ]
+
+    # IMPORTANT: You must use the 'flags' to tell Discord this is a v2 message
+    # Flag 32768 (1 << 15) is 'IS_COMPONENTS_V2'
+    await ctx.send(components=component_data, flags=discord.MessageFlags(value=32768))
+
 @bot.command(name="ping")
 async def ping(ctx):
     """Checks if the bot is responsive."""
     await ctx.send(f"**Pong!** ({round(bot.latency * 1000)}ms)")
+
+@bot.command(name="test")
+async def test(ctx: commands.Context):
+	url = "https://www.discord.com"
+	os.system(f"am start -a android.intent.action.VIEW -d {url}")
+	await ctx.send("Teste pra abrir o chrome")
 
 @bot.command(name="status")
 async def status(ctx):
@@ -94,9 +154,8 @@ async def status(ctx):
 async def on_command_error(ctx, error):
     """ Catches errors globally so the bot doesn't crash. """
     if isinstance(error, commands.CommandNotFound):
-        return  # Ignore random/wrong commands
+        return
     
-    # Send a pretty error message to Discord
     embed = discord.Embed(title="Error", description=str(error), color=discord.Color.red())
     await ctx.send(embed=embed)
     print(f"ERROR: {error}")
