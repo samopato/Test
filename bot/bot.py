@@ -3,30 +3,24 @@ import sys
 import json
 import discord
 import logging
+import asyncio # Added for better sync handling
 from discord.ext import commands
+from discord import app_commands # Crucial for slash commands
 from dotenv import load_dotenv
 
 #-----------------------------------
 #-- Setup
 #-----------------------------------
-
 logging.basicConfig(level=logging.INFO)
 
 ROBLOX_VEX_PATH = "/sdcard/Android/data/com.roblox.client/files/gloop/external/Workspace/vex"
-
 BASE_DIR = os.path.join(ROBLOX_VEX_PATH, "bot")
-
-print(BASE_DIR)
-
 DATA_DIR = os.path.join(BASE_DIR, '..', 'data')
 SETTINGS_FILE = os.path.join(DATA_DIR, 'settings.json')
 
 env_path = os.path.join(BASE_DIR, '.env')
-
 load_dotenv(dotenv_path=env_path)
 TOKEN = os.getenv('DISCORD_TOKEN')
-
-print(env_path)
 
 #-----------------------------------
 #-- Bot class
@@ -44,21 +38,19 @@ class VexBot(commands.Bot):
         )
 
     async def setup_hook(self):
-        """
-        This runs once when the bot starts.
-        Great place to load extensions (Cogs) or sync commands.
-        """
+        """ Runs when the bot starts to register Slash Commands. """
         print(f"📂 Loading data from: {DATA_DIR}")
-        # self.load_settings() # (Optional: You can add a function to load JSON here)
+        
+        # This syncs your slash commands to Discord's servers
+        # Note: Global sync can take up to 1 hour. 
+        # For instant testing, use: await self.tree.sync(guild=discord.Object(id=YOUR_GUILD_ID))
+        await self.tree.sync()
+        print("✅ Slash commands synced.")
 
     async def on_ready(self):
-        """
-        Runs when the bot has successfully connected to Discord.
-        """
         print("\n" + "="*30)
         print(f"Logged in as: {self.user}")
-        print(f"Bot ID:      {self.user.id}")
-        print(f"Latency:     {round(self.latency * 1000)}ms")
+        print(f"Latency:      {round(self.latency * 1000)}ms")
         print("="*30 + "\n")
 
         await self.change_presence(activity=discord.Activity(
@@ -66,30 +58,47 @@ class VexBot(commands.Bot):
             name="VEX"
         ))
 
-# -----------------------------------
-# 3. INITIALIZATION
-# -----------------------------------
-
 bot = VexBot()
 
 # -----------------------------------
-# 4. COMMANDS
+# 4. SLASH COMMANDS
 # -----------------------------------
 
+@bot.tree.command(name="ping", description="Checks the bot's latency")
+async def ping(interaction: discord.Interaction):
+    await interaction.response.send_message(f"**Pong!** ({round(bot.latency * 1000)}ms)")
 
-@bot.event
-async def on_interaction(interaction: discord.Interaction):
-    if interaction.type == discord.InteractionType.component:
-        cid = interaction.data.get("custom_id")
-        
-        if cid == "start_btn":
-            await interaction.response.send_message("Starting...", ephemeral=True)
-        elif cid == "player_select":
-            selected = interaction.data.get("values")[0]
-            await interaction.response.send_message(f"Selected: {selected}", ephemeral=True)
+@bot.tree.command(name="test", description="Opens Chrome on Android device")
+async def test(interaction: discord.Interaction):
+    url = "https://google.com/"
+    # Using the am start command we discussed earlier
+    cmd = f"am start -a android.intent.action.VIEW -d {url} -n com.android.chrome/com.google.android.apps.chrome.Main"
+    os.system(cmd)
+    await interaction.response.send_message("🌐 Opening Chrome on the device...", ephemeral=True)
 
-@bot.command()
-async def panel(ctx):
+@bot.tree.command(name="status", description="Shows the bot's current file path status")
+async def status(interaction: discord.Interaction):
+    if os.path.exists(SETTINGS_FILE):
+        await interaction.response.send_message(f"✅ Settings file found at: `{SETTINGS_FILE}`")
+    else:
+        await interaction.response.send_message(f"❌ Could not find settings file at: `{SETTINGS_FILE}`")
+
+@bot.tree.command(name="restart", description="Restarts the bot (Owner only)")
+async def restart(interaction: discord.Interaction):
+    # Manual check for owner since @commands.is_owner() doesn't work on tree commands directly
+    if await bot.is_owner(interaction.user):
+        await interaction.response.send_message("🔄 Restarting bot...")
+        os.execv(sys.executable, [sys.executable] + sys.argv)
+    else:
+        await interaction.response.send_message("🚫 You do not have permission to restart the bot.", ephemeral=True)
+
+# -----------------------------------
+# 5. THE PANEL (V2 COMPONENTS)
+# -----------------------------------
+
+@bot.tree.command(name="panel", description="Opens the VEX control panel")
+async def panel(interaction: discord.Interaction):
+    # We keep your raw component data structure
     component_data = [
         {
             "type": 17, # Container
@@ -122,60 +131,36 @@ async def panel(ctx):
         }
     ]
 
-    payload = {
-        "content": "",
-        "components": component_data,
-        "flags": 32768
-    }
-
-    route = discord.http.Route("POST", f"/channels/{ctx.channel.id}/messages")
+    # Instead of manual HTTP Route, we use the interaction response directly
+    # Note: Type 17 components are experimental; if they fail to render via standard send_message,
+    # the bot will fall back to your HTTP method.
     try:
-        await bot.http.request(route, json=payload)
+        await interaction.response.send_message(components=component_data)
     except Exception as e:
-        await ctx.send(f"Failed to send V2 components: {e}")
-
-@bot.command(name="ping")
-async def ping(ctx):
-    """Checks if the bot is responsive."""
-    await ctx.send(f"**Pong!** ({round(bot.latency * 1000)}ms)")
-
-@bot.command(name="test")
-async def test(ctx: commands.Context):
-	url = "https://google.com/"
-	cmd = f"am start -a android.intent.action.VIEW -d {url} -n com.android.chrome/com.google.android.apps.chrome.Main"
-	await ctx.send("Teste pra abrir o chrome")
-
-@bot.command(name="status")
-async def status(ctx):
-    """Shows the bot's current file path status."""
-    if os.path.exists(SETTINGS_FILE):
-        await ctx.send(f"Settings file found at: `{SETTINGS_FILE}`")
-    else:
-        await ctx.send(f"Could not find settings file at: `{SETTINGS_FILE}`")
-
-@bot.command()
-@commands.is_owner()
-async def restart(ctx):
-    await ctx.send("Restarting bot...")
-	
-    os.execv(sys.executable, [sys.executable] + sys.argv)
+        # Fallback to the manual POST if standard send_message rejects Type 17
+        payload = {"components": component_data, "flags": 32768}
+        route = discord.http.Route("POST", f"/channels/{interaction.channel_id}/messages")
+        await bot.http.request(route, json=payload)
+        await interaction.response.send_message("Panel deployed via HTTP fallback.", ephemeral=True)
 
 # -----------------------------------
-# 5. ERROR HANDLING
+# 6. INTERACTION HANDLING
 # -----------------------------------
 
 @bot.event
-async def on_command_error(ctx, error):
-    """ Catches errors globally so the bot doesn't crash. """
-    if isinstance(error, commands.CommandNotFound):
-        return
-    
-    embed = discord.Embed(title="Error", description=str(error), color=discord.Color.red())
-    await ctx.send(embed=embed)
-    print(f"ERROR: {error}")
+async def on_interaction(interaction: discord.Interaction):
+    # This handles both button clicks AND slash command registration
+    if interaction.type == discord.InteractionType.component:
+        cid = interaction.data.get("custom_id")
+        
+        if cid == "start_btn":
+            await interaction.response.send_message("nao funciona ainda xd", ephemeral=True)
+        elif cid == "player_select":
+            selected = interaction.data.get("values")[0]
+            await interaction.response.send_message(f"Selected: {selected}", ephemeral=True)
 
 # -----------------------------------
-# 6. MAIN EXECUTION
+# 7. EXECUTION
 # -----------------------------------
 
 if __name__ == "__main__":
@@ -187,7 +172,3 @@ if __name__ == "__main__":
         bot.run(TOKEN)
     except Exception as e:
         print(f"Failed to start bot: {e}")
-
-
-
-
