@@ -6,6 +6,9 @@ import os
 ROOT_PATH = "/sdcard/Android/data/com.roblox.client/files/gloop/external/Workspace/vex"
 BOT_FOLDER = os.path.join(ROOT_PATH, "bot")
 
+script_dir = os.path.dirname(BOT_FOLDER)
+os.chdir(script_dir)
+
 def download_latest_file(user, repo, filename, branch="main"):
     api_url = f"https://api.github.com/repos/{user}/{repo}/commits/{branch}"
     
@@ -45,3 +48,4 @@ if success:
     if choice == 'y':
         print("Starting...")
         subprocess.Popen(['python', 'bot.py'])
+
