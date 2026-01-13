@@ -252,9 +252,13 @@ local followConn
 local track
 local flingConn
 
-local ws = WebSocket.connect("ws://localhost:8765")
-ws.OnMessage:Connect(function(message)
-    warn(`[WEBSOCKET]: {message}`)
+local socket = WebSocket.connect("ws://localhost:8765")
+socket.OnMessage:Connect(function(message)
+    warn(`[VEX]: {message}`)
+end)
+
+socket.OnClose:Connect(function()
+    warn("[VEX]: WebSocket connection lost!")
 end)
 
 local commands do
