@@ -4,6 +4,7 @@ import json
 import discord
 import logging
 import asyncio # Added for better sync handling
+import websockets
 from discord.ext import commands
 from discord import app_commands # Crucial for slash commands
 from dotenv import load_dotenv
@@ -53,6 +54,8 @@ class VexBot(commands.Bot):
         print(f"Latency:      {round(self.latency * 1000)}ms")
         print("="*30 + "\n")
 
+        start_server = websockets.serve(handler, "localhost", 8765)
+        
         await self.change_presence(activity=discord.Activity(
             type=discord.ActivityType.watching, 
             name="VEX"
@@ -172,3 +175,4 @@ if __name__ == "__main__":
         bot.run(TOKEN)
     except Exception as e:
         print(f"Failed to start bot: {e}")
+
