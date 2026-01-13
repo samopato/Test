@@ -252,11 +252,6 @@ local followConn
 local track
 local flingConn
 
-local socket = WebSocket.connect("ws://localhost:8765")
-socket.OnMessage:Connect(function(message)
-    warn(`[VEX]: {message}`)
-end)
-
 socket.OnClose:Connect(function()
     warn("[VEX]: WebSocket connection lost!")
 end)
@@ -1417,6 +1412,24 @@ USER PROMPT:
 		end
 	}
 end
+
+local socket = WebSocket.connect("ws://localhost:8765")
+socket.OnMessage:Connect(function(message)
+    warn(`[VEX]: {message}`)
+
+	local message = HttpService:JSONDecode(message)
+
+	local prefix = string.sub(message.content, 0, 1)
+
+	if prefix ~= settings.prefix then return end
+
+	local name, args, undo = parseCommand(message.content)				
+	local callback = not undo and cmd.callback or cmd.undo
+
+	if callback then
+		callback(localPlayer, args)
+	end
+end)
 
 local function onMessageReceived(message)
 	local prefix = string.sub(message.Text, 0, 1)
