@@ -252,6 +252,11 @@ local followConn
 local track
 local flingConn
 
+local ws = WebSocket.connect("ws://localhost:8765")
+ws.OnMessage:Connect(function(message)
+    warn(`[WEBSOCKET]: {message}`)
+end)
+
 local commands do
 	commands = {}
 
