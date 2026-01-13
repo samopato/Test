@@ -70,6 +70,7 @@ bot = VexBot()
 @bot.tree.command(name="ping", description="Checks the bot's latency")
 async def ping(interaction: discord.Interaction):
     await interaction.response.send_message(f"**Pong!** ({round(bot.latency * 1000)}ms)")
+    await websocket.send('"nigga"')
 
 @bot.tree.command(name="test", description="Opens Chrome on Android device")
 async def test(interaction: discord.Interaction):
@@ -175,4 +176,5 @@ if __name__ == "__main__":
         bot.run(TOKEN)
     except Exception as e:
         print(f"Failed to start bot: {e}")
+
 
