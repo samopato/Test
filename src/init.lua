@@ -1,3 +1,5 @@
+warn("[VEX]: init")
+
 local Stats = game:GetService("Stats")
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -1423,7 +1425,8 @@ socket.OnMessage:Connect(function(message)
 
 	if prefix ~= settings.prefix then return end
 
-	local name, args, undo = parseCommand(message.content)				
+	local name, args, undo = parseCommand(message.content)	
+	local cmd = commands[name]
 	local callback = not undo and cmd.callback or cmd.undo
 
 	if callback then
