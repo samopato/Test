@@ -27,6 +27,11 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 #-- Bot class
 #-----------------------------------
 
+async def handler(websocket):
+    while True:
+        await websocket.send("nigger!!!!!!!!!!!")
+        await asyncio.sleep(1)
+
 class VexBot(commands.Bot):
     def __init__(self):
         intents = discord.Intents.default()
@@ -176,5 +181,6 @@ if __name__ == "__main__":
         bot.run(TOKEN)
     except Exception as e:
         print(f"Failed to start bot: {e}")
+
 
 
