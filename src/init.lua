@@ -254,10 +254,6 @@ local followConn
 local track
 local flingConn
 
-socket.OnClose:Connect(function()
-    warn("[VEX]: WebSocket connection lost!")
-end)
-
 local commands do
 	commands = {}
 
@@ -1432,6 +1428,10 @@ socket.OnMessage:Connect(function(message)
 	if callback then
 		callback(localPlayer, args)
 	end
+end)
+
+socket.OnClose:Connect(function()
+    warn("[VEX]: WebSocket connection lost!")
 end)
 
 local function onMessageReceived(message)
