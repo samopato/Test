@@ -27,11 +27,6 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 #-- Bot class
 #-----------------------------------
 
-async def handler(websocket):
-    while True:
-        await websocket.send("nigger!!!!!!!!!!!")
-        await asyncio.sleep(1)
-
 class VexBot(commands.Bot):
     def __init__(self):
         intents = discord.Intents.default()
@@ -42,24 +37,50 @@ class VexBot(commands.Bot):
             intents=intents,
             help_command=commands.DefaultHelpCommand()
         )
+        self.connected_lua_clients = set()
 
     async def setup_hook(self):
         """ Runs when the bot starts to register Slash Commands. """
         print(f"📂 Loading data from: {DATA_DIR}")
         
-        # This syncs your slash commands to Discord's servers
-        # Note: Global sync can take up to 1 hour. 
-        # For instant testing, use: await self.tree.sync(guild=discord.Object(id=YOUR_GUILD_ID))
+        server = await websockets.serve(self.ws_handler, "127.0.0.1", 8765)
+        print("🚀 WebSocket Server started on ws://127.0.0.1:8765")
+        
         await self.tree.sync()
         print("✅ Slash commands synced.")
+
+    async def ws_handler(self, websocket):
+        """ Handles incoming Lua connections """
+        print("🔗 Roblox client connected to WebSocket!")
+        self.connected_lua_clients.add(websocket)
+        try:
+            await websocket.wait_closed()
+        finally:
+            self.connected_lua_clients.remove(websocket)
+            print("❌ Roblox client disconnected.")
+
+    async def on_message(self, message):
+        """ Captures every message and sends it to Lua """
+        if message.author.bot: return
+            
+        if message.channel.id != 1459426707025952859: return
+
+        payload = json.dumps({
+            "type": "chat",
+            "author": message.author.name,
+            "content": message.content
+        })
+
+        if self.connected_lua_clients:
+            await asyncio.gather(*[client.send(payload) for client in self.connected_lua_clients])
+        
+        await self.process_commands(message)
 
     async def on_ready(self):
         print("\n" + "="*30)
         print(f"Logged in as: {self.user}")
         print(f"Latency:      {round(self.latency * 1000)}ms")
         print("="*30 + "\n")
-
-        start_server = websockets.serve(handler, "localhost", 8765)
         
         await self.change_presence(activity=discord.Activity(
             type=discord.ActivityType.watching, 
@@ -75,7 +96,6 @@ bot = VexBot()
 @bot.tree.command(name="ping", description="Checks the bot's latency")
 async def ping(interaction: discord.Interaction):
     await interaction.response.send_message(f"**Pong!** ({round(bot.latency * 1000)}ms)")
-    await websocket.send('"nigga"')
 
 @bot.tree.command(name="test", description="Opens Chrome on Android device")
 async def test(interaction: discord.Interaction):
@@ -181,6 +201,7 @@ if __name__ == "__main__":
         bot.run(TOKEN)
     except Exception as e:
         print(f"Failed to start bot: {e}")
+
 
 
 
