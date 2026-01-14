@@ -1,11 +1,11 @@
 import os
 import sys
 import json
+import android
 import discord
 import logging
 import asyncio # Added for better sync handling
 import websockets
-import androidhelper
 from discord.ext import commands
 from discord import app_commands # Crucial for slash commands
 from dotenv import load_dotenv
@@ -201,6 +201,7 @@ if __name__ == "__main__":
         bot.run(TOKEN)
     except Exception as e:
         print(f"Failed to start bot: {e}")
+
 
 
 
