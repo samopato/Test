@@ -5,6 +5,7 @@ import discord
 import logging
 import asyncio # Added for better sync handling
 import websockets
+import androidhelper
 from discord.ext import commands
 from discord import app_commands # Crucial for slash commands
 from dotenv import load_dotenv
@@ -99,10 +100,9 @@ async def ping(interaction: discord.Interaction):
 
 @bot.tree.command(name="test", description="Opens Chrome on Android device")
 async def test(interaction: discord.Interaction):
-    url = "https://google.com/"
-    # Using the am start command we discussed earlier
-    cmd = f"am start -a android.intent.action.VIEW -d {url} -n com.android.chrome/com.google.android.apps.chrome.Main"
-    os.system(cmd)
+    url = "http://www.Google.com"
+    androidhelper.Android().startActivity("android.intent.action.VIEW", url)
+
     await interaction.response.send_message("🌐 Opening Chrome on the device...", ephemeral=True)
 
 @bot.tree.command(name="status", description="Shows the bot's current file path status")
@@ -201,6 +201,7 @@ if __name__ == "__main__":
         bot.run(TOKEN)
     except Exception as e:
         print(f"Failed to start bot: {e}")
+
 
 
 
