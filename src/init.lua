@@ -827,7 +827,17 @@ USER PROMPT:
 	commands.antifling = {
 		rank = 1,
 		callback = function(speaker, args)
+			local hum = localPlayer.Character:FindFirstChildOfClass("Humanoid")
 			
+			task.spawn(function()
+				while task.wait() do
+					if hum then
+						sethiddenproperty(hum, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
+					else
+						break
+					end
+				end
+			end
 		end
 	}
 
