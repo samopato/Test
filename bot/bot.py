@@ -36,7 +36,7 @@ if not ROBLOX_COOKIE:
     raise ValueError("ROBLOX_COOKIE not found in environment variables")
 
 # Local state to track user selections
-# Format: { owner_id: {"place": str, "job": str, "val": str, "username": str} }
+# Format: { owner_id: {"place": str, "job": str, "val": str} }
 selection_state: Dict[int, Dict[str, str]] = {}
 
 # -----------------------------------
@@ -107,13 +107,12 @@ def fetch_friends() -> List[Dict[str, str]]:
                 icon = "🟢" if presence["userPresenceType"] == 2 else "🔵"
                 place_id = presence.get('placeId', 0)
                 game_id = presence.get('gameId', '0')
-                username = presence.get('lastUserName', 'Unknown')
                 
-                # Value format: UserID|PlaceID|JobID|Username
-                value = f"{presence['userId']}|{place_id}|{game_id}|{username}"
+                # Value format: UserID|PlaceID|JobID
+                value = f"{presence['userId']}|{place_id}|{game_id}"
                 
                 options.append({
-                    "label": username[:100],
+                    "label": presence.get('lastUserName', 'Unknown')[:100],
                     "value": value,
                     "description": f"{icon} {presence.get('lastLocation', 'Online')[:100]}"
                 })
@@ -126,96 +125,7 @@ def fetch_friends() -> List[Dict[str, str]]:
         return []
 
 # -----------------------------------
-# -- Standard Discord UI Builder
-# -----------------------------------
-
-def create_panel_embed(place_id: str = "None", game_id: str = "None", username: str = "None") -> discord.Embed:
-    """Creates a standard embed for the control panel."""
-    
-    # Determine color based on game status
-    if place_id != "None" and int(place_id) > 0:
-        color = discord.Color.green()  # In-game
-        status = "🟢 In-Game"
-    elif username != "None":
-        color = discord.Color.blue()  # Online
-        status = "🔵 Online"
-    else:
-        color = discord.Color.red()  # No selection
-        status = "⚫ No Selection"
-    
-    embed = discord.Embed(
-        title="🎮 Vex Control Panel",
-        description="Select a friend and manage game sessions",
-        color=color
-    )
-    
-    embed.add_field(name="Status", value=status, inline=True)
-    embed.add_field(name="Selected Player", value=f"`{username}`", inline=True)
-    embed.add_field(name="PlaceID", value=f"`{place_id}`", inline=True)
-    embed.add_field(name="GameID", value=f"`{game_id}`", inline=False)
-    
-    embed.set_footer(text="Use the dropdown to select a friend • Buttons to control")
-    
-    return embed
-
-def create_panel_view(options: List[Dict[str, str]], selected_val: Optional[str] = None) -> discord.ui.View:
-    """Creates the interactive view with buttons and select menu."""
-    
-    view = discord.ui.View(timeout=None)
-    
-    # Create select menu
-    if not options:
-        options = [{
-            "label": "No friends online",
-            "value": "null",
-            "description": "None of your friends are currently online"
-        }]
-    
-    select = discord.ui.Select(
-        placeholder="Select a target player...",
-        custom_id="vex_player_select",
-        options=[
-            discord.SelectOption(
-                label=opt["label"],
-                value=opt["value"],
-                description=opt.get("description", ""),
-                default=(opt["value"] == selected_val) if selected_val else False
-            )
-            for opt in options
-        ],
-        min_values=1,
-        max_values=1
-    )
-    
-    # Create buttons
-    start_btn = discord.ui.Button(
-        label="Start",
-        style=discord.ButtonStyle.green,
-        custom_id="vex_start_btn"
-    )
-    
-    rejoin_btn = discord.ui.Button(
-        label="Rejoin",
-        style=discord.ButtonStyle.blurple,
-        custom_id="vex_rejoin_btn"
-    )
-    
-    refresh_btn = discord.ui.Button(
-        label="Refresh",
-        style=discord.ButtonStyle.gray,
-        custom_id="vex_refresh_btn",
-        emoji="🔄"
-    )
-    
-    view.add_item(select)
-    view.add_item(start_btn)
-    view.add_item(rejoin_btn)
-    view.add_item(refresh_btn)
-    
-    return view
-
-# -----------------------------------
-# -- V2 Component Builder (Fallback)
+# -- V2 Component Builder
 # -----------------------------------
 
 def build_v2_panel(
@@ -225,11 +135,7 @@ def build_v2_panel(
     game_id: str = "None",
     selected_val: Optional[str] = None
 ) -> List[Dict]:
-    """Builds the Type 17 component structure for the control panel.
-    
-    Note: This requires Discord V2 Component access which may not be available
-    for all bots. Use the standard embed/view method as fallback.
-    """
+    """Builds the Type 17 component structure for the control panel."""
     
     if not options:
         options = [{
@@ -294,10 +200,10 @@ def build_v2_panel(
                         },
                         {
                             "type": 2,  # Button
-                            "style": 2,  # Gray
-                            "label": "Refresh",
-                            "custom_id": "vex_refresh_btn",
-                            "emoji": {"name": "🔄"}
+                            "style": 5,  # Link
+                            "label": "Join BOT",
+                            "url": "https://discohook.app",
+                            "disabled": True
                         }
                     ]
                 }
@@ -338,6 +244,8 @@ class VexBot(commands.Bot):
     async def start_websocket_server(self):
         """Start the WebSocket server for Lua client connections."""
         try:
+            # Important: Remove reuse_address parameter to fix IP reuse issues
+            # Instead, we'll handle it with proper cleanup
             self.ws_server = await websockets.serve(
                 self.ws_handler,
                 WS_HOST,
@@ -352,7 +260,7 @@ class VexBot(commands.Bot):
             await asyncio.Future()  # Run forever
             
         except OSError as e:
-            if e.errno == 98 or e.errno == 48:  # Address already in use (Linux/Mac)
+            if e.errno == 98:  # Address already in use
                 logger.error(f"Port {WS_PORT} is already in use. Please choose a different port or stop the existing process.")
             else:
                 logger.error(f"Failed to start WebSocket server: {e}")
@@ -431,9 +339,8 @@ bot = VexBot()
 # -- Slash Commands
 # -----------------------------------
 
-@bot.tree.command(name="panel", description="Spawn the Control Panel (Owner Only)")
-@app_commands.describe(use_v2="Try to use V2 components (requires special access)")
-async def panel_command(interaction: discord.Interaction, use_v2: bool = False):
+@bot.tree.command(name="panel", description="Spawn the V2 Control Panel (Owner Only)")
+async def panel_command(interaction: discord.Interaction):
     """Create a new control panel for managing game sessions."""
     if not await bot.is_owner(interaction.user):
         await interaction.response.send_message("🚫 Access Denied. This command is owner-only.", ephemeral=True)
@@ -445,37 +352,19 @@ async def panel_command(interaction: discord.Interaction, use_v2: bool = False):
         # Fetch online friends
         options = fetch_friends()
         
-        if use_v2:
-            # Try V2 components (requires special Discord access)
-            logger.info("Attempting to create V2 component panel...")
-            components = build_v2_panel(16711680, options)  # Red: 16711680
-            
-            # Send using raw HTTP request
-            route = discord.http.Route("POST", f"/webhooks/{bot.user.id}/{interaction.token}")
-            try:
-                await bot.http.request(route, json={"components": components})
-                logger.info(f"V2 Panel created successfully by {interaction.user}")
-                return
-            except discord.HTTPException as e:
-                logger.error(f"V2 component creation failed: {e}")
-                await interaction.followup.send(
-                    "❌ V2 components failed. Your bot may not have access to this feature.\n"
-                    "Falling back to standard panel...",
-                    ephemeral=True
-                )
-                await asyncio.sleep(2)
+        # Build panel with red accent (no selection)
+        components = build_v2_panel(16711680, options)  # Red: 16711680
         
-        # Standard embed + view approach (always works)
-        embed = create_panel_embed()
-        view = create_panel_view(options)
+        # Send using raw HTTP request (required for Type 17 components)
+        route = discord.http.Route("POST", f"/webhooks/{bot.user.id}/{interaction.token}")
+        await bot.http.request(route, json={"components": components})
         
-        await interaction.followup.send(embed=embed, view=view)
-        logger.info(f"Standard panel created by {interaction.user}")
+        logger.info(f"Panel created by {interaction.user}")
     
     except Exception as e:
-        logger.error(f"Error creating panel: {e}", exc_info=True)
+        logger.error(f"Error creating panel: {e}")
         await interaction.followup.send(
-            f"❌ Failed to create panel: {str(e)}",
+            "❌ Failed to create panel. Ensure the bot has proper permissions and V2 component access.",
             ephemeral=True
         )
 
@@ -492,9 +381,6 @@ async def status_command(interaction: discord.Interaction):
     embed.add_field(name="WebSocket Server", value=f"{WS_HOST}:{WS_PORT}", inline=False)
     embed.add_field(name="Connected Clients", value=ws_status, inline=False)
     embed.add_field(name="Roblox Auth", value="✅ Authenticated" if MY_ROBLOX_ID else "❌ Not authenticated", inline=False)
-    
-    if MY_ROBLOX_ID:
-        embed.add_field(name="Roblox User ID", value=f"`{MY_ROBLOX_ID}`", inline=False)
     
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
@@ -522,40 +408,29 @@ async def on_interaction(interaction: discord.Interaction):
             value = values[0]
             parts = value.split("|")
             
-            if len(parts) < 3:
+            if len(parts) != 3:
                 await interaction.response.send_message("❌ Malformed selection data.", ephemeral=True)
                 return
             
-            user_id_str = parts[0]
-            place_id = parts[1]
-            job_id = parts[2]
-            username = parts[3] if len(parts) > 3 else "Unknown"
+            user_id_str, place_id, job_id = parts
+            
+            # Determine color based on game status
+            # Green if in-game (placeId > 0), Blue if just online
+            new_color = 3447003 if int(place_id) > 0 else 32526  # Green: 3447003, Blue: 32526
             
             # Store selection
             selection_state[user_id] = {
                 "place": place_id,
                 "job": job_id,
-                "val": value,
-                "username": username
+                "val": value
             }
             
-            # Check if this is V2 or standard
-            if interaction.message.embeds:
-                # Standard embed - update it
-                embed = create_panel_embed(place_id, job_id, username)
-                options = fetch_friends()
-                view = create_panel_view(options, value)
-                
-                await interaction.response.edit_message(embed=embed, view=view)
-            else:
-                # V2 component - update with raw JSON
-                new_color = 3447003 if int(place_id) > 0 else 32526  # Green or Blue
-                options = fetch_friends()
-                updated_components = build_v2_panel(new_color, options, place_id, job_id, value)
-                
-                await interaction.response.edit_message(components=updated_components)
+            # Update panel with new color and stats
+            options = fetch_friends()
+            updated_components = build_v2_panel(new_color, options, place_id, job_id, value)
             
-            logger.info(f"User {interaction.user} selected {username} - PlaceID: {place_id}, JobID: {job_id}")
+            await interaction.response.edit_message(components=updated_components)
+            logger.info(f"User {interaction.user} selected PlaceID: {place_id}, JobID: {job_id}")
         
         # Handle Start Button
         elif custom_id == "vex_start_btn":
@@ -567,13 +442,9 @@ async def on_interaction(interaction: discord.Interaction):
             
             place_id = user_data.get("place", "0")
             job_id = user_data.get("job", "0")
-            username = user_data.get("username", "Unknown")
             
             if int(place_id) == 0:
-                await interaction.response.send_message(
-                    f"❌ **{username}** is not in a game right now.",
-                    ephemeral=True
-                )
+                await interaction.response.send_message("❌ Selected player is not in a game.", ephemeral=True)
                 return
             
             # Open Roblox game
@@ -581,11 +452,10 @@ async def on_interaction(interaction: discord.Interaction):
             webbrowser.open(roblox_url)
             
             await interaction.response.send_message(
-                f"🚀 Joining **{username}**'s game...\n"
-                f"**PlaceID:** `{place_id}`\n**JobID:** `{job_id}`",
+                f"🚀 Joining game...\n**PlaceID:** `{place_id}`\n**JobID:** `{job_id}`",
                 ephemeral=True
             )
-            logger.info(f"User {interaction.user} joining {username}'s game - PlaceID: {place_id}")
+            logger.info(f"User {interaction.user} joining PlaceID: {place_id}")
         
         # Handle Rejoin Button
         elif custom_id == "vex_rejoin_btn":
@@ -594,11 +464,7 @@ async def on_interaction(interaction: discord.Interaction):
                 return
             
             # Broadcast rejoin command to all connected clients
-            payload = json.dumps({
-                "type": "rejoin",
-                "timestamp": asyncio.get_event_loop().time(),
-                "user": str(interaction.user)
-            })
+            payload = json.dumps({"type": "rejoin", "timestamp": asyncio.get_event_loop().time()})
             
             sent_count = 0
             failed_clients = []
@@ -617,46 +483,15 @@ async def on_interaction(interaction: discord.Interaction):
                     bot.connected_clients.remove(ws)
             
             await interaction.response.send_message(
-                f"🔄 Rejoin command sent to **{sent_count}** client(s).",
+                f"🔄 Rejoin command sent to {sent_count} client(s).",
                 ephemeral=True
             )
-            logger.info(f"Rejoin broadcast sent to {sent_count} clients by {interaction.user}")
-        
-        # Handle Refresh Button
-        elif custom_id == "vex_refresh_btn":
-            # Refresh the friend list
-            options = fetch_friends()
-            
-            user_data = selection_state.get(user_id)
-            selected_val = user_data.get("val") if user_data else None
-            place_id = user_data.get("place", "None") if user_data else "None"
-            game_id = user_data.get("job", "None") if user_data else "None"
-            username = user_data.get("username", "None") if user_data else "None"
-            
-            # Check if this is V2 or standard
-            if interaction.message.embeds:
-                # Standard embed
-                embed = create_panel_embed(place_id, game_id, username)
-                view = create_panel_view(options, selected_val)
-                
-                await interaction.response.edit_message(embed=embed, view=view)
-            else:
-                # V2 component
-                color = 3447003 if place_id != "None" and int(place_id) > 0 else 16711680
-                updated_components = build_v2_panel(color, options, place_id, game_id, selected_val)
-                
-                await interaction.response.edit_message(components=updated_components)
-            
-            await interaction.followup.send("🔄 Friend list refreshed!", ephemeral=True)
-            logger.info(f"Friend list refreshed by {interaction.user}")
+            logger.info(f"Rejoin broadcast sent to {sent_count} clients")
     
     except Exception as e:
-        logger.error(f"Error handling interaction: {e}", exc_info=True)
+        logger.error(f"Error handling interaction: {e}")
         try:
-            if not interaction.response.is_done():
-                await interaction.response.send_message(f"❌ An error occurred: {str(e)}", ephemeral=True)
-            else:
-                await interaction.followup.send(f"❌ An error occurred: {str(e)}", ephemeral=True)
+            await interaction.response.send_message(f"❌ An error occurred: {str(e)}", ephemeral=True)
         except:
             pass
 
@@ -688,11 +523,10 @@ async def on_error(event, *args, **kwargs):
 
 if __name__ == "__main__":
     try:
-        logger.info("Starting bot...")
         bot.run(TOKEN, log_handler=None)  # We're using our own logging config
     except KeyboardInterrupt:
         logger.info("Received keyboard interrupt, shutting down...")
     except Exception as e:
-        logger.error(f"Fatal error: {e}", exc_info=True)
+        logger.error(f"Fatal error: {e}")
     finally:
         logger.info("Bot shutdown complete")
