@@ -44,7 +44,12 @@ class VexBot(commands.Bot):
         """ Runs when the bot starts to register Slash Commands. """
         print(f"📂 Loading data from: {DATA_DIR}")
         
-        server = await websockets.serve(self.ws_handler, "127.0.0.1", 8765)
+        server = await websockets.serve(
+            self.ws_handler, 
+            "127.0.0.1", 
+            8765,
+            reuse_address=True
+        )
         print("🚀 WebSocket Server started on ws://127.0.0.1:8765")
         
         await self.tree.sync()
@@ -205,6 +210,7 @@ if __name__ == "__main__":
         bot.run(TOKEN)
     except Exception as e:
         print(f"Failed to start bot: {e}")
+
 
 
 
