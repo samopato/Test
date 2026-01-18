@@ -604,10 +604,11 @@ async def on_interaction(interaction: discord.Interaction):
 async def on_ready():
     """Called when the bot successfully connects to Discord."""
     # Print banner without logger formatting for cleaner output
-    print(f"\n{Fore.GREEN}{'='*60}")
-    print(f"{Fore.GREEN}✓ Bot logged in as {bot.user} (ID: {bot.user.id})")
+    print(f"\n{Fore.GREEN}{'='*40}")
+    print(f"{Fore.GREEN}✓ {bot.user}")
+    print(f"{Fore.GREEN}✓ {bot.user.id}")
     print(f"{Fore.GREEN}✓ Connected to {len(bot.guilds)} guild(s)")
-    print(f"{Fore.GREEN}{'='*60}{Style.RESET_ALL}\n")
+    print(f"{Fore.GREEN}{'='*40}{Style.RESET_ALL}\n")
     
     # Set bot status
     activity = discord.Activity(
@@ -642,9 +643,9 @@ async def on_command_error(ctx, error):
 
 if __name__ == "__main__":
     try:
-        print(f"\n{Fore.CYAN}{'='*60}")
+        print(f"\n{Fore.CYAN}{'='*40}")
         print(f"{Fore.CYAN}Starting VEX Discord Bot...")
-        print(f"{Fore.CYAN}{'='*60}{Style.RESET_ALL}\n")
+        print(f"{Fore.CYAN}{'='*40}{Style.RESET_ALL}\n")
         bot.run(TOKEN, log_handler=None)  # We're using our own logging config
     except KeyboardInterrupt:
         logger.info(f"{Fore.YELLOW}Received keyboard interrupt, shutting down...")
@@ -652,3 +653,4 @@ if __name__ == "__main__":
         logger.critical(f"{Fore.RED}Fatal error: {e}", exc_info=True)
     finally:
         logger.info(f"{Fore.GREEN}Bot shutdown complete")
+
