@@ -24,8 +24,6 @@ env_path = os.path.join(BASE_DIR, '.env')
 load_dotenv(dotenv_path=env_path)
 TOKEN = os.getenv('DISCORD_TOKEN')
 
-outputChannel = bot.get_channel(1462534721517916465)
-
 #-----------------------------------
 #-- Bot class
 #-----------------------------------
@@ -52,6 +50,8 @@ class VexBot(commands.Bot):
         await self.tree.sync()
         print("✅ Slash commands synced.")
 
+    channel = self.get_channel(1462534721517916465)
+    
     async def ws_handler(self, websocket):
         """ Handles incoming Lua connections """
         await channel.send("🔗 Roblox client connected to WebSocket!")
@@ -203,6 +203,7 @@ if __name__ == "__main__":
         bot.run(TOKEN)
     except Exception as e:
         print(f"Failed to start bot: {e}")
+
 
 
 
