@@ -410,7 +410,8 @@ async def panel_command(interaction: discord.Interaction):
             logger.warning(f"{Fore.YELLOW}User {interaction.user} attempted to use /panel (not owner)")
             return
 
-        await interaction.response.defer()
+        # Respond immediately to acknowledge the interaction
+        await interaction.response.send_message("⏳ Creating panel...", ephemeral=True)
         
         # Fetch online friends
         options = fetch_friends()
@@ -418,43 +419,53 @@ async def panel_command(interaction: discord.Interaction):
         # Build panel with red accent (no selection)
         components = build_v2_panel(16711680, options)  # Red: 16711680
         
-        # Send as a follow-up message instead of editing the deferred response
-        # This avoids the "Unknown Interaction" error
-        await interaction.followup.send(
-            content="**VEX Control Panel**",
-            components=components
-        )
-        
-        logger.info(f"{Fore.GREEN}✓ Panel created by {interaction.user}")
-    
-    except discord.errors.NotFound:
-        logger.error(f"{Fore.RED}404 Unknown Interaction - The interaction token may have expired")
-        logger.error(f"{Fore.YELLOW}This usually happens when the response takes too long (>3 seconds for initial response)")
+        # Send the panel as a new message in the channel (not as a followup)
+        # V2 components need to be sent via webhook, not as interaction response
+        webhook = await interaction.channel.create_webhook(name="VEX Panel", reason="Control Panel Creation")
         try:
-            await interaction.followup.send(
-                "❌ Panel creation timed out. Please try again.",
-                ephemeral=True
+            await webhook.send(
+                content="**VEX Control Panel**",
+                components=components,
+                username="VEX Control"
             )
+            logger.info(f"{Fore.GREEN}✓ Panel created by {interaction.user}")
+            
+            # Update the ephemeral message
+            await interaction.edit_original_response(content="✅ Panel created!")
+        finally:
+            # Clean up the webhook
+            await webhook.delete()
+    
+    except discord.errors.InteractionResponded:
+        logger.error(f"{Fore.RED}Interaction already responded to")
+    
+    except discord.errors.Forbidden as e:
+        logger.error(f"{Fore.RED}Permission error: {e}", exc_info=True)
+        try:
+            if interaction.response.is_done():
+                await interaction.edit_original_response(content="❌ I don't have permission to create webhooks in this channel.")
+            else:
+                await interaction.response.send_message("❌ I don't have permission to create webhooks in this channel.", ephemeral=True)
         except:
             pass
     
     except discord.errors.HTTPException as e:
         logger.error(f"{Fore.RED}Discord HTTP Error: {e.status} - {e.text}", exc_info=True)
         try:
-            await interaction.followup.send(
-                f"❌ Failed to create panel: {e.text}",
-                ephemeral=True
-            )
+            if interaction.response.is_done():
+                await interaction.edit_original_response(content=f"❌ Failed to create panel: {e.text}")
+            else:
+                await interaction.response.send_message(f"❌ Failed to create panel: {e.text}", ephemeral=True)
         except:
             pass
     
     except Exception as e:
         logger.error(f"{Fore.RED}Error creating panel: {e}", exc_info=True)
         try:
-            await interaction.followup.send(
-                "❌ Failed to create panel. Check bot logs for details.",
-                ephemeral=True
-            )
+            if interaction.response.is_done():
+                await interaction.edit_original_response(content="❌ Failed to create panel. Check bot logs for details.")
+            else:
+                await interaction.response.send_message("❌ Failed to create panel. Check bot logs for details.", ephemeral=True)
         except:
             pass
 
@@ -604,10 +615,11 @@ async def on_interaction(interaction: discord.Interaction):
 @bot.event
 async def on_ready():
     """Called when the bot successfully connects to Discord."""
-    logger.info(f"{Fore.GREEN}{'='*60}")
-    logger.info(f"{Fore.GREEN}✓ Bot logged in as {bot.user} (ID: {bot.user.id})")
-    logger.info(f"{Fore.GREEN}✓ Connected to {len(bot.guilds)} guild(s)")
-    logger.info(f"{Fore.GREEN}{'='*60}")
+    # Print banner without logger formatting for cleaner output
+    print(f"\n{Fore.GREEN}{'='*60}")
+    print(f"{Fore.GREEN}✓ Bot logged in as {bot.user} (ID: {bot.user.id})")
+    print(f"{Fore.GREEN}✓ Connected to {len(bot.guilds)} guild(s)")
+    print(f"{Fore.GREEN}{'='*60}{Style.RESET_ALL}\n")
     
     # Set bot status
     activity = discord.Activity(
@@ -642,9 +654,9 @@ async def on_command_error(ctx, error):
 
 if __name__ == "__main__":
     try:
-        logger.info(f"{Fore.CYAN}{'='*60}")
-        logger.info(f"{Fore.CYAN}Starting VEX Discord Bot...")
-        logger.info(f"{Fore.CYAN}{'='*60}")
+        print(f"\n{Fore.CYAN}{'='*60}")
+        print(f"{Fore.CYAN}Starting VEX Discord Bot...")
+        print(f"{Fore.CYAN}{'='*60}{Style.RESET_ALL}\n")
         bot.run(TOKEN, log_handler=None)  # We're using our own logging config
     except KeyboardInterrupt:
         logger.info(f"{Fore.YELLOW}Received keyboard interrupt, shutting down...")
