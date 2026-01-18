@@ -11,19 +11,61 @@ from discord.ext import commands
 from discord import app_commands
 from dotenv import load_dotenv
 from typing import Dict, Set, Optional, List
+from colorama import Fore, Back, Style, init
+
+# Initialize colorama for cross-platform colored output
+init(autoreset=True)
 
 # -----------------------------------
-# -- Setup & Configuration
+# -- Colored Logging Setup
 # -----------------------------------
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+
+class ColoredFormatter(logging.Formatter):
+    """Custom formatter with colors for different log levels."""
+    
+    COLORS = {
+        'DEBUG': Fore.CYAN,
+        'INFO': Fore.GREEN,
+        'WARNING': Fore.YELLOW,
+        'ERROR': Fore.RED,
+        'CRITICAL': Fore.RED + Back.WHITE + Style.BRIGHT,
+    }
+    
+    def format(self, record):
+        # Add color to levelname
+        levelname = record.levelname
+        if levelname in self.COLORS:
+            record.levelname = f"{self.COLORS[levelname]}{levelname}{Style.RESET_ALL}"
+        
+        # Add color to logger name
+        record.name = f"{Fore.MAGENTA}{record.name}{Style.RESET_ALL}"
+        
+        # Format timestamp in blue
+        result = super().format(record)
+        return result
+
+# Setup logging with colors
+handler = logging.StreamHandler(sys.stdout)
+handler.setFormatter(ColoredFormatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+))
+
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+logger.addHandler(handler)
+
+# Also set up discord.py logger with colors
+discord_logger = logging.getLogger('discord')
+discord_logger.setLevel(logging.INFO)
+discord_logger.addHandler(handler)
 
 load_dotenv()
 
-# Environment variables with validation
+# -----------------------------------
+# -- Environment Variables
+# -----------------------------------
+
 TOKEN = os.getenv('DISCORD_TOKEN')
 ROBLOX_COOKIE = os.getenv('ROBLOX_COOKIE')
 LOG_CHANNEL_ID = int(os.getenv('LOG_CHANNEL_ID', '1462534721517916465'))
@@ -31,12 +73,13 @@ WS_HOST = os.getenv('WS_HOST', '127.0.0.1')
 WS_PORT = int(os.getenv('WS_PORT', '8765'))
 
 if not TOKEN:
+    logger.critical("DISCORD_TOKEN not found in environment variables")
     raise ValueError("DISCORD_TOKEN not found in environment variables")
 if not ROBLOX_COOKIE:
+    logger.critical("ROBLOX_COOKIE not found in environment variables")
     raise ValueError("ROBLOX_COOKIE not found in environment variables")
 
 # Local state to track user selections
-# Format: { owner_id: {"place": str, "job": str, "val": str} }
 selection_state: Dict[int, Dict[str, str]] = {}
 
 # -----------------------------------
@@ -52,12 +95,14 @@ def get_auth_id(cookie: str) -> Optional[int]:
             timeout=5
         )
         if response.status_code == 200:
-            return response.json().get('id')
+            user_id = response.json().get('id')
+            logger.info(f"{Fore.GREEN}Successfully authenticated with Roblox (User ID: {user_id})")
+            return user_id
         else:
             logger.error(f"Failed to authenticate with Roblox: {response.status_code}")
             return None
     except Exception as e:
-        logger.error(f"Error getting auth ID: {e}")
+        logger.error(f"Error getting auth ID: {e}", exc_info=True)
         return None
 
 MY_ROBLOX_ID = get_auth_id(ROBLOX_COOKIE)
@@ -67,6 +112,7 @@ if not MY_ROBLOX_ID:
 def fetch_friends() -> List[Dict[str, str]]:
     """Fetches online friends and returns them as select menu options."""
     if not MY_ROBLOX_ID:
+        logger.warning("Cannot fetch friends: Not authenticated with Roblox")
         return []
     
     try:
@@ -86,6 +132,7 @@ def fetch_friends() -> List[Dict[str, str]]:
         friend_ids = [friend["id"] for friend in friends_resp.json().get("data", [])]
         
         if not friend_ids:
+            logger.info("No friends found")
             return []
         
         # Get presence information
@@ -117,11 +164,12 @@ def fetch_friends() -> List[Dict[str, str]]:
                     "description": f"{icon} {presence.get('lastLocation', 'Online')[:100]}"
                 })
         
+        logger.info(f"{Fore.CYAN}Found {len(options)} online friends")
         # Discord has a limit of 25 options per select menu
         return options[:25]
     
     except Exception as e:
-        logger.error(f"Error fetching friends: {e}")
+        logger.error(f"Error fetching friends: {e}", exc_info=True)
         return []
 
 # -----------------------------------
@@ -228,24 +276,27 @@ class VexBot(commands.Bot):
         
         self.connected_clients: Set[websockets.WebSocketServerProtocol] = set()
         self.ws_server = None
+        self.ws_task = None
 
     async def setup_hook(self):
         """Called when the bot is starting up."""
+        logger.info(f"{Fore.YELLOW}Setting up bot...")
+        
         # Start WebSocket server as background task
-        self.loop.create_task(self.start_websocket_server())
+        self.ws_task = self.loop.create_task(self.start_websocket_server())
         
         # Sync slash commands
         try:
-            await self.tree.sync()
-            logger.info("Slash commands synced successfully")
+            synced = await self.tree.sync()
+            logger.info(f"{Fore.GREEN}✓ Synced {len(synced)} slash command(s)")
         except Exception as e:
-            logger.error(f"Failed to sync commands: {e}")
+            logger.error(f"Failed to sync commands: {e}", exc_info=True)
 
     async def start_websocket_server(self):
         """Start the WebSocket server for Lua client connections."""
         try:
-            # Important: Remove reuse_address parameter to fix IP reuse issues
-            # Instead, we'll handle it with proper cleanup
+            logger.info(f"{Fore.YELLOW}Starting WebSocket server on {WS_HOST}:{WS_PORT}...")
+            
             self.ws_server = await websockets.serve(
                 self.ws_handler,
                 WS_HOST,
@@ -254,23 +305,28 @@ class VexBot(commands.Bot):
                 ping_timeout=10,
                 close_timeout=5
             )
-            logger.info(f"WebSocket server started on {WS_HOST}:{WS_PORT}")
+            logger.info(f"{Fore.GREEN}✓ WebSocket server started successfully")
             
             # Keep server running
             await asyncio.Future()  # Run forever
             
         except OSError as e:
-            if e.errno == 98:  # Address already in use
-                logger.error(f"Port {WS_PORT} is already in use. Please choose a different port or stop the existing process.")
+            if e.errno == 98 or "already in use" in str(e).lower():
+                logger.error(f"{Fore.RED}✗ Port {WS_PORT} is already in use!")
+                logger.error(f"{Fore.YELLOW}Solutions:")
+                logger.error(f"{Fore.YELLOW}  1. Change WS_PORT in your .env file to a different port (e.g., 8766)")
+                logger.error(f"{Fore.YELLOW}  2. Find and stop the process using port {WS_PORT}:")
+                logger.error(f"{Fore.CYAN}     Linux/Mac: lsof -ti:{WS_PORT} | xargs kill -9")
+                logger.error(f"{Fore.CYAN}     Windows: netstat -ano | findstr :{WS_PORT}")
             else:
-                logger.error(f"Failed to start WebSocket server: {e}")
+                logger.error(f"Failed to start WebSocket server: {e}", exc_info=True)
         except Exception as e:
-            logger.error(f"WebSocket server error: {e}")
+            logger.error(f"WebSocket server error: {e}", exc_info=True)
 
-    async def ws_handler(self, websocket: websockets.WebSocketServerProtocol):
+    async def ws_handler(self, websocket):
         """Handle individual WebSocket client connections."""
         client_addr = websocket.remote_address
-        logger.info(f"WebSocket client connecting from {client_addr}")
+        logger.info(f"{Fore.CYAN}New WebSocket connection from {client_addr}")
         
         self.connected_clients.add(websocket)
         
@@ -287,20 +343,17 @@ class VexBot(commands.Bot):
             async for message in websocket:
                 try:
                     data = json.loads(message)
-                    logger.info(f"Received from {client_addr}: {data}")
-                    
-                    # Handle client messages here if needed
-                    # For example, status updates from Lua client
+                    logger.info(f"{Fore.CYAN}Received from {client_addr}: {data}")
                     
                 except json.JSONDecodeError:
                     logger.warning(f"Invalid JSON from {client_addr}: {message}")
                 except Exception as e:
-                    logger.error(f"Error processing message from {client_addr}: {e}")
+                    logger.error(f"Error processing message from {client_addr}: {e}", exc_info=True)
         
-        except websockets.exceptions.ConnectionClosed:
-            logger.info(f"WebSocket connection closed normally for {client_addr}")
+        except websockets.exceptions.ConnectionClosed as e:
+            logger.info(f"{Fore.YELLOW}WebSocket connection closed for {client_addr} (code: {e.code})")
         except Exception as e:
-            logger.error(f"WebSocket handler error for {client_addr}: {e}")
+            logger.error(f"WebSocket handler error for {client_addr}: {e}", exc_info=True)
         finally:
             # Clean up on disconnect
             if websocket in self.connected_clients:
@@ -312,11 +365,11 @@ class VexBot(commands.Bot):
                 except Exception as e:
                     logger.error(f"Failed to send disconnection log: {e}")
             
-            logger.info(f"WebSocket client {client_addr} cleaned up")
+            logger.info(f"{Fore.YELLOW}WebSocket client {client_addr} cleaned up")
 
     async def close(self):
         """Clean up resources when bot shuts down."""
-        logger.info("Shutting down bot...")
+        logger.info(f"{Fore.YELLOW}Shutting down bot...")
         
         # Close all WebSocket connections
         for ws in list(self.connected_clients):
@@ -330,7 +383,16 @@ class VexBot(commands.Bot):
             self.ws_server.close()
             await self.ws_server.wait_closed()
         
+        # Cancel WebSocket task
+        if self.ws_task and not self.ws_task.done():
+            self.ws_task.cancel()
+            try:
+                await self.ws_task
+            except asyncio.CancelledError:
+                pass
+        
         await super().close()
+        logger.info(f"{Fore.GREEN}✓ Bot shutdown complete")
 
 # Create bot instance
 bot = VexBot()
@@ -342,47 +404,84 @@ bot = VexBot()
 @bot.tree.command(name="panel", description="Spawn the V2 Control Panel (Owner Only)")
 async def panel_command(interaction: discord.Interaction):
     """Create a new control panel for managing game sessions."""
-    if not await bot.is_owner(interaction.user):
-        await interaction.response.send_message("🚫 Access Denied. This command is owner-only.", ephemeral=True)
-        return
-
-    await interaction.response.defer()
-    
     try:
+        if not await bot.is_owner(interaction.user):
+            await interaction.response.send_message("🚫 Access Denied. This command is owner-only.", ephemeral=True)
+            logger.warning(f"{Fore.YELLOW}User {interaction.user} attempted to use /panel (not owner)")
+            return
+
+        await interaction.response.defer()
+        
         # Fetch online friends
         options = fetch_friends()
         
         # Build panel with red accent (no selection)
         components = build_v2_panel(16711680, options)  # Red: 16711680
         
-        # Send using raw HTTP request (required for Type 17 components)
-        route = discord.http.Route("POST", f"/webhooks/{bot.user.id}/{interaction.token}")
-        await bot.http.request(route, json={"components": components})
+        # Send as a follow-up message instead of editing the deferred response
+        # This avoids the "Unknown Interaction" error
+        await interaction.followup.send(
+            content="**VEX Control Panel**",
+            components=components
+        )
         
-        logger.info(f"Panel created by {interaction.user}")
+        logger.info(f"{Fore.GREEN}✓ Panel created by {interaction.user}")
+    
+    except discord.errors.NotFound:
+        logger.error(f"{Fore.RED}404 Unknown Interaction - The interaction token may have expired")
+        logger.error(f"{Fore.YELLOW}This usually happens when the response takes too long (>3 seconds for initial response)")
+        try:
+            await interaction.followup.send(
+                "❌ Panel creation timed out. Please try again.",
+                ephemeral=True
+            )
+        except:
+            pass
+    
+    except discord.errors.HTTPException as e:
+        logger.error(f"{Fore.RED}Discord HTTP Error: {e.status} - {e.text}", exc_info=True)
+        try:
+            await interaction.followup.send(
+                f"❌ Failed to create panel: {e.text}",
+                ephemeral=True
+            )
+        except:
+            pass
     
     except Exception as e:
-        logger.error(f"Error creating panel: {e}")
-        await interaction.followup.send(
-            "❌ Failed to create panel. Ensure the bot has proper permissions and V2 component access.",
-            ephemeral=True
-        )
+        logger.error(f"{Fore.RED}Error creating panel: {e}", exc_info=True)
+        try:
+            await interaction.followup.send(
+                "❌ Failed to create panel. Check bot logs for details.",
+                ephemeral=True
+            )
+        except:
+            pass
 
 @bot.tree.command(name="status", description="Check bot and WebSocket status")
 async def status_command(interaction: discord.Interaction):
     """Display current bot status including WebSocket connections."""
-    ws_count = len(bot.connected_clients)
-    ws_status = f"✅ {ws_count} client(s) connected" if ws_count > 0 else "❌ No clients connected"
+    try:
+        ws_count = len(bot.connected_clients)
+        ws_status = f"✅ {ws_count} client(s) connected" if ws_count > 0 else "❌ No clients connected"
+        
+        embed = discord.Embed(
+            title="🤖 Bot Status",
+            color=discord.Color.green() if ws_count > 0 else discord.Color.red()
+        )
+        embed.add_field(name="WebSocket Server", value=f"{WS_HOST}:{WS_PORT}", inline=False)
+        embed.add_field(name="Connected Clients", value=ws_status, inline=False)
+        embed.add_field(name="Roblox Auth", value="✅ Authenticated" if MY_ROBLOX_ID else "❌ Not authenticated", inline=False)
+        
+        if MY_ROBLOX_ID:
+            embed.add_field(name="Roblox User ID", value=str(MY_ROBLOX_ID), inline=False)
+        
+        await interaction.response.send_message(embed=embed, ephemeral=True)
+        logger.info(f"{Fore.CYAN}Status command used by {interaction.user}")
     
-    embed = discord.Embed(
-        title="🤖 Bot Status",
-        color=discord.Color.green() if ws_count > 0 else discord.Color.red()
-    )
-    embed.add_field(name="WebSocket Server", value=f"{WS_HOST}:{WS_PORT}", inline=False)
-    embed.add_field(name="Connected Clients", value=ws_status, inline=False)
-    embed.add_field(name="Roblox Auth", value="✅ Authenticated" if MY_ROBLOX_ID else "❌ Not authenticated", inline=False)
-    
-    await interaction.response.send_message(embed=embed, ephemeral=True)
+    except Exception as e:
+        logger.error(f"{Fore.RED}Error in status command: {e}", exc_info=True)
+        await interaction.response.send_message("❌ Error retrieving status", ephemeral=True)
 
 # -----------------------------------
 # -- Component Interaction Handler
@@ -410,6 +509,7 @@ async def on_interaction(interaction: discord.Interaction):
             
             if len(parts) != 3:
                 await interaction.response.send_message("❌ Malformed selection data.", ephemeral=True)
+                logger.error(f"{Fore.RED}Malformed selection data: {value}")
                 return
             
             user_id_str, place_id, job_id = parts
@@ -430,7 +530,7 @@ async def on_interaction(interaction: discord.Interaction):
             updated_components = build_v2_panel(new_color, options, place_id, job_id, value)
             
             await interaction.response.edit_message(components=updated_components)
-            logger.info(f"User {interaction.user} selected PlaceID: {place_id}, JobID: {job_id}")
+            logger.info(f"{Fore.GREEN}User {interaction.user} selected PlaceID: {place_id}, JobID: {job_id}")
         
         # Handle Start Button
         elif custom_id == "vex_start_btn":
@@ -455,7 +555,7 @@ async def on_interaction(interaction: discord.Interaction):
                 f"🚀 Joining game...\n**PlaceID:** `{place_id}`\n**JobID:** `{job_id}`",
                 ephemeral=True
             )
-            logger.info(f"User {interaction.user} joining PlaceID: {place_id}")
+            logger.info(f"{Fore.GREEN}User {interaction.user} joining PlaceID: {place_id}")
         
         # Handle Rejoin Button
         elif custom_id == "vex_rejoin_btn":
@@ -474,7 +574,7 @@ async def on_interaction(interaction: discord.Interaction):
                     await ws.send(payload)
                     sent_count += 1
                 except Exception as e:
-                    logger.error(f"Failed to send to WebSocket client: {e}")
+                    logger.error(f"{Fore.RED}Failed to send to WebSocket client: {e}")
                     failed_clients.append(ws)
             
             # Remove failed clients
@@ -486,10 +586,12 @@ async def on_interaction(interaction: discord.Interaction):
                 f"🔄 Rejoin command sent to {sent_count} client(s).",
                 ephemeral=True
             )
-            logger.info(f"Rejoin broadcast sent to {sent_count} clients")
+            logger.info(f"{Fore.CYAN}Rejoin broadcast sent to {sent_count} clients")
     
+    except discord.errors.NotFound:
+        logger.error(f"{Fore.RED}404 Unknown Interaction in component handler")
     except Exception as e:
-        logger.error(f"Error handling interaction: {e}")
+        logger.error(f"{Fore.RED}Error handling interaction: {e}", exc_info=True)
         try:
             await interaction.response.send_message(f"❌ An error occurred: {str(e)}", ephemeral=True)
         except:
@@ -502,8 +604,10 @@ async def on_interaction(interaction: discord.Interaction):
 @bot.event
 async def on_ready():
     """Called when the bot successfully connects to Discord."""
-    logger.info(f"Bot logged in as {bot.user} (ID: {bot.user.id})")
-    logger.info(f"Connected to {len(bot.guilds)} guild(s)")
+    logger.info(f"{Fore.GREEN}{'='*60}")
+    logger.info(f"{Fore.GREEN}✓ Bot logged in as {bot.user} (ID: {bot.user.id})")
+    logger.info(f"{Fore.GREEN}✓ Connected to {len(bot.guilds)} guild(s)")
+    logger.info(f"{Fore.GREEN}{'='*60}")
     
     # Set bot status
     activity = discord.Activity(
@@ -515,7 +619,22 @@ async def on_ready():
 @bot.event
 async def on_error(event, *args, **kwargs):
     """Global error handler for events."""
-    logger.error(f"Error in event {event}", exc_info=sys.exc_info())
+    logger.error(f"{Fore.RED}Error in event '{event}'", exc_info=sys.exc_info())
+
+@bot.event
+async def on_command_error(ctx, error):
+    """Handle command errors."""
+    if isinstance(error, commands.CommandNotFound):
+        return  # Ignore unknown commands
+    
+    logger.error(f"{Fore.RED}Command error in {ctx.command}: {error}", exc_info=error)
+    
+    if isinstance(error, commands.MissingPermissions):
+        await ctx.send("❌ You don't have permission to use this command.")
+    elif isinstance(error, commands.BotMissingPermissions):
+        await ctx.send("❌ I don't have the required permissions to execute this command.")
+    else:
+        await ctx.send(f"❌ An error occurred: {str(error)}")
 
 # -----------------------------------
 # -- Main Entry Point
@@ -523,10 +642,13 @@ async def on_error(event, *args, **kwargs):
 
 if __name__ == "__main__":
     try:
+        logger.info(f"{Fore.CYAN}{'='*60}")
+        logger.info(f"{Fore.CYAN}Starting VEX Discord Bot...")
+        logger.info(f"{Fore.CYAN}{'='*60}")
         bot.run(TOKEN, log_handler=None)  # We're using our own logging config
     except KeyboardInterrupt:
-        logger.info("Received keyboard interrupt, shutting down...")
+        logger.info(f"{Fore.YELLOW}Received keyboard interrupt, shutting down...")
     except Exception as e:
-        logger.error(f"Fatal error: {e}")
+        logger.critical(f"{Fore.RED}Fatal error: {e}", exc_info=True)
     finally:
-        logger.info("Bot shutdown complete")
+        logger.info(f"{Fore.GREEN}Bot shutdown complete")
