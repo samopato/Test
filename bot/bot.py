@@ -15,204 +15,122 @@ from dotenv import load_dotenv
 # -- Setup & Configuration
 # -----------------------------------
 logging.basicConfig(level=logging.INFO)
+load_dotenv()
 
-# Define Paths
-ROBLOX_VEX_PATH = "/sdcard/Android/data/com.roblox.client/files/gloop/external/Workspace/vex"
-BASE_DIR = os.path.join(ROBLOX_VEX_PATH, "bot")
-DATA_DIR = os.path.join(BASE_DIR, '..', 'data')
-env_path = os.path.join(BASE_DIR, '.env')
-
-load_dotenv(dotenv_path=env_path)
-
-# Credentials
 TOKEN = os.getenv('DISCORD_TOKEN')
 ROBLOX_COOKIE = os.getenv('ROBLOX_COOKIE')
 
-# State Handling
-user_selections = {}  # Stores {user_id: {place_id, job_id, color}}
+# Webhook/Channel IDs
+LOG_CHANNEL_ID = 1462534721517916465
 
 # -----------------------------------
-# -- Helper Functions
+# -- Roblox Data Helpers
 # -----------------------------------
 
-def get_authenticated_user(cookie):
-    """Automatically gets your Roblox ID from the cookie."""
+def get_auth_id(cookie):
     try:
-        resp = requests.get(
-            "https://users.roblox.com/v1/users/authenticated",
-            cookies={".ROBLOSECURITY": cookie}
-        )
-        if resp.status_code == 200:
-            user = resp.json()
-            print(f"✅ Authenticated as: {user['name']} ({user['id']})")
-            return user['id']
-    except Exception as e:
-        print(f"❌ Auth Error: {e}")
-    return None
+        r = requests.get("https://users.roblox.com/v1/users/authenticated", cookies={".ROBLOSECURITY": cookie}, timeout=5)
+        return r.json().get('id') if r.status_code == 200 else None
+    except: return None
 
-# Load ID immediately
-MY_ROBLOX_ID = get_authenticated_user(ROBLOX_COOKIE) if ROBLOX_COOKIE else None
+MY_ROBLOX_ID = get_auth_id(ROBLOX_COOKIE)
 
-def get_roblox_friends():
+def get_friend_options():
     """Fetches online friends for the dropdown."""
-    if not MY_ROBLOX_ID or not ROBLOX_COOKIE:
-        return []
-
     try:
-        # 1. Get Friend List
-        friends_resp = requests.get(
-            f"https://friends.roblox.com/v1/users/{MY_ROBLOX_ID}/friends",
-            cookies={".ROBLOSECURITY": ROBLOX_COOKIE}
-        )
-        friend_ids = [f["id"] for f in friends_resp.json()["data"]]
-
-        if not friend_ids: return []
-
-        # 2. Check Presence
-        presence_resp = requests.post(
-            "https://presence.roblox.com/v1/presence/users",
-            json={"userIds": friend_ids},
-            cookies={".ROBLOSECURITY": ROBLOX_COOKIE}
-        )
+        f_resp = requests.get(f"https://friends.roblox.com/v1/users/{MY_ROBLOX_ID}/friends", cookies={".ROBLOSECURITY": cookie}, timeout=5)
+        ids = [f["id"] for f in f_resp.json()["data"]]
+        p_resp = requests.post("https://presence.roblox.com/v1/presence/users", json={"userIds": ids}, cookies={".ROBLOSECURITY": cookie}, timeout=5)
         
         options = []
-        for p in presence_resp.json()["userPresences"]:
-            # 2 = In Game, 1 = Online, 0 = Offline
+        for p in p_resp.json()["userPresences"]:
             if p["userPresenceType"] in [1, 2]:
-                status_icon = "🟢" if p["userPresenceType"] == 2 else "🔵"
-                desc = p.get("lastLocation", "Browsing Website")
-                
-                # Value format: "UserID|PlaceID|JobID"
+                icon = "🟢" if p["userPresenceType"] == 2 else "🔵"
                 val = f"{p['userId']}|{p.get('placeId', 0)}|{p.get('gameId', '0')}"
-                
-                options.append({
-                    "label": f"{status_icon} {p['lastUserName']}",
-                    "value": val,
-                    "description": desc[:100]
-                })
-        return options[:25] # Discord limit
-    except Exception as e:
-        print(f"API Error: {e}")
-        return []
+                options.append({"label": f"{icon} {p['lastUserName']}", "value": val, "description": p.get("lastLocation", "Online")[:100]})
+        return options[:25]
+    except: return []
 
-def build_panel_payload(color, options, selected_value=None):
-    """Constructs the JSON for the Type 17 component panel."""
-    
-    # If options is empty (no friends online), add a placeholder
+def create_panel_json(color, options, selected_val=None, place_id="None", game_id="None"):
+    """
+    Constructs the experimental Type 17 Panel.
+    Includes the new Stats section for PlaceID and GameID.
+    """
     if not options:
-        options = [{"label": "No friends online", "value": "null", "description": "Try again later"}]
-
-    # Mark the selected option as default if one exists
-    if selected_value:
+        options = [{"label": "No friends online", "value": "null"}]
+    
+    if selected_val:
         for opt in options:
-            if opt["value"] == selected_value:
-                opt["default"] = True
-            else:
-                opt["default"] = False
+            opt["default"] = (opt["value"] == selected_val)
 
-    return [
-        {
-            "type": 17, # Container
-            "accent_color": color, 
-            "components": [
-                {"type": 12, "items": [{"media": {"url": "https://cdn.discohook.app/tenor/trump-laugh-gif-16069436437887441139.gif"}}]},
-                {"type": 14, "divider": True},
-                {"type": 10, "content": "**Player to join**"},
-                {
-                    "type": 1,
-                    "components": [{
-                        "type": 3,
-                        "custom_id": "player_select",
-                        "placeholder": "Choose a player...",
-                        "options": options
-                    }]
-                },
-                {
-                    "type": 1,
-                    "components": [
-                        {"type": 2, "style": 1, "label": "Start", "custom_id": "start_btn"},
-                        {"type": 2, "style": 4, "label": "Rejoin", "custom_id": "rejoin_btn"}
-                    ]
-                }
-            ]
-        }
-    ]
+    return [{
+        "type": 17, 
+        "accent_color": color,
+        "components": [
+            {"type": 12, "items": [{"media": {"url": "https://cdn.discohook.app/tenor/trump-laugh-gif-16069436437887441139.gif"}}]},
+            {"type": 14, "divider": True},
+            {"type": 10, "content": f"📊 **SESSION STATS**\n**PlaceID:** `{place_id}`\n**GameID:** `{game_id}`"},
+            {"type": 14, "divider": True},
+            {"type": 1, "components": [{"type": 3, "custom_id": "player_select", "options": options, "placeholder": "Select target player..."}]},
+            {"type": 1, "components": [
+                {"type": 2, "style": 1, "label": "Start Join", "custom_id": "start_btn"},
+                {"type": 2, "style": 4, "label": "Force Rejoin", "custom_id": "rejoin_btn"}
+            ]}
+        ]
+    }]
 
 # -----------------------------------
-# -- Bot Class
+# -- Bot Core
 # -----------------------------------
 
 class VexBot(commands.Bot):
     def __init__(self):
-        super().__init__(
-            command_prefix="!", 
-            intents=discord.Intents.all(),
-            help_command=commands.DefaultHelpCommand()
-        )
+        super().__init__(command_prefix="!", intents=discord.Intents.all())
         self.connected_clients = set()
+        self.current_selection = {} # Stores {user_id: {place, job, val}}
 
     async def setup_hook(self):
-        # Start WebSocket Server
-        await websockets.serve(self.ws_handler, "127.0.0.1", 8765, reuse_address=True)
-        print("🚀 WebSocket Server listening on ws://127.0.0.1:8765")
+        self.loop.create_task(self.start_ws())
         await self.tree.sync()
 
-    async def ws_handler(self, websocket):
-        self.connected_clients.add(websocket)
-        channel = self.get_channel(1462534721517916465)
-        if channel: await channel.send("🔗 Roblox Connected!")
-        
+    async def start_ws(self):
         try:
-            await websocket.wait_closed()
+            async with websockets.serve(self.ws_handler, "127.0.0.1", 8765, reuse_address=True):
+                await asyncio.Future()
+        except Exception as e:
+            logging.error(f"WebSocket Server Error: {e}")
+
+    async def ws_handler(self, ws):
+        self.connected_clients.add(ws)
+        log_ch = self.get_channel(LOG_CHANNEL_ID)
+        if log_ch: await log_ch.send("🔗 **Client linked to VEX WebSocket**")
+        try:
+            await ws.wait_closed()
         finally:
-            self.connected_clients.remove(websocket)
-            if channel: await channel.send("❌ Roblox Disconnected.")
-
-    async def on_message(self, message):
-        if message.author.bot or message.channel.id != 1459426707025952859:
-            return
-
-        payload = json.dumps({
-            "type": "chat",
-            "author": message.author.name,
-            "content": message.content
-        })
-        
-        if self.connected_clients:
-            await asyncio.gather(*[c.send(payload) for c in self.connected_clients], return_exceptions=True)
-
-        await self.process_commands(message)
+            self.connected_clients.remove(ws)
+            if log_ch: await log_ch.send("❌ **Client unlinked from WebSocket**")
 
 bot = VexBot()
 
 # -----------------------------------
-# -- Slash Commands
+# -- Commands & Logic
 # -----------------------------------
 
-@bot.tree.command(name="panel", description="Opens the VEX control panel")
+@bot.tree.command(name="panel", description="Owner Only: Deployment of the VEX Panel")
 async def panel(interaction: discord.Interaction):
+    # Owner Security Check
+    if not await bot.is_owner(interaction.user):
+        return await interaction.response.send_message("🚫 Developer access only.", ephemeral=True)
+
     await interaction.response.defer()
+    options = get_friend_options()
     
-    options = get_roblox_friends()
+    # Color Red (16711680) - Idle State
+    components = create_panel_json(16711680, options)
     
-    # Default Color: Red (16711680) because no one is selected yet
-    components = build_panel_payload(16711680, options)
-
-    # Use HTTP fallback to send experimental components
-    try:
-        route = discord.http.Route("POST", f"/webhooks/{bot.user.id}/{interaction.token}/messages/@original")
-        await bot.http.request(route, json={"components": components})
-    except Exception as e:
-        await interaction.followup.send(f"Failed to render panel: {e}")
-
-@bot.tree.command(name="restart", description="Restarts the bot")
-async def restart(interaction: discord.Interaction):
-    await interaction.response.send_message("🔄 Restarting...")
-    os.execv(sys.executable, [sys.executable] + sys.argv)
-
-# -----------------------------------
-# -- Interaction Handler (The Brain)
-# -----------------------------------
+    # Use Webhook Route for Type 17 rendering
+    route = discord.http.Route("POST", f"/webhooks/{bot.user.id}/{interaction.token}")
+    await bot.http.request(route, json={"components": components})
 
 @bot.event
 async def on_interaction(interaction: discord.Interaction):
@@ -220,72 +138,69 @@ async def on_interaction(interaction: discord.Interaction):
         return
 
     cid = interaction.data.get("custom_id")
-    
-    # --- 1. Dropdown Selection ---
+    uid = interaction.user.id
+
+    # -- HANDLE SELECT MENU --
     if cid == "player_select":
-        selected_val = interaction.data.get("values")[0]
+        val = interaction.data.get("values")[0]
+        if val == "null": return
         
-        if selected_val == "null":
-            await interaction.response.send_message("No friend selected.", ephemeral=True)
-            return
-
-        # Parse Data: UserID | PlaceID | JobID
-        parts = selected_val.split("|")
-        place_id = int(parts[1])
+        parts = val.split("|")
+        p_id, j_id = parts[1], parts[2]
         
-        # Determine Color: Green (3447003) if In-Game, Blue (32526) if Online
-        new_color = 3447003 if place_id > 0 else 32526
+        # Determine UI color: Green if in-game, Blue if online
+        new_color = 3447003 if int(p_id) > 0 else 32526
         
-        # Save selection state
-        user_selections[interaction.user.id] = {
-            "val": selected_val,
-            "place": place_id,
-            "job": parts[2]
-        }
+        # Update local bot state
+        bot.current_selection[uid] = {"place": p_id, "job": j_id, "val": val}
 
-        # Re-fetch options to rebuild the UI with the new color
-        # (We cache options briefly in a real app, but here we fetch fresh to be safe)
-        options = get_roblox_friends()
-        new_components = build_panel_payload(new_color, options, selected_val)
-
-        # Update the panel visually
+        # Update the Panel with Stats and Color
+        options = get_friend_options()
+        new_comps = create_panel_json(new_color, options, val, p_id, j_id)
+        
         try:
-            await interaction.response.edit_message(components=new_components)
-        except:
-            await interaction.response.send_message("Selection saved (UI update failed).", ephemeral=True)
+            await interaction.response.edit_message(components=new_comps)
+        except discord.HTTPException:
+            # Fallback for experimental component timeout
+            pass
 
-    # --- 2. Start Button ---
+    # -- HANDLE START BUTTON --
     elif cid == "start_btn":
-        data = user_selections.get(interaction.user.id)
+        data = bot.current_selection.get(uid)
+        if not data or int(data["place"]) == 0:
+            return await interaction.response.send_message("❌ Target not in a joinable session.", ephemeral=True)
         
-        if not data:
-            await interaction.response.send_message("⚠️ Select a player first!", ephemeral=True)
-            return
+        # Use roblox protocol to join
+        webbrowser.open(f"roblox://placeId={data['place']}&gameInstanceId={data['job']}")
+        await interaction.response.send_message(f"🚀 Launching Join: {data['place']}", ephemeral=True)
 
-        if data["place"] == 0:
-            await interaction.response.send_message("⚠️ Player is online but not in a game.", ephemeral=True)
-            return
-
-        # Launch Roblox
-        url = f"roblox://placeId={data['place']}&gameInstanceId={data['job']}"
-        webbrowser.open(url)
-        await interaction.response.send_message(f"🚀 Joining game...", ephemeral=True)
-
-    # --- 3. Rejoin Button (WebSocket) ---
+    # -- HANDLE REJOIN BUTTON --
     elif cid == "rejoin_btn":
         if not bot.connected_clients:
-            await interaction.response.send_message("❌ No Roblox client connected.", ephemeral=True)
-            return
-            
-        payload = json.dumps({"type": "rejoin"})
-        await asyncio.gather(*[c.send(payload) for c in bot.connected_clients], return_exceptions=True)
-        await interaction.response.send_message("🔄 Sent REJOIN command.", ephemeral=True)
+            return await interaction.response.send_message("❌ No Lua clients connected.", ephemeral=True)
+        
+        # WebSocket Broadcast
+        disconnected = set()
+        for ws in bot.connected_clients:
+            try:
+                await ws.send(json.dumps({"type": "rejoin"}))
+            except:
+                disconnected.add(ws)
+        
+        bot.connected_clients -= disconnected
+        await interaction.response.send_message("🔄 Rejoin request sent to all clients.", ephemeral=True)
 
 # -----------------------------------
-# -- Run
+# -- Error Handling
 # -----------------------------------
+@bot.tree.error
+async def on_app_command_error(interaction: discord.Interaction, error: app_commands.AppCommandError):
+    logging.error(f"Interaction Error: {error}")
+    if not interaction.response.is_done():
+        await interaction.response.send_message("⚠️ An internal error occurred.", ephemeral=True)
+
 if __name__ == "__main__":
     if not TOKEN:
-        print("CRITICAL: Missing DISCORD_TOKEN in .env")
+        print("CRITICAL: DISCORD_TOKEN is missing from .env")
     else:
         bot.run(TOKEN)
