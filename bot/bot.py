@@ -49,11 +49,13 @@ class VexBot(commands.Bot):
         
         await self.tree.sync()
         print("✅ Slash commands synced.")
-
-    channel = self.get_channel(1462534721517916465)
     
     async def ws_handler(self, websocket):
         """ Handles incoming Lua connections """
+
+        channel = self.get_channel(1462534721517916465)
+
+        
         await channel.send("🔗 Roblox client connected to WebSocket!")
         self.connected_lua_clients.add(websocket)
         try:
@@ -203,6 +205,7 @@ if __name__ == "__main__":
         bot.run(TOKEN)
     except Exception as e:
         print(f"Failed to start bot: {e}")
+
 
 
 
