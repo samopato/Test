@@ -1,11 +1,11 @@
 import os
 import sys
 import json
-import android
 import discord
 import logging
 import asyncio # Added for better sync handling
 import websockets
+import webbrowser
 from discord.ext import commands
 from discord import app_commands # Crucial for slash commands
 from dotenv import load_dotenv
@@ -23,6 +23,8 @@ SETTINGS_FILE = os.path.join(DATA_DIR, 'settings.json')
 env_path = os.path.join(BASE_DIR, '.env')
 load_dotenv(dotenv_path=env_path)
 TOKEN = os.getenv('DISCORD_TOKEN')
+
+outputChannel = bot.get_channel(123456789012345678)
 
 #-----------------------------------
 #-- Bot class
@@ -52,13 +54,13 @@ class VexBot(commands.Bot):
 
     async def ws_handler(self, websocket):
         """ Handles incoming Lua connections """
-        print("🔗 Roblox client connected to WebSocket!")
+        await channel.send("🔗 Roblox client connected to WebSocket!")
         self.connected_lua_clients.add(websocket)
         try:
             await websocket.wait_closed()
         finally:
             self.connected_lua_clients.remove(websocket)
-            print("❌ Roblox client disconnected.")
+            await channel.send("❌ Roblox client disconnected.")
 
     async def on_message(self, message):
         """ Captures every message and sends it to Lua """
@@ -101,9 +103,9 @@ async def ping(interaction: discord.Interaction):
 @bot.tree.command(name="test", description="Opens Chrome on Android device")
 async def test(interaction: discord.Interaction):
     url = "http://www.Google.com"
-    androidhelper.Android().startActivity("android.intent.action.VIEW", url)
+    webbrowser.get(chrome_path).open(url)
 
-    await interaction.response.send_message("🌐 Opening Chrome on the device...", ephemeral=True)
+    await interaction.response.send_message("🌐 Opening browser on the device...", ephemeral=True)
 
 @bot.tree.command(name="status", description="Shows the bot's current file path status")
 async def status(interaction: discord.Interaction):
@@ -201,6 +203,7 @@ if __name__ == "__main__":
         bot.run(TOKEN)
     except Exception as e:
         print(f"Failed to start bot: {e}")
+
 
 
 
