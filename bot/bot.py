@@ -419,22 +419,19 @@ async def panel_command(interaction: discord.Interaction):
         # Build panel with red accent (no selection)
         components = build_v2_panel(16711680, options)  # Red: 16711680
         
-        # Send the panel as a new message in the channel (not as a followup)
-        # V2 components need to be sent via webhook, not as interaction response
-        webhook = await interaction.channel.create_webhook(name="VEX Panel", reason="Control Panel Creation")
-        try:
-            await webhook.send(
-                content="**VEX Control Panel**",
-                components=components,
-                username="VEX Control"
-            )
-            logger.info(f"{Fore.GREEN}✓ Panel created by {interaction.user}")
-            
-            # Update the ephemeral message
-            await interaction.edit_original_response(content="✅ Panel created!")
-        finally:
-            # Clean up the webhook
-            await webhook.delete()
+        # Send via raw HTTP request (V2 components require this method)
+        payload = {
+            "content": "**VEX Control Panel**",
+            "components": components
+        }
+        
+        route = discord.http.Route("POST", f"/channels/{interaction.channel.id}/messages")
+        await bot.http.request(route, json=payload)
+        
+        logger.info(f"{Fore.GREEN}✓ Panel created by {interaction.user}")
+        
+        # Update the ephemeral message
+        await interaction.edit_original_response(content="✅ Panel created!")
     
     except discord.errors.InteractionResponded:
         logger.error(f"{Fore.RED}Interaction already responded to")
@@ -443,9 +440,9 @@ async def panel_command(interaction: discord.Interaction):
         logger.error(f"{Fore.RED}Permission error: {e}", exc_info=True)
         try:
             if interaction.response.is_done():
-                await interaction.edit_original_response(content="❌ I don't have permission to create webhooks in this channel.")
+                await interaction.edit_original_response(content="❌ I don't have permission to send messages in this channel.")
             else:
-                await interaction.response.send_message("❌ I don't have permission to create webhooks in this channel.", ephemeral=True)
+                await interaction.response.send_message("❌ I don't have permission to send messages in this channel.", ephemeral=True)
         except:
             pass
     
