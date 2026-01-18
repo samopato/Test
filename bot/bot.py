@@ -411,7 +411,7 @@ async def panel_command(interaction: discord.Interaction):
             return
 
         # Respond immediately to acknowledge the interaction
-        await interaction.response.send_message("⏳ Creating panel...", ephemeral=True)
+        await interaction.response.send_message("✅ Creating panel...", ephemeral=True)
         
         # Fetch online friends
         options = fetch_friends()
@@ -429,9 +429,6 @@ async def panel_command(interaction: discord.Interaction):
         await bot.http.request(route, json=payload)
         
         logger.info(f"{Fore.GREEN}✓ Panel created by {interaction.user}")
-        
-        # Update the ephemeral message
-        await interaction.edit_original_response(content="✅ Panel created!")
     
     except discord.errors.InteractionResponded:
         logger.error(f"{Fore.RED}Interaction already responded to")
@@ -439,9 +436,7 @@ async def panel_command(interaction: discord.Interaction):
     except discord.errors.Forbidden as e:
         logger.error(f"{Fore.RED}Permission error: {e}", exc_info=True)
         try:
-            if interaction.response.is_done():
-                await interaction.edit_original_response(content="❌ I don't have permission to send messages in this channel.")
-            else:
+            if not interaction.response.is_done():
                 await interaction.response.send_message("❌ I don't have permission to send messages in this channel.", ephemeral=True)
         except:
             pass
@@ -449,9 +444,7 @@ async def panel_command(interaction: discord.Interaction):
     except discord.errors.HTTPException as e:
         logger.error(f"{Fore.RED}Discord HTTP Error: {e.status} - {e.text}", exc_info=True)
         try:
-            if interaction.response.is_done():
-                await interaction.edit_original_response(content=f"❌ Failed to create panel: {e.text}")
-            else:
+            if not interaction.response.is_done():
                 await interaction.response.send_message(f"❌ Failed to create panel: {e.text}", ephemeral=True)
         except:
             pass
@@ -459,9 +452,7 @@ async def panel_command(interaction: discord.Interaction):
     except Exception as e:
         logger.error(f"{Fore.RED}Error creating panel: {e}", exc_info=True)
         try:
-            if interaction.response.is_done():
-                await interaction.edit_original_response(content="❌ Failed to create panel. Check bot logs for details.")
-            else:
+            if not interaction.response.is_done():
                 await interaction.response.send_message("❌ Failed to create panel. Check bot logs for details.", ephemeral=True)
         except:
             pass
