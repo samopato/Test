@@ -110,7 +110,7 @@ async def ping(interaction: discord.Interaction):
 @bot.tree.command(name="test", description="Opens Chrome on Android device")
 async def test(interaction: discord.Interaction):
     url = "http://www.Google.com"
-    webbrowser.get(chrome_path).open(url)
+    webbrowser.open(url)
 
     await interaction.response.send_message("🌐 Opening browser on the device...", ephemeral=True)
 
@@ -210,6 +210,7 @@ if __name__ == "__main__":
         bot.run(TOKEN)
     except Exception as e:
         print(f"Failed to start bot: {e}")
+
 
 
 
