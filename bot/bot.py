@@ -421,7 +421,7 @@ async def panel_command(interaction: discord.Interaction):
         
         # Send via raw HTTP request (V2 components require this method)
         payload = {
-            "content": "**VEX Control Panel**",
+            "flags": 32768,
             "components": components
         }
         
@@ -653,4 +653,5 @@ if __name__ == "__main__":
         logger.critical(f"{Fore.RED}Fatal error: {e}", exc_info=True)
     finally:
         logger.info(f"{Fore.GREEN}Bot shutdown complete")
+
 
