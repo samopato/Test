@@ -3,6 +3,7 @@ import sys
 import json
 import discord
 import logging
+from selenium import webdriver
 import asyncio
 import websockets
 import webbrowser
@@ -19,6 +20,8 @@ init(autoreset=True)
 # -----------------------------------
 # -- Colored Logging Setup
 # -----------------------------------
+
+driver=webdriver.Chrome()
 
 class ColoredFormatter(logging.Formatter):
     """Custom formatter with colors for different log levels."""
@@ -592,8 +595,13 @@ async def on_interaction(interaction: discord.Interaction):
                 return
             
             # Open Roblox game
+
+            driver.close()
+            
             roblox_url = f"roblox://placeId={place_id}&gameInstanceId={job_id}"
-            webbrowser.open(roblox_url)
+            driver.get("https://newholland.com")
+
+            ## driver.implicitly_wait(5)
             
             await interaction.response.send_message(
                 f"🚀 Joining game...\n**PlaceID:** `{place_id}`\n**JobID:** `{job_id}`",
@@ -698,6 +706,7 @@ if __name__ == "__main__":
         logger.critical(f"{Fore.RED}Fatal error: {e}", exc_info=True)
     finally:
         logger.info(f"{Fore.GREEN}Bot shutdown complete")
+
 
 
 
