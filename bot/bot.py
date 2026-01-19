@@ -110,69 +110,71 @@ if not MY_ROBLOX_ID:
     logger.warning("Could not authenticate with Roblox. Friend features may not work.")
 
 def fetch_friends() -> List[Dict[str, str]]:
-    """Fetches online friends and their profile names for select menu options."""
+    """Fetches online friends and their profile names correctly."""
     if not MY_ROBLOX_ID:
-        logger.warning("Cannot fetch friends: Not authenticated with Roblox")
+        logger.warning("Not authenticated")
         return []
     
     try:
         headers = {".ROBLOSECURITY": ROBLOX_COOKIE}
         
-        # 1. Get online friends list
+        # 1. Get Friend IDs
         friends_resp = requests.get(
             f"https://friends.roblox.com/v1/users/{MY_ROBLOX_ID}/friends/online",
-            cookies=headers,
-            timeout=5
+            cookies=headers, timeout=5
         )
-        if friends_resp.status_code != 200: return []
-        
-        friend_ids = [friend["id"] for friend in friends_resp.json().get("data", [])]
+        friend_ids = [f["id"] for f in friends_resp.json().get("data", [])]
         if not friend_ids: return []
 
-        # 2. Get Presence (to see who is actually In-Game/Online)
-        presence_resp = requests.post(
-            "https://presence.roblox.com/v1/presence/users",
-            json={"userIds": friend_ids},
-            cookies=headers,
-            timeout=5
-        )
-        if presence_resp.status_code != 200: return []
-        
-        # 3. Get Profiles (Names) for all online friends
-        # This fixes the "Unknown" name issue
+        # 2. Get Names from Profile API (The Fix is here)
+        # We request multiple name fields to be safe
         profile_url = "https://apis.roblox.com/user-profile-api/v1/user/profiles/get-profiles"
         profile_resp = requests.post(
             profile_url,
-            json={"userIds": friend_ids, "fields": ["names.combinedName"]},
+            json={
+                "userIds": friend_ids, 
+                "fields": ["names.combinedName", "names.displayName", "names.username"]
+            },
             cookies=headers
         )
         
-        # Map IDs to Names for quick lookup
         names_map = {}
         if profile_resp.status_code == 200:
             profiles = profile_resp.json().get("userProfiles", [])
-            names_map = {p["userId"]: p["names"]["combinedName"] for p in profiles}
+            for p in profiles:
+                uid = p.get("userId")
+                names = p.get("names", {})
+                # Try combinedName first, then displayName, then username
+                resolved_name = names.get("combinedName") or names.get("displayName") or names.get("username")
+                if uid and resolved_name:
+                    names_map[uid] = resolved_name
 
+        # 3. Get Presence and Build Options
+        pres_resp = requests.post(
+            "https://presence.roblox.com/v1/presence/users",
+            json={"userIds": friend_ids}, cookies=headers
+        )
+        
         options = []
-        for presence in presence_resp.json().get("userPresences", []):
-            if presence["userPresenceType"] in [1, 2]: # 1=Online, 2=In-Game
+        for presence in pres_resp.json().get("userPresences", []):
+            if presence["userPresenceType"] in [1, 2]:
                 uid = presence['userId']
-                display_name = names_map.get(uid, f"User {uid}")
+                # If name_map failed, we use the Presence API's lastUserName as a backup
+                name = names_map.get(uid) or presence.get('lastUserName') or f"User {uid}"
                 
                 icon = "🟢" if presence["userPresenceType"] == 2 else "🔵"
-                place_id = presence.get('placeId', 0)
-                game_id = presence.get('gameId', '0')
+                val = f"{uid}|{presence.get('placeId', 0)}|{presence.get('gameId', '0')}"
                 
                 options.append({
-                    "label": display_name[:100],
-                    "value": f"{uid}|{place_id}|{game_id}",
+                    "label": name[:100],
+                    "value": val,
                     "description": f"{icon} {presence.get('lastLocation', 'Online')[:100]}"
                 })
         
-        return options[:25] # Discord limit
+        return options[:25]
         
     except Exception as e:
-        logger.error(f"Error fetching friends: {e}")
+        logger.error(f"Fetch failed: {e}")
         return []
 
 # -----------------------------------
@@ -656,6 +658,7 @@ if __name__ == "__main__":
         logger.critical(f"{Fore.RED}Fatal error: {e}", exc_info=True)
     finally:
         logger.info(f"{Fore.GREEN}Bot shutdown complete")
+
 
 
 
