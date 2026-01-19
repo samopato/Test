@@ -3,11 +3,11 @@ import sys
 import json
 import discord
 import logging
-from selenium import webdriver
 import asyncio
 import websockets
 import webbrowser
 import requests
+from selenium import webdriver
 from discord.ext import commands
 from discord import app_commands
 from dotenv import load_dotenv
@@ -596,11 +596,15 @@ async def on_interaction(interaction: discord.Interaction):
             
             # Open Roblox game
 
-            driver.close()
+            ##driver.close()
+
+            webbrowser.open("about:blank", 1)
             
             roblox_url = f"roblox://placeId={place_id}&gameInstanceId={job_id}"
-            driver.get("https://newholland.com")
 
+            webbrowser.open(roblox_url)
+            
+            ##driver.get("https://newholland.com")
             ## driver.implicitly_wait(5)
             
             await interaction.response.send_message(
@@ -706,6 +710,7 @@ if __name__ == "__main__":
         logger.critical(f"{Fore.RED}Fatal error: {e}", exc_info=True)
     finally:
         logger.info(f"{Fore.GREEN}Bot shutdown complete")
+
 
 
 
