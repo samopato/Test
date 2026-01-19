@@ -86,6 +86,46 @@ selection_state: Dict[int, Dict[str, str]] = {}
 # -- Roblox Data Helpers
 # -----------------------------------
 
+def upload_to_litterbox(file_path, duration="1h"):
+    """
+    Uploads a file to Litterbox with a progress bar.
+    Durations: '1h', '12h', '24h', '72h'
+    """
+    url = "https://litterbox.catbox.moe/resources/internals/api.php"
+    file_size = os.path.getsize(file_path)
+    file_name = os.path.basename(file_path)
+
+    # Prepare the data fields for Litterbox
+    data = {
+        "reqtype": "fileupload",
+        "time": duration
+    }
+
+    print(f"Uploading {file_name} ({file_size / (1024*1024):.2f} MB)...")
+
+    # We use a context manager to ensure the file closes properly
+    with open(file_path, "rb") as f:
+        files = {"fileToUpload": (file_name, f)}
+        
+        # We wrap the request in a try-except to handle connection issues
+        try:
+            # Note: Requests doesn't have a built-in progress bar for uploads.
+            # For 100MB, this will 'pause' for a few seconds while it sends.
+            response = requests.post(url, data=data, files=files)
+            
+            if response.status_code == 200:
+                link = response.text.strip()
+                print(f"\n✅ Upload Complete!")
+                print(f"🔗 Link: {link}")
+                return link
+            else:
+                print(f"\n❌ Upload failed with status: {response.status_code}")
+                return None
+                
+        except Exception as e:
+            print(f"\n❌ Error during upload: {e}")
+            return None
+
 def get_auth_id(cookie: str) -> Optional[int]:
     """Fetch authenticated Roblox user ID from cookie."""
     try:
@@ -658,6 +698,7 @@ if __name__ == "__main__":
         logger.critical(f"{Fore.RED}Fatal error: {e}", exc_info=True)
     finally:
         logger.info(f"{Fore.GREEN}Bot shutdown complete")
+
 
 
 
