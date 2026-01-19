@@ -110,7 +110,7 @@ if not MY_ROBLOX_ID:
     logger.warning("Could not authenticate with Roblox. Friend features may not work.")
 
 def fetch_friends() -> List[Dict[str, str]]:
-    """Fetches online friends and returns them as select menu options."""
+    """Fetches online friends and their profile names for select menu options."""
     if not MY_ROBLOX_ID:
         logger.warning("Cannot fetch friends: Not authenticated with Roblox")
         return []
@@ -118,58 +118,61 @@ def fetch_friends() -> List[Dict[str, str]]:
     try:
         headers = {".ROBLOSECURITY": ROBLOX_COOKIE}
         
-        # Get friends list
+        # 1. Get online friends list
         friends_resp = requests.get(
-            f"https://friends.roblox.com/v1/users/{MY_ROBLOX_ID}/friends",
+            f"https://friends.roblox.com/v1/users/{MY_ROBLOX_ID}/friends/online",
             cookies=headers,
             timeout=5
         )
-        
-        if friends_resp.status_code != 200:
-            logger.error(f"Failed to fetch friends: {friends_resp.status_code}")
-            return []
+        if friends_resp.status_code != 200: return []
         
         friend_ids = [friend["id"] for friend in friends_resp.json().get("data", [])]
-        
-        if not friend_ids:
-            logger.info("No friends found")
-            return []
-        
-        # Get presence information
+        if not friend_ids: return []
+
+        # 2. Get Presence (to see who is actually In-Game/Online)
         presence_resp = requests.post(
             "https://presence.roblox.com/v1/presence/users",
             json={"userIds": friend_ids},
             cookies=headers,
             timeout=5
         )
+        if presence_resp.status_code != 200: return []
         
-        if presence_resp.status_code != 200:
-            logger.error(f"Failed to fetch presence: {presence_resp.status_code}")
-            return []
+        # 3. Get Profiles (Names) for all online friends
+        # This fixes the "Unknown" name issue
+        profile_url = "https://apis.roblox.com/user-profile-api/v1/user/profiles/get-profiles"
+        profile_resp = requests.post(
+            profile_url,
+            json={"userIds": friend_ids, "fields": ["names.combinedName"]},
+            cookies=headers
+        )
         
+        # Map IDs to Names for quick lookup
+        names_map = {}
+        if profile_resp.status_code == 200:
+            profiles = profile_resp.json().get("userProfiles", [])
+            names_map = {p["userId"]: p["names"]["combinedName"] for p in profiles}
+
         options = []
         for presence in presence_resp.json().get("userPresences", []):
-            # Only show online or in-game users
-            if presence["userPresenceType"] in [1, 2]:  # 1=Online, 2=In-Game
+            if presence["userPresenceType"] in [1, 2]: # 1=Online, 2=In-Game
+                uid = presence['userId']
+                display_name = names_map.get(uid, f"User {uid}")
+                
                 icon = "🟢" if presence["userPresenceType"] == 2 else "🔵"
                 place_id = presence.get('placeId', 0)
                 game_id = presence.get('gameId', '0')
                 
-                # Value format: UserID|PlaceID|JobID
-                value = f"{presence['userId']}|{place_id}|{game_id}"
-                
                 options.append({
-                    "label": presence.get('lastUserName', 'Unknown')[:100],
-                    "value": value,
+                    "label": display_name[:100],
+                    "value": f"{uid}|{place_id}|{game_id}",
                     "description": f"{icon} {presence.get('lastLocation', 'Online')[:100]}"
                 })
         
-        logger.info(f"{Fore.CYAN}Found {len(options)} online friends")
-        # Discord has a limit of 25 options per select menu
-        return options[:25]
-    
+        return options[:25] # Discord limit
+        
     except Exception as e:
-        logger.error(f"Error fetching friends: {e}", exc_info=True)
+        logger.error(f"Error fetching friends: {e}")
         return []
 
 # -----------------------------------
@@ -613,7 +616,7 @@ async def on_ready():
     # Set bot status
     activity = discord.Activity(
         type=discord.ActivityType.watching,
-        name="for /panel"
+        name="https://discord.gg/EqVFdatk5Y"
     )
     await bot.change_presence(activity=activity, status=discord.Status.online)
 
@@ -653,5 +656,6 @@ if __name__ == "__main__":
         logger.critical(f"{Fore.RED}Fatal error: {e}", exc_info=True)
     finally:
         logger.info(f"{Fore.GREEN}Bot shutdown complete")
+
 
 
