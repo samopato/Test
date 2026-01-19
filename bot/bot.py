@@ -7,7 +7,6 @@ import asyncio
 import websockets
 import webbrowser
 import requests
-from selenium import webdriver
 from discord.ext import commands
 from discord import app_commands
 from dotenv import load_dotenv
@@ -20,8 +19,6 @@ init(autoreset=True)
 # -----------------------------------
 # -- Colored Logging Setup
 # -----------------------------------
-
-driver=webdriver.Chrome()
 
 class ColoredFormatter(logging.Formatter):
     """Custom formatter with colors for different log levels."""
@@ -710,6 +707,7 @@ if __name__ == "__main__":
         logger.critical(f"{Fore.RED}Fatal error: {e}", exc_info=True)
     finally:
         logger.info(f"{Fore.GREEN}Bot shutdown complete")
+
 
 
 
