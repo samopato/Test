@@ -1422,16 +1422,25 @@ USER PROMPT:
 end
 
 local socket = WebSocket.connect("ws://localhost:8765")
-socket.OnMessage:Connect(function(message)
-    warn(`[VEX]: {message}`)
+socket.OnMessage:Connect(function(data)
+    warn(`[VEX]: {data}`)
 
-	local message = HttpService:JSONDecode(message)
+	if not data then return end
 
-	local prefix = string.sub(message.content, 0, 1)
+	local message = HttpService:JSONDecode(data)
+	
+	if message.type == "rejoin" then
+		commands["rejoin"].callback()
+		return
+	end
+				
+	local content = message.content
+
+	local prefix = string.sub(tostring(content), 0, 1)
 
 	if prefix ~= settings.prefix then return end
 
-	local name, args, undo = parseCommand(message.content)	
+	local name, args, undo = parseCommand(content)	
 	local cmd = commands[name]
 	local callback = not undo and cmd.callback or cmd.undo
 
