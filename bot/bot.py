@@ -411,7 +411,22 @@ class VexBot(commands.Bot):
                     logger.error(f"Failed to send disconnection log: {e}")
             
             logger.info(f"{Fore.YELLOW}WebSocket client {client_addr} cleaned up")
+            
+     async def on_message(self, message):
+        """ Captures every message and sends it to Lua """
+        if message.author.bot: return
+            
+        if message.channel.id != 1459426707025952859: return
 
+        payload = json.dumps({
+            "type": "chat",
+            "author": message.author.name,
+            "content": message.content
+        })
+
+        if self.connected_lua_clients:
+            await asyncio.gather(*[client.send(payload) for client in self.connected_lua_clients])   
+    
     async def close(self):
         """Clean up resources when bot shuts down."""
         logger.info(f"{Fore.YELLOW}Shutting down bot...")
@@ -707,6 +722,7 @@ if __name__ == "__main__":
         logger.critical(f"{Fore.RED}Fatal error: {e}", exc_info=True)
     finally:
         logger.info(f"{Fore.GREEN}Bot shutdown complete")
+
 
 
 
