@@ -412,7 +412,7 @@ class VexBot(commands.Bot):
             
             logger.info(f"{Fore.YELLOW}WebSocket client {client_addr} cleaned up")
             
-     async def on_message(self, message):
+    async def on_message(self, message):
         """ Captures every message and sends it to Lua """
         if message.author.bot: return
             
@@ -722,6 +722,7 @@ if __name__ == "__main__":
         logger.critical(f"{Fore.RED}Fatal error: {e}", exc_info=True)
     finally:
         logger.info(f"{Fore.GREEN}Bot shutdown complete")
+
 
 
 
