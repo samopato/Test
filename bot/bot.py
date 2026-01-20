@@ -424,8 +424,8 @@ class VexBot(commands.Bot):
             "content": message.content
         })
 
-        if self.connected_lua_clients:
-            await asyncio.gather(*[client.send(payload) for client in self.connected_lua_clients])   
+        if self.connected_clients:
+            await asyncio.gather(*[client.send(payload) for client in self.connected_clients])   
     
     async def close(self):
         """Clean up resources when bot shuts down."""
@@ -722,6 +722,7 @@ if __name__ == "__main__":
         logger.critical(f"{Fore.RED}Fatal error: {e}", exc_info=True)
     finally:
         logger.info(f"{Fore.GREEN}Bot shutdown complete")
+
 
 
 
