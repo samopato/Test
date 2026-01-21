@@ -272,6 +272,19 @@ local commands do
 			bp.Parent = hat.Handle
 			bp.Position = hat.Handle.Position
 
+			--keep network ownership
+			for _, v in next, game:GetDescendants() do
+       			if not v:IsA("BasePart") then return end
+				
+				if v.AssemblyMass == "inf" then return end
+
+				RunService.Heartbeat:Connect(function()
+              		v.CustomPhysicalProperties = PhysicalProperties.new(0,0,0,0,0)
+            		v.Velocity = Vector3.new(25.70,0,0)
+          			v.RotVelocity = Vector3.new(9e9,9e9,9e9)
+      			end)
+  			end
+
 			--perm death
 			replicatesignal(localPlayer.ConnectDiedSignalBackend)
 			task.wait(Players.RespawnTime + 0.20)
@@ -1291,15 +1304,11 @@ USER PROMPT:
 			local orbitingParts = {}
 
 			local function isValidPart(part: Instance)			
-				if not part:IsA("BasePart") then return false end
+				if not part:IsA("BasePart") then return end
 
-				if part.Anchored == true then return false end
-
-				if part:IsA("Terrain") then return false end
-
-				if part.Parent == LocalPlayer.Character or part:IsDescendantOf(LocalPlayer.Character) then
-					return false
-				end
+				if part.AssemblyMass == "inf" then return end
+				
+				if part.Parent == LocalPlayer.Character or part:IsDescendantOf(LocalPlayer.Character) then return end
 
 				return true
 			end
