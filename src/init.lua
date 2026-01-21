@@ -273,17 +273,23 @@ local commands do
 			bp.Position = hat.Handle.Position
 
 			--keep network ownership
-			for _, v in next, game:GetDescendants() do
-       			if not v:IsA("BasePart") then return end
+			task.spawn(function()
+				for _, v in next, game:GetDescendants() do
+       				if not v:IsA("BasePart") then
+						return 
+					end
 				
-				if v.AssemblyMass == "inf" then return end
+					if v.AssemblyMass == "inf" or v.Anchored then 
+						return 
+					end
 
-				RunService.Heartbeat:Connect(function()
-              		v.CustomPhysicalProperties = PhysicalProperties.new(0,0,0,0,0)
-            		v.Velocity = Vector3.new(25.70,0,0)
-          			v.RotVelocity = Vector3.new(9e9,9e9,9e9)
-      			end)
-  			end
+					RunService.Heartbeat:Connect(function()
+	              		v.CustomPhysicalProperties = PhysicalProperties.new(0,0,0,0,0)
+            			v.Velocity = Vector3.new(25.70,0,0)
+          				v.RotVelocity = Vector3.new(9e9,9e9,9e9)
+      				end)
+  				end
+			end)
 
 			--perm death
 			replicatesignal(localPlayer.ConnectDiedSignalBackend)
