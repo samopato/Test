@@ -286,10 +286,12 @@ local commands do
        				attachment:Destroy()
     			end
 			end
-			
+
 			task.spawn(function()
-				bp.Position = targetRoot.Position
- 				hat.Handle.Position = targetRoot.Position
+				while RunService.Heartbeat:Wait() do
+					bp.Position = targetRoot.Position
+ 					hat.Handle.Position = targetRoot.Position
+				end
 			end)
 
 			workspace.Camera.CameraSubject = hat.Handle
