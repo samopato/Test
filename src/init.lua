@@ -280,13 +280,15 @@ local commands do
 					end
 				
 					if v.AssemblyMass == "inf" or v.Anchored then 
-						return 
+						return
 					end
 
 					RunService.Heartbeat:Connect(function()
+						sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge)
 	              		v.CustomPhysicalProperties = PhysicalProperties.new(0,0,0,0,0)
             			v.Velocity = Vector3.new(25.70,0,0)
           				v.RotVelocity = Vector3.new(9e9,9e9,9e9)
+						v.CanCollide = false,
       				end)
   				end
 			end)
