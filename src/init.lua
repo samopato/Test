@@ -879,10 +879,13 @@ USER PROMPT:
 				flingConn = nil
 			end
 
-			local function fling(hrp, hum, targetRoot)
-				if not hrp then return end
+			local function fling(hrp, hum, target)
+				if not (hrp and hum and target.Character) then return end
 
-				if not targetRoot or targetRoot and targetRoot.Parent:FindFirstChildOfClass("Humanoid").Sit then
+				local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
+				local targetHum = target.Character:FindFirstChildOfClass("Humanoid")
+				
+				if not targetRoot or (targetHum and targetHum.Sit) then
 					return true
 				end
 				
@@ -898,19 +901,14 @@ USER PROMPT:
 						
 						local hrp = localPlayer.Character:FindFirstChild("HumanoidRootPart")
 						local hum = localPlayer.Character:FindFirstChildOfClass("Humanoid")
-						local targetRoot = target.Character and target.Character:FindFirstChild("HumanoidRootPart")
-						
-						if not targetRoot then
-							continue
-						end
 
-						if not (hrp and hum) then
-							repeat task.wait() until localPlayer.Character:FindFirstChild("HumanoidRootPart")
+						if not localPlayer.Character then
+							localPlayer.CharacterAdded:Wait()
 						end
 
 						local success = false
 							
-						repeat success = fling(hrp, hum, targetRoot) RunService.Heartbeat:Wait() until success
+						repeat success = fling(hrp, hum, target) RunService.Heartbeat:Wait() until success
 					end
 				end
 			end)
