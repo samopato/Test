@@ -881,6 +881,10 @@ USER PROMPT:
 
 			local function fling(hrp, hum, targetRoot)
 				if not hrp then return end
+
+				if not targetRoot or targetRoot and targetRoot.Parent:FindFirstChildOfClass("Humanoid").Sit then
+					return true
+				end
 				
 				hrp.CFrame = targetRoot.CFrame
 				sethiddenproperty(hrp, "PhysicsRepRootPart", targetRoot)
@@ -904,7 +908,9 @@ USER PROMPT:
 							repeat task.wait() until localPlayer.Character:FindFirstChild("HumanoidRootPart")
 						end
 
-						repeat fling(hrp, hum, targetRoot) RunService.Heartbeat:Wait() until not target.Character:FindFirstChild("Head")
+						local success = false
+							
+						repeat success = fling(hrp, hum, targetRoot) RunService.Heartbeat:Wait() until success
 					end
 				end
 			end)
