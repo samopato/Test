@@ -343,6 +343,22 @@ local commands do
 	commands.god2 = {
 		rank = 1,
 		callback = function()
+			local humanoid = localPlayer.Character:WaitForChild("Humanoid")
+			local forceField = Instance.new("ForceField")
+			local original = hrp.CFrame			
+
+			forceField.Visible = false
+			forceField.Parent = localPlayer.Character
+
+			humanoid:SetStateEnabled(15, false)
+			humanoid.BreakJointsOnDeath = false
+			replicatesignal(localPlayer.kill)
+		end
+	}
+
+	commands.god2 = {
+		rank = 1,
+		callback = function()
 			local hrp = localPlayer.Character:WaitForChild("HumanoidRootPart")
 			local hum = localPlayer.Character:WaitForChild("Humanoid")
 			local original = hrp.CFrame
