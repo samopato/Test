@@ -879,6 +879,8 @@ USER PROMPT:
 				flingConn = nil
 			end
 
+			local tries = 0
+
 			local function fling(target)
 				local root = localPlayer.Character:FindFirstChild("HumanoidRootPart")
 				local humanoid = localPlayer.Character:FindFirstChildOfClass("Humanoid")				
@@ -893,15 +895,20 @@ USER PROMPT:
 					return true --in case player is is gone
 				end
 
-				if (targetHum.Sit or targetHum.Health <= 0)) then
+				if (argetHum.Sit or targetHum.Health <= 0 then
 					return true --in case player is sitting or dead
 				end
 
+				if tries > 20 then
+					return true
+				end
 			
 				hum:SetStateEnabled(15, false)	
 				root.CFrame = targetRoot.CFrame
 				sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
 				sethiddenproperty(humanoid, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
+
+				tries += 1
 			end
 			
 			flingConn = task.spawn(function()
@@ -912,7 +919,7 @@ USER PROMPT:
 						local success = false
 							
 						repeat success = fling(target) RunService.Heartbeat:Wait() until success
-						warn("success")
+						tries = 0
 					end
 				end
 			end)
