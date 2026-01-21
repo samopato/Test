@@ -1023,6 +1023,7 @@ USER PROMPT:
 				while heartbeat:Wait() do
 					if targetRoot and root then
 						hum.Sit = true
+						hum:ChangeState(math.random(1, 12))
 
 						for _,v in pairs(char:GetChildren()) do
 							if v:IsA("BasePart") then
