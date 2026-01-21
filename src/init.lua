@@ -878,8 +878,7 @@ USER PROMPT:
 			end
 
 			local function fling(hrp, hum, target)
-				if not (hrp and hum) then return true end
-
+				if not hrp then return true end
 
 				warn("tried to fling")
 				local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
