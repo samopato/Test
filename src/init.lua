@@ -340,7 +340,7 @@ local commands do
 		end
 	}
 
-	commands.god2 = {
+	commands.god3 = {
 		rank = 1,
 		callback = function()
 			local humanoid = localPlayer.Character:WaitForChild("Humanoid")
