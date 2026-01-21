@@ -882,10 +882,14 @@ USER PROMPT:
 
 				local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
 				local targetHum = target.Character:FindFirstChildOfClass("Humanoid")
+
+				warn("fling attempt1")
 				
 				if not targetRoot or (targetHum and targetHum.Sit) then
 					return true
 				end
+
+				warn("fling attempt2")
 				
 				hrp.CFrame = targetRoot.CFrame
 				sethiddenproperty(hrp, "PhysicsRepRootPart", targetRoot)
@@ -894,7 +898,6 @@ USER PROMPT:
 			
 			flingConn = task.spawn(function()
 				while RunService.Heartbeat:Wait() do
-					warn("flinging!")
 					for _,target in next, list do
 						if not target then continue end
 
@@ -903,7 +906,7 @@ USER PROMPT:
 						local success = false
 							
 						repeat success = fling(hrp, hum, target) RunService.Heartbeat:Wait() until success
-						warn("success!")
+						warn("success")
 					end
 				end
 			end)
