@@ -905,7 +905,7 @@ USER PROMPT:
 
 				tries += 1
 			
-				hum:SetStateEnabled(15, false)	
+				humanoid:SetStateEnabled(15, false)	
 				root.CFrame = targetRoot.CFrame
 				sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
 				sethiddenproperty(humanoid, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
