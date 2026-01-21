@@ -898,14 +898,13 @@ USER PROMPT:
 				while RunService.Heartbeat:Wait() do
 					for _,target in next, list do
 						if not target then continue end
-						
-						local hrp = localPlayer.Character:FindFirstChild("HumanoidRootPart")
-						local hum = localPlayer.Character:FindFirstChildOfClass("Humanoid")
 
 						if not localPlayer.Character then
 							localPlayer.CharacterAdded:Wait()
 						end
 
+						local hrp = localPlayer.Character:FindFirstChild("HumanoidRootPart")
+						local hum = localPlayer.Character:FindFirstChildOfClass("Humanoid")
 						local success = false
 							
 						repeat success = fling(hrp, hum, target) RunService.Heartbeat:Wait() until success
