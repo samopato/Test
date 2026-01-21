@@ -884,7 +884,7 @@ USER PROMPT:
 				local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
 				local targetHum = target.Character:FindFirstChildOfClass("Humanoid")
 
-				if not hrp or not humanoid then
+				if not root or not humanoid then
 					return true
 				end
 				
@@ -895,6 +895,8 @@ USER PROMPT:
 				root.CFrame = targetRoot.CFrame
 				sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
 				sethiddenproperty(humanoid, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
+				
+				return false
 			end
 			
 			flingConn = task.spawn(function()
