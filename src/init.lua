@@ -861,6 +861,8 @@ USER PROMPT:
 		callback = function(speaker, args)
 			local target = findPlayer(speaker, args[1])
 			local list = {}
+
+			workspace.FallenPartsDestroyHeight = 0/0
 			
 			if args[1] == "nonranked" then
 				for _,v in next, Players:GetPlayers() do
@@ -887,10 +889,16 @@ USER PROMPT:
 					return true --in case we dont exist
 				end
 				
-				if not targetRoot or (targetHum and (targetHum.Sit or targetHum.Health <= 0)) then
-					return true --in case player is sitting or is dead already
+				if not targetRoot or not targetHum then
+					return true --in case player is is gone
 				end
-				
+
+				if (targetHum.Sit or targetHum.Health <= 0)) then
+					return true --in case player is sitting or dead
+				end
+
+			
+				hum:SetStateEnabled(15, false)	
 				root.CFrame = targetRoot.CFrame
 				sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
 				sethiddenproperty(humanoid, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
