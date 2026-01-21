@@ -346,20 +346,19 @@ local commands do
 			
 			for i,v in next ,workspace:GetDescendants() do
 				if v:isA("Part") and v.Parent ~= char and v.Name == "HumanoidRootPart" then 						
-						task.wait(3)
-      					local target = v
+					task.wait(3)
+      				local target = v
 					
-						task.spawn(function()
-   							while true do
-								bp.Position = target.Position + Vector3.new(0,math.sin(num/10)) + target.Parent.Humanoid.MoveDirection
- 								game.Players.LocalPlayer.Character:FindFirstChildOfClass("Accessory")[bodypart].Position = target.Position +  Vector3.new(0,math.sin(num/10)) + target.Parent.Humanoid.MoveDirection
-								task.wait(.175)
-							end
-						end)
+					task.spawn(function()
+   						while true do
+							bp.Position = target.Position + Vector3.new(0,math.sin(num/10)) + target.Parent.Humanoid.MoveDirection
+ 							game.Players.LocalPlayer.Character:FindFirstChildOfClass("Accessory")[bodypart].Position = target.Position +  Vector3.new(0,math.sin(num/10)) + target.Parent.Humanoid.MoveDirection
+							task.wait(.175)
+						end
+					end)
 
-						game:GetService("RunService").Heartbeat:wait()
-						workspace.Camera.CameraSubject = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Accessory")[bodypart]
-					end
+					game:GetService("RunService").Heartbeat:wait()
+					workspace.Camera.CameraSubject = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Accessory")[bodypart]
 				end
 			end
 		end
