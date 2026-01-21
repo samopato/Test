@@ -989,6 +989,16 @@ USER PROMPT:
 			local hum = char.Humanoid
 			local root = char.HumanoidRootPart
 
+			local list = {
+				0,
+				2,
+				3,
+				6,
+				7,
+				8,
+				12
+			}
+
 			if carpetConn then
 				task.cancel(carpetConn)
 				carpetConn = nil
@@ -1023,7 +1033,7 @@ USER PROMPT:
 				while heartbeat:Wait() do
 					if targetRoot and root then
 						hum.Sit = true
-						hum:ChangeState(math.random(1, 12))
+						hum:ChangeState(list[math.random(1, #list)])
 
 						for _,v in pairs(char:GetChildren()) do
 							if v:IsA("BasePart") then
