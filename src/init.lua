@@ -1406,6 +1406,7 @@ USER PROMPT:
 			local customEnv = {
 				localPlayer = localPlayer,
 				chat = chat,
+				bypass = bypass,
 				whisper = whisper,
 				speaker = speaker,
 				script = script 
