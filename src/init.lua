@@ -880,6 +880,8 @@ USER PROMPT:
 			end
 
 			local function fling(hrp, hum, targetRoot)
+				if not hrp then return end
+				
 				hrp.CFrame = targetRoot.CFrame
 				sethiddenproperty(hrp, "PhysicsRepRootPart", targetRoot)
 				sethiddenproperty(hum, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
