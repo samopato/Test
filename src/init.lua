@@ -261,106 +261,38 @@ local commands do
 	-- Test
 	-----------------------------
 
-	commands.flingtest = {
+	commands.hatfling = {
 		rank = 4,
-		callback = function()
-			local Player = Players.LocalPlayer
-			local Character = Player.Character or assert(tostring(Character) == tostring(Player), "Player character is not valid.") or false
+		callback = function(speaker, args)
+			local targetRoot = findPlayer(speaker, args[1]).Character.HumanoidRootPart
+			local char = localPlayer.Character
+			local humanoid = char:FindFirstChildOfClass("Humanoid")
+			local hat = char:FindFirstChildOfClass("Accessory")			
+			local bp = Instance.new("BodyPosition")
+			bp.Parent = hat.Handle
+			bp.Position = hat.Handle.Position
 
-			local Torso = Character and Character:FindFirstChild("Torso") or Character:FindFirstChild("UpperTorso")
-			local Humanoid = Character and Character:FindFirstChildWhichIsA("Humanoid")
-			local RootPart = Humanoid and Humanoid.RootPart
-
-			--perma death
+			--perm death
 			replicatesignal(localPlayer.ConnectDiedSignalBackend)
 			task.wait(Players.RespawnTime + 0.20)
 			replicatesignal(localPlayer.Kill)
 
-			-- Reweld to Head Method (Optional)
-			for _, x in next, Humanoid:GetAccessories() do
+			--idk
+			for _, x in next, humanoid:GetAccessories() do
   				sethiddenproperty(x, "BackendAccoutrementState", 0)
-   				local Attachment = x:FindFirstChildWhichIsA("Attachment", true)
+   				local attachment = x:FindFirstChildWhichIsA("Attachment", true)
 				
-    			if Attachment then
-       				Attachment:Destroy()
+    			if attachment then
+       				attachment:Destroy()
     			end
 			end
+			
+			task.spawn(function()
+				bp.Position = targetRoot.Position
+ 				hat.Handle.Position = targetRoot.Position
+			end)
 
-			-- Drop Hats
-			Torso:Destroy()
-			RootPart:Destroy()
-			
-			for _, x in next, Character:GetChildren() do
-   				if x:IsA("BasePart") and not tostring(x):match("Head") then -- Head has to be deleted last
-       				x:Destroy()
-    			end
-			end
-
-    		local function GetClass(x, v)				
-        		return x:FindFirstChildWhichIsA(v, true)
-    		end
-				
-    		for _, x in next, Humanoid:GetAccessories() do
-       			local Mesh = GetClass(x, "SpecialMesh") or GetClass(x, "MeshPart") or GetClass(x, "Mesh")
-					
-       			if Mesh then
-           			Mesh:Destroy()
-        		end
-    		end
-
-			--[[
-			if Configuration.RemoveHead then
-    			local Head = Character:FindFirstChild("Head")
-				
-   				if Head then
-        			Head:Destroy()
-    			end
-			end
-			]]--
-			
-			local bodypart = "Handle"
-			local char = game.Players.localPlayer.Character
-			local player = game.Players.LocalPlayer
-			local num = 0
-			local mouse = player:GetMouse()
-			local uis = game:GetService("UserInputService")
-			local bp = Instance.new("BodyPosition")
-			local newhum = Instance.new("Humanoid")
-			local newhum2 = Instance.new("Humanoid")
-			local char = localPlayer.Character
-			local hum = char.Humanoid
-			
-			for _, v in next, game:GetDescendants() do
-      			if v:isA("Part") or v:isA("MeshPart") and v.Anchored == false  then 
-					RunService.Heartbeat:Connect(function()
-              			v.CustomPhysicalProperties = PhysicalProperties.new(0,0,0,0,0)
-               			v.Velocity = Vector3.new(25.70,0,0)
-              			v.RotVelocity = Vector3.new(9e9,9e9,9e9)
-              			v.CanCollide = false
- 					end)
-				end
-			end
-			
-			bp.Parent = localPlayer.Character:FindFirstChildOfClass("Accessory")[bodypart]
-			bp.Position = localPlayer.Character:FindFirstChildOfClass("Accessory")[bodypart].Position
-			
-			for i,v in next ,workspace:GetDescendants() do
-				if v:isA("Part") and v.Parent ~= char and v.Name == "HumanoidRootPart" then 						
-					task.wait(3)
-      				local target = v
-					
-					task.spawn(function()
-   						while true do
-							bp.Position = target.Position + Vector3.new(0,math.sin(num/10)) + target.Parent.Humanoid.MoveDirection
- 							game.Players.LocalPlayer.Character:FindFirstChildOfClass("Accessory")[bodypart].Position = target.Position +  Vector3.new(0,math.sin(num/10)) + target.Parent.Humanoid.MoveDirection
-							task.wait(.175)
-						end
-					end)
-
-					game:GetService("RunService").Heartbeat:wait()
-					workspace.Camera.CameraSubject = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Accessory")[bodypart]
-				end
-			end
+			workspace.Camera.CameraSubject = hat.Handle
 		end
 	}
 
