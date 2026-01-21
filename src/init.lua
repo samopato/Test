@@ -877,35 +877,34 @@ USER PROMPT:
 				flingConn = nil
 			end
 
-			local function fling(hrp, hum, target)
-				if not hrp or hrp and hrp.Parent == nil then return true end
-
+			local function fling(target)
+				local root = localPlayer.Character:FindFirstChild("HumanoidRootPart")
+				local humanoid = localPlayer.Character:FindFirstChildOfClass("Humanoid")
+				
 				local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
 				local targetHum = target.Character:FindFirstChildOfClass("Humanoid")
 
-				warn("fling attempt1")
+				if not hrp or not humanoid then
+					return true
+				end
 				
 				if not targetRoot or (targetHum and targetHum.Sit) then
 					return true
 				end
-
-				warn("fling attempt2")
 				
-				hrp.CFrame = targetRoot.CFrame
-				sethiddenproperty(hrp, "PhysicsRepRootPart", targetRoot)
-				sethiddenproperty(hum, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
+				root.CFrame = targetRoot.CFrame
+				sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
+				sethiddenproperty(humanoid, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
 			end
 			
 			flingConn = task.spawn(function()
 				while RunService.Heartbeat:Wait() do
 					for _,target in next, list do
 						if not target then continue end
-
-						local hrp = localPlayer.Character:FindFirstChild("HumanoidRootPart")
-						local hum = localPlayer.Character:FindFirstChildOfClass("Humanoid")
+							
 						local success = false
 							
-						repeat success = fling(hrp, hum, target) RunService.Heartbeat:Wait() until success
+						repeat success = fling(target) RunService.Heartbeat:Wait() until success
 						warn("success")
 					end
 				end
