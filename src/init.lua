@@ -296,19 +296,17 @@ local commands do
     			end
 			end
 
-			if Configuration.RemoveMesh then				
-    			local function GetClass(x, v)				
-        			return x:FindFirstChildWhichIsA(v, true)
-    			end
+    		local function GetClass(x, v)				
+        		return x:FindFirstChildWhichIsA(v, true)
+    		end
 				
-    			for _, x in next, Humanoid:GetAccessories() do
-       				local Mesh = GetClass(x, "SpecialMesh") or GetClass(x, "MeshPart") or GetClass(x, "Mesh")
+    		for _, x in next, Humanoid:GetAccessories() do
+       			local Mesh = GetClass(x, "SpecialMesh") or GetClass(x, "MeshPart") or GetClass(x, "Mesh")
 					
-       				if Mesh then
-           				Mesh:Destroy()
-        			end
-    			end
-			end
+       			if Mesh then
+           			Mesh:Destroy()
+        		end
+    		end
 
 			--[[
 			if Configuration.RemoveHead then
@@ -343,10 +341,10 @@ local commands do
 				end
 			end
 			
-			bp.Parent = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Accessory")[bodypart]
-			bp.Position =  game.Players.LocalPlayer.Character:FindFirstChildOfClass("Accessory")[bodypart].Position
+			bp.Parent = localPlayer.Character:FindFirstChildOfClass("Accessory")[bodypart]
+			bp.Position = localPlayer.Character:FindFirstChildOfClass("Accessory")[bodypart].Position
 			
-			for i,v in next , game.workspace:GetDescendants() do
+			for i,v in next ,workspace:GetDescendants() do
 				if v:isA("Part") and v.Parent ~= char and v.Name == "HumanoidRootPart" then 						
 						task.wait(3)
       					local target = v
