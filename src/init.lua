@@ -288,7 +288,7 @@ local commands do
 	              		v.CustomPhysicalProperties = PhysicalProperties.new(0,0,0,0,0)
             			v.Velocity = Vector3.new(25.70,0,0)
           				v.RotVelocity = Vector3.new(9e9,9e9,9e9)
-						v.CanCollide = false,
+						v.CanCollide = false
       				end)
   				end
 			end)
