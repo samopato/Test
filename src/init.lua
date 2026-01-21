@@ -878,9 +878,8 @@ USER PROMPT:
 			end
 
 			local function fling(hrp, hum, target)
-				if not hrp then return true end
+				if not hrp or hrp and hrp.Parent == nil then return true end
 
-				warn("tried to fling")
 				local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
 				local targetHum = target.Character:FindFirstChildOfClass("Humanoid")
 				
@@ -904,6 +903,7 @@ USER PROMPT:
 						local success = false
 							
 						repeat success = fling(hrp, hum, target) RunService.Heartbeat:Wait() until success
+						warn("success!")
 					end
 				end
 			end)
