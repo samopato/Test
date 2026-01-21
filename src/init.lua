@@ -871,8 +871,6 @@ USER PROMPT:
 			else
 				list = {target}
 			end
-
-			warn(#list)
 			
 			if flingConn then
 				task.cancel(flingConn)
@@ -906,6 +904,8 @@ USER PROMPT:
 						local hrp = localPlayer.Character:FindFirstChild("HumanoidRootPart")
 						local hum = localPlayer.Character:FindFirstChildOfClass("Humanoid")
 						local success = false
+
+						warn("flinging!!!!")
 							
 						repeat success = fling(hrp, hum, target) RunService.Heartbeat:Wait() until success
 					end
