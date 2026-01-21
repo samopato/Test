@@ -345,8 +345,7 @@ local commands do
 		callback = function()
 			local humanoid = localPlayer.Character:WaitForChild("Humanoid")
 			local forceField = Instance.new("ForceField")
-			local original = hrp.CFrame			
-
+			
 			forceField.Visible = false
 			forceField.Parent = localPlayer.Character
 
