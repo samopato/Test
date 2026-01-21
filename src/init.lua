@@ -879,24 +879,21 @@ USER PROMPT:
 
 			local function fling(target)
 				local root = localPlayer.Character:FindFirstChild("HumanoidRootPart")
-				local humanoid = localPlayer.Character:FindFirstChildOfClass("Humanoid")
-				
+				local humanoid = localPlayer.Character:FindFirstChildOfClass("Humanoid")				
 				local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
 				local targetHum = target.Character:FindFirstChildOfClass("Humanoid")
 
 				if not root or not humanoid then
-					return true
+					return true --in case we dont exist
 				end
 				
-				if not targetRoot or (targetHum and targetHum.Sit) then
-					return true
+				if not targetRoot or (targetHum and (targetHum.Sit or targetHum.Health <= 0)) then
+					return true --in case player is sitting or is dead already
 				end
 				
 				root.CFrame = targetRoot.CFrame
 				sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
 				sethiddenproperty(humanoid, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
-				
-				return false
 			end
 			
 			flingConn = task.spawn(function()
