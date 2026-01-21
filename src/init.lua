@@ -895,20 +895,20 @@ USER PROMPT:
 					return true --in case player is is gone
 				end
 
-				if (argetHum.Sit or targetHum.Health <= 0 then
+				if targetHum.Sit or targetHum.Health <= 0 then
 					return true --in case player is sitting or dead
 				end
 
 				if tries > 20 then
 					return true
 				end
+
+				tries += 1
 			
 				hum:SetStateEnabled(15, false)	
 				root.CFrame = targetRoot.CFrame
 				sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
 				sethiddenproperty(humanoid, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
-
-				tries += 1
 			end
 			
 			flingConn = task.spawn(function()
