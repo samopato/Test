@@ -878,8 +878,10 @@ USER PROMPT:
 			end
 
 			local function fling(hrp, hum, target)
-				if not (hrp and hum and target.Character) then return true end
+				if not (hrp and hum) then return true end
 
+
+				warn("tried to fling")
 				local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
 				local targetHum = target.Character:FindFirstChildOfClass("Humanoid")
 				
@@ -894,13 +896,9 @@ USER PROMPT:
 			
 			flingConn = task.spawn(function()
 				while RunService.Heartbeat:Wait() do
-					warn("flinging!!!!")
+					warn("flinging!")
 					for _,target in next, list do
 						if not target then continue end
-
-						if not localPlayer.Character then
-							localPlayer.CharacterAdded:Wait()
-						end
 
 						local hrp = localPlayer.Character:FindFirstChild("HumanoidRootPart")
 						local hum = localPlayer.Character:FindFirstChildOfClass("Humanoid")
