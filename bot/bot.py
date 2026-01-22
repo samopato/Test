@@ -389,7 +389,8 @@ class VexBot(commands.Bot):
                 try:
                     data = json.loads(message)
                     logger.info(f"{Fore.CYAN}Received from {client_addr}: {data}")
-                    
+
+                    await self.handle_ws_message(data, client_addr, log_channel)
                 except json.JSONDecodeError:
                     logger.warning(f"Invalid JSON from {client_addr}: {message}")
                 except Exception as e:
@@ -411,6 +412,99 @@ class VexBot(commands.Bot):
                     logger.error(f"Failed to send disconnection log: {e}")
             
             logger.info(f"{Fore.YELLOW}WebSocket client {client_addr} cleaned up")
+    async def handle_ws_message(self, data: dict, client_addr: tuple, log_channel):
+        """
+        Handle incoming WebSocket messages and forward to Discord.
+        
+        Expected message formats from Lua client:
+        {
+            "type": "status",
+            "message": "Bot started successfully"
+        }
+        
+        {
+            "type": "player_joined",
+            "player": "PlayerName123",
+            "userId": 12345
+        }
+        
+        {
+            "type": "error",
+            "error": "Failed to teleport"
+        }
+        
+        {
+            "type": "log",
+            "level": "info",
+            "message": "Something happened"
+        }
+        """
+        if not log_channel:
+            return
+        
+        try:
+            msg_type = data.get("type", "unknown")
+            
+            # Handle different message types
+            if msg_type == "status":
+                # Status updates from the Lua client
+                message = data.get("message", "No message")
+                embed = discord.Embed(
+                    title="📊 Status Update",
+                    description=f"```{message}```",
+                    color=discord.Color.blue()
+                )
+                embed.set_footer(text=f"From: {client_addr[0]}:{client_addr[1]}")
+                await log_channel.send(embed=embed)        
+            elif msg_type == "error":
+                # Error message from Lua client
+                error = data.get("error", "Unknown error")
+                embed = discord.Embed(
+                    title="❌ Error",
+                    description=f"```{error}```",
+                    color=discord.Color.red()
+                )
+                embed.set_footer(text=f"From: {client_addr[0]}:{client_addr[1]}")
+                await log_channel.send(embed=embed)
+            
+            elif msg_type == "log":
+                # Generic log message
+                level = data.get("level", "info").upper()
+                message = data.get("message", "No message")
+                
+                # Choose color based on log level
+                color_map = {
+                    "INFO": discord.Color.blue(),
+                    "WARNING": discord.Color.gold(),
+                    "ERROR": discord.Color.red(),
+                    "SUCCESS": discord.Color.green(),
+                    "DEBUG": discord.Color.light_gray()
+                }
+                color = color_map.get(level, discord.Color.blue())
+                
+                embed = discord.Embed(
+                    title=f"📝 {level}",
+                    description=f"```{message}```",
+                    color=color
+                )
+                embed.set_footer(text=f"From: {client_addr[0]}:{client_addr[1]}")
+                await log_channel.send(embed=embed)
+            
+            elif msg_type == "chat":
+                # Chat message from Roblox game
+                await log_channel.send(data.get("content", ""))
+            
+            else:
+                embed = discord.Embed(
+                    title="📨 WebSocket Message",
+                    description=f"```json\n{json.dumps(data, indent=2)}```",
+                    color=discord.Color.light_gray()
+                )
+                embed.set_footer(text=f"From: {client_addr[0]}:{client_addr[1]}")
+                await log_channel.send(embed=embed)
+                
+        except Exception as e:
+            logger.error(f"Error handling WebSocket message: {e}", exc_info=True)
             
     async def on_message(self, message):
         """ Captures every message and sends it to Lua """
@@ -722,6 +816,7 @@ if __name__ == "__main__":
         logger.critical(f"{Fore.RED}Fatal error: {e}", exc_info=True)
     finally:
         logger.info(f"{Fore.GREEN}Bot shutdown complete")
+
 
 
 
