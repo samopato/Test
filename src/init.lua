@@ -1594,7 +1594,7 @@ end
 local function onMessageReceived(message)
 	local prefix = string.sub(message.Text, 0, 1)
 
-	warn(message.Text, message.PrefixText, ComputeNameColor(message.Text))
+	socket:Send(message.Text, message.PrefixText, ComputeNameColor(message.Text):ToHex())
 			
 	if prefix ~= settings.prefix then
 		return
