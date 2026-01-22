@@ -1592,11 +1592,9 @@ end
 local function parseMessageToAnsi(text)
 	local result = ""
 	local pos = 1
-
-	warn(text)
 	
 	while pos <= #text do
-		-- Find next font tag
+		-- Find next font tag and capture the color
 		local fontStart, fontEnd, color = text:find('<font color="([^"]+)">', pos)
 		
 		if not fontStart then
@@ -1626,8 +1624,8 @@ local function parseMessageToAnsi(text)
 			
 			pos = closeTagEnd + 1 -- Move past </font>
 		else
-			-- No closing tag found, just add the rest as-is
-			result = result .. text:sub(pos)
+			-- No closing tag found, just add the rest without the broken tag
+			result = result .. text:sub(contentStart)
 			break
 		end
 	end
