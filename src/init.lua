@@ -1557,17 +1557,16 @@ socket.OnClose:Connect(function()
 end)
 
 
-NAME_COLORS =
-	{
-		Color3.new(253/255, 41/255, 67/255), -- BrickColor.new("Bright red").Color,
-		Color3.new(1/255, 162/255, 255/255), -- BrickColor.new("Bright blue").Color,
-		Color3.new(2/255, 184/255, 87/255), -- BrickColor.new("Earth green").Color,
-		BrickColor.new("Bright violet").Color,
-		BrickColor.new("Bright orange").Color,
-		BrickColor.new("Bright yellow").Color,
-		BrickColor.new("Light reddish violet").Color,
-		BrickColor.new("Brick yellow").Color,
-	}
+local messageList = {}
+local NAME_COLORS = {
+	"[2;31m", -- red
+	"[2;34m", -- blue
+    "[2;32m", -- green
+    "[2;33m", -- yellow
+    "[2;35m", -- magenta  
+    "[2;36m", -- cyan
+}
+local RESET_COLOR = "[0m"
 
 local function GetNameValue(pName)
 	local value = 0
@@ -1586,30 +1585,55 @@ local function GetNameValue(pName)
 end
 
 local color_offset = 0
+
 local function ComputeNameColor(pName)
 	return NAME_COLORS[((GetNameValue(pName) + color_offset) % #NAME_COLORS) + 1]
 end
 
+local function logMessages()
+	if #messageList == 0 then return end
+	
+	local payload = HttpService:JSONEncode({
+		content = "```ansi\n" .. table.concat(messageList, "\n") .. "\n```"
+	})
+	socket:Send(payload)
+	messageList = {} -- Clear the list after sending
+end
+
+-- Start the logging loop
+task.spawn(function()
+	while true do
+		task.wait(2)
+		logMessages()
+	end
+end)
 
 local function onMessageReceived(message)
-	local prefix = string.sub(message.Text, 0, 1)
-
-	socket:Send(message.Text, message.PrefixText, ComputeNameColor(message.Text):ToHex())
-			
+	-- Log the message with ANSI color formatting
+	local speaker = Players:GetPlayerByUserId(message.TextSource and message.TextSource.UserId)
+	if speaker then
+		local playerName = speaker.Name
+		local colorCode = ComputeNameColor(playerName)
+		local formattedMessage = colorCode .. "[" .. playerName .. "]:" .. RESET_COLOR .. " " .. message.Text
+		table.insert(messageList, formattedMessage)
+	end
+	
+	-- Command handling
+	local prefix = string.sub(message.Text, 1, 1)
+	
 	if prefix ~= settings.prefix then
 		return
 	end
-
-	local speaker = Players:GetPlayerByUserId(message.TextSource and message.TextSource.UserId)
+	
 	local name, args, undo = parseCommand(message.Text)
 	local cmd = commands[name]
-
+	
+	if not cmd then return end
+	
 	local rank = getRank(speaker.UserId)
-
 	if rank < cmd.rank then return end
-
+	
 	local callback = not undo and cmd.callback or cmd.undo
-
 	if callback then
 		callback(speaker, args)
 	end
