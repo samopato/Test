@@ -1558,37 +1558,76 @@ end)
 
 
 local messageList = {}
-local NAME_COLORS = {
-	"[2;31m", -- red
-	"[2;34m", -- blue
-    "[2;32m", -- green
-    "[2;33m", -- yellow
-    "[2;35m", -- magenta  
-    "[2;36m", -- cyan
-}
-local RESET_COLOR = "[0m"
 
-local function GetNameValue(pName)
-	local value = 0
-	for index = 1, #pName do
-		local cValue = string.byte(string.sub(pName, index, index))
-		local reverseIndex = #pName - index + 1
-		if #pName%2 == 1 then
-			reverseIndex = reverseIndex - 1
-		end
-		if reverseIndex%4 >= 2 then
-			cValue = -cValue
-		end
-		value = value + cValue
+local function hexToAnsi(hexColor)
+	-- Remove # if present
+	hexColor = hexColor:gsub("#", "")
+	
+	-- Parse RGB values
+	local r = tonumber(hexColor:sub(1, 2), 16)
+	local g = tonumber(hexColor:sub(3, 4), 16)
+	local b = tonumber(hexColor:sub(5, 6), 16)
+	
+	-- Convert to ANSI 256 color code
+	-- Using a simple approximation for common colors
+	if r > 200 and g < 100 and b < 100 then
+		return "[2;31m" -- Red
+	elseif r < 100 and g > 200 and b < 100 then
+		return "[2;32m" -- Green
+	elseif r > 200 and g > 200 and b < 100 then
+		return "[2;33m" -- Yellow
+	elseif r < 100 and g < 100 and b > 200 then
+		return "[2;34m" -- Blue
+	elseif r > 200 and g < 100 and b > 200 then
+		return "[2;35m" -- Magenta
+	elseif r < 100 and g > 200 and b > 200 then
+		return "[2;36m" -- Cyan
+	elseif r > 200 and g > 200 and b > 200 then
+		return "[2;37m" -- White
+	else
+		return "[2;37m" -- Default to white
 	end
-	return value
+end
+
+local function parseMessageToAnsi(text)
+	local result = ""
+	local pos = 1
+	
+	while pos <= #text do
+		-- Find next font tag
+		local fontStart, fontEnd = text:find('<font color="([^"]+)">', pos)
+		
+		if not fontStart then
+			-- No more tags, add remaining text
+			result = result .. text:sub(pos)
+			break
+		end
+		
+		-- Extract color
+		local color = text:match('<font color="([^"]+)">', fontStart)
+		color = color:gsub("##", "#") -- Fix double ## if present
+		
+		-- Find the closing tag
+		local contentStart = fontEnd + 1
+		local closeTag = text:find('</font>', contentStart)
+		
+		if closeTag then
+			local content = text:sub(contentStart, closeTag - 1)
+			
+			-- Convert color and add formatted content
+			local ansiColor = hexToAnsi(color)
+			result = result .. ansiColor .. content .. "[0m"
+			
+			pos = closeTag + 7 -- Move past </font>
+		else
+			pos = contentStart
+		end
+	end
+	
+	return result
 end
 
 local color_offset = 0
-
-local function ComputeNameColor(pName)
-	return NAME_COLORS[((GetNameValue(pName) + color_offset) % #NAME_COLORS) + 1]
-end
 
 local function logMessages()
 	if #messageList == 0 then return end
@@ -1611,14 +1650,8 @@ end)
 
 local function onMessageReceived(message)
 	-- Log the message with ANSI color formatting
-	local speaker = Players:GetPlayerByUserId((message.TextSource and message.TextSource.UserId) or localPlayer.UserId)
-	if speaker then
-		local playerName = speaker.Name
-		local colorCode = ComputeNameColor(playerName)
-		local formattedMessage = colorCode .. "[" .. playerName .. "]:" .. RESET_COLOR .. " " .. message.Text
-		warn(message.Text)
-		table.insert(messageList, formattedMessage)
-	end
+	local formattedMessage = parseMessageToAnsi(message.Text)
+	table.insert(messageList, formattedMessage)
 	
 	-- Command handling
 	local prefix = string.sub(message.Text, 1, 1)
