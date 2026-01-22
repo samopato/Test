@@ -1625,7 +1625,7 @@ local function parseMessageToAnsi(text)
 		-- Handle Opening Tag <font color="...">
 		elseif tagContent:match('color="([^"]+)"') then
 			local hex = tagContent:match('color="([^"]+)"')
-			local ansi = hexToDiscordAnsi(hex)
+			local ansi = hexToAnsi(hex)
 			
 			table.insert(colorStack, ansi)
 			result = result .. ansi
