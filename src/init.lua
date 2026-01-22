@@ -1580,7 +1580,7 @@ local function hexToAnsi(hexColor)
 		return "[33m" -- Yellow
 	elseif b > r + 50 and b > g + 50 then
 		return "[34m" -- Blue
-	elseif r > 150 and b > 100 and g < 150 then
+	elseif r + 10 > g and r > b and g < 200 then
 		return "[35m" -- Magenta
 	elseif g > 150 and b > 150 and r < 150 then
 		return "[36m" -- Cyan
