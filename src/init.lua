@@ -1592,10 +1592,12 @@ end
 local function parseMessageToAnsi(text)
 	local result = ""
 	local pos = 1
+
+	warn(text)
 	
 	while pos <= #text do
 		-- Find next font tag
-		local fontStart, fontEnd = text:find('<font color="([^"]+)">', pos)
+		local fontStart, fontEnd, color = text:find('<font color="([^"]+)">', pos)
 		
 		if not fontStart then
 			-- No more tags, add remaining text
@@ -1603,33 +1605,35 @@ local function parseMessageToAnsi(text)
 			break
 		end
 		
-		-- Extract color
-		local color = text:match('<font color="([^"]+)">', fontStart)
-		color = color:gsub("##", "#") -- Fix double ## if present
+		-- Add any text before the tag
+		if fontStart > pos then
+			result = result .. text:sub(pos, fontStart - 1)
+		end
+		
+		-- Fix double ## if present
+		color = color:gsub("##", "#")
 		
 		-- Find the closing tag
 		local contentStart = fontEnd + 1
-		local closeTag = text:find('</font>', contentStart)
+		local closeTagStart, closeTagEnd = text:find('</font>', contentStart)
 		
-		if closeTag then
-			local content = text:sub(contentStart, closeTag - 1)
-
-			warn(color)
+		if closeTagStart then
+			local content = text:sub(contentStart, closeTagStart - 1)
 			
 			-- Convert color and add formatted content
 			local ansiColor = hexToAnsi(color)
-			result = result .. ansiColor .. content .. "[0m"
+			result = result .. ansiColor .. content .. "\27[0m"
 			
-			pos = closeTag + 7 -- Move past </font>
+			pos = closeTagEnd + 1 -- Move past </font>
 		else
-			pos = contentStart
+			-- No closing tag found, just add the rest as-is
+			result = result .. text:sub(pos)
+			break
 		end
 	end
 	
 	return result
 end
-
-local color_offset = 0
 
 local function logMessages()
 	if #messageList == 0 then return end
