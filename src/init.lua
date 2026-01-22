@@ -1559,43 +1559,38 @@ end)
 
 local messageList = {}
 
-local function hexToDiscordAnsi(hexColor)
-	hexColor = hexColor:gsub("#", "") -- Remove all # characters
-
-	-- Parse RGB
-	local r = tonumber(hexColor:sub(1, 2), 16) or 0
-	local g = tonumber(hexColor:sub(3, 4), 16) or 0
-	local b = tonumber(hexColor:sub(5, 6), 16) or 0
-
-	-- DISCORD COLOR PALETTE LOGIC
-	-- Discord only supports: 30(Gray), 31(Red), 32(Green), 33(Yellow), 34(Blue), 35(Pink), 36(Cyan), 37(White)
+local function hexToAnsi(hexColor)
+	-- Remove # if present
+	hexColor = hexColor:gsub("#", "")
 	
-	-- 1. Check for Grayscale (White/Gray)
-	-- If color is very bright, make it White (37). 
-	-- Note: Discord's "Gray" (30) is barely visible on dark mode, so we often default to White (37) for generic text.
-	if r > 200 and g > 200 and b > 200 then
-		return "[0;37m" -- White
+	-- Parse RGB values
+	local r = tonumber(hexColor:sub(1, 2), 16)
+	local g = tonumber(hexColor:sub(3, 4), 16)
+	local b = tonumber(hexColor:sub(5, 6), 16)
+	
+	-- Use string.char(27) for the escape character (works better in Roblox)
+	local esc = string.char(27)
+	
+	-- More flexible color matching
+	if r > g + 50 and r > b + 50 then
+		return "[31m" -- Red
+	elseif g > r + 50 and g > b + 50 then
+		return "[32m" -- Green
+	elseif r > 150 and g > 150 and b < 100 then
+		return "[33m" -- Yellow
+	elseif b > r + 50 and b > g + 50 then
+		return "[34m" -- Blue
+	elseif r > 150 and b > 150 and g < 150 then
+		return "[35m" -- Magenta
+	elseif g > 150 and b > 150 and r < 150 then
+		return "[36m" -- Cyan
+	elseif r > 200 and g > 200 and b > 200 then
+		return "[37m" -- White
+	elseif r < 50 and g < 50 and b < 50 then
+		return "[30m" -- Black
+	else
+		return "[37m" -- Default to white
 	end
-
-	-- 2. Color Matching based on dominance
-	if r > g and r > b then
-		if g > 150 then return "[0;33m" end -- Orange/Yellowish -> Yellow
-		return "[0;31m" -- Red
-	elseif g > r and g > b then
-		if r > 150 then return "[0;33m" end -- Lime/Yellowish -> Yellow
-		return "[0;32m" -- Green
-	elseif b > r and b > g then
-		if r > 150 then return "[0;35m" end -- Purple -> Pink
-		if g > 150 then return "[0;36m" end -- Teal -> Cyan
-		return "[0;34m" -- Blue
-	end
-
-	-- 3. Secondary mixes (Yellow, Pink, Cyan)
-	if r > 150 and g > 150 then return "[0;33m" end -- Yellow
-	if r > 150 and b > 150 then return "[0;35m" end -- Pink
-	if g > 150 and b > 150 then return "[0;36m" end -- Cyan
-
-	return "[0;37m" -- Fallback to White
 end
 
 -- 2. Parser: Handles nested tags
