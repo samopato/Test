@@ -1590,45 +1590,11 @@ local function hexToAnsi(hexColor)
 end
 
 local function parseMessageToAnsi(text)
-	local result = ""
-	local pos = 1
-	
-	while pos <= #text do
-		-- Find next font tag and capture the color
-		local fontStart, fontEnd, color = text:find('<font color="([^"]+)">', pos)
-		
-		if not fontStart then
-			-- No more tags, add remaining text
-			result = result .. text:sub(pos)
-			break
-		end
-		
-		-- Add any text before the tag
-		if fontStart > pos then
-			result = result .. text:sub(pos, fontStart - 1)
-		end
-		
-		-- Fix double ## if present
+	local result = text:gsub('<font color="([^"]+)">([^<]*)</font>', function(color, content)
 		color = color:gsub("##", "#")
-		
-		-- Find the closing tag
-		local contentStart = fontEnd + 1
-		local closeTagStart, closeTagEnd = text:find('</font>', contentStart)
-		
-		if closeTagStart then
-			local content = text:sub(contentStart, closeTagStart - 1)
-			
-			-- Convert color and add formatted content
-			local ansiColor = hexToAnsi(color)
-			result = result .. ansiColor .. content .. "\27[0m"
-			
-			pos = closeTagEnd + 1 -- Move past </font>
-		else
-			-- No closing tag found, just add the rest without the broken tag
-			result = result .. text:sub(contentStart)
-			break
-		end
-	end
+		local ansiColor = hexToAnsi(color)
+		return ansiColor .. content .. "[2;0m"
+	end)
 	
 	return result
 end
