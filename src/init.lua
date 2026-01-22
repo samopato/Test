@@ -1613,6 +1613,8 @@ local function parseMessageToAnsi(text)
 		
 		if closeTag then
 			local content = text:sub(contentStart, closeTag - 1)
+
+			warn(color)
 			
 			-- Convert color and add formatted content
 			local ansiColor = hexToAnsi(color)
