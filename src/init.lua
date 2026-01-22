@@ -943,7 +943,7 @@ USER PROMPT:
 				local root = localPlayer.Character:FindFirstChild("HumanoidRootPart")
 				local humanoid = localPlayer.Character:FindFirstChildOfClass("Humanoid")			
 
-				if not target then
+				if not target.Character then
 					return true
 				end
 				
