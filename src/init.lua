@@ -1560,43 +1560,69 @@ end)
 local messageList = {}
 
 local function hexToAnsi(hexColor)
-	-- Remove # if present
+	-- Clean up string (remove # or ##)
 	hexColor = hexColor:gsub("#", "")
 	
-	-- Parse RGB values
-	local r = tonumber(hexColor:sub(1, 2), 16)
-	local g = tonumber(hexColor:sub(3, 4), 16)
-	local b = tonumber(hexColor:sub(5, 6), 16)
+	local r = tonumber(hexColor:sub(1, 2), 16) or 0
+	local g = tonumber(hexColor:sub(3, 4), 16) or 0
+	local b = tonumber(hexColor:sub(5, 6), 16) or 0
+
+	-- Calculate closest ANSI 256 color
+	-- Formula converts 0-255 RGB to 0-5 scale
+	local r5 = math.floor((r / 255) * 5)
+	local g5 = math.floor((g / 255) * 5)
+	local b5 = math.floor((b / 255) * 5)
 	
-	-- Convert to ANSI 256 color code
-	-- Using a simple approximation for common colors
-	if r > 200 and g < 100 and b < 100 then
-		return "[2;31m" -- Red
-	elseif r < 100 and g > 200 and b < 100 then
-		return "[2;32m" -- Green
-	elseif r > 200 and g > 200 and b < 100 then
-		return "[2;33m" -- Yellow
-	elseif r < 100 and g < 100 and b > 200 then
-		return "[2;34m" -- Blue
-	elseif r > 200 and g < 100 and b > 200 then
-		return "[2;35m" -- Magenta
-	elseif r < 100 and g > 200 and b > 200 then
-		return "[2;36m" -- Cyan
-	elseif r > 200 and g > 200 and b > 200 then
-		return "[2;37m" -- White
-	else
-		return "[2;37m" -- Default to white
-	end
+	-- Calculate ANSI index: 16 + 36*r + 6*g + b
+	local ansiCode = 16 + (36 * r5) + (6 * g5) + b5
+	
+	return string.format("\27[38;5;%dm", ansiCode)
 end
 
+-- 2. Parser: Handles nested tags using a "Color Stack"
 local function parseMessageToAnsi(text)
-	local result = text:gsub('<font color="([^"]+)">([^<]*)</font>', function(color, content)
-		color = color:gsub("##", "#")
-		local ansiColor = hexToAnsi(color)
-		return ansiColor .. content .. "[2;0m"
-	end)
+	local colorStack = { "\27[0m" } -- Start with 'Reset' in the stack
+	local result = ""
+	local position = 1
 	
-	return result
+	while true do
+		-- Find the next tag (either opening <font> or closing </font>)
+		local s, e, tagContent = text:find("<(.-)>", position)
+		
+		-- If no more tags are found, append the rest of the text and break
+		if not s then
+			result = result .. text:sub(position)
+			break
+		end
+		
+		-- Append the text occurring *before* this tag
+		if s > position then
+			result = result .. text:sub(position, s - 1)
+		end
+		
+		-- Check if it is a closing tag </font>
+		if tagContent:sub(1, 1) == "/" then
+			if #colorStack > 1 then
+				table.remove(colorStack) -- Pop the current color
+			end
+			-- Re-apply the color that is now on top of the stack (the parent color)
+			result = result .. colorStack[#colorStack]
+			
+		-- Check if it is an opening tag <font color="...">
+		elseif tagContent:match('color="([^"]+)"') then
+			local hex = tagContent:match('color="([^"]+)"')
+			local ansi = hexToAnsi(hex)
+			
+			table.insert(colorStack, ansi) -- Push new color to stack
+			result = result .. ansi        -- Apply new color
+		end
+		
+		-- Move search position past the current tag
+		position = e + 1
+	end
+	
+	-- Ensure we reset everything at the very end
+	return result .. "\27[0m"
 end
 
 local function logMessages()
