@@ -1594,6 +1594,7 @@ local function logMessages()
 	if #messageList == 0 then return end
 	
 	local payload = HttpService:JSONEncode({
+		type = "chat",
 		content = "```ansi\n" .. table.concat(messageList, "\n") .. "\n```"
 	})
 	socket:Send(payload)
