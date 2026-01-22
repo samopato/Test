@@ -68,7 +68,7 @@ load_dotenv()
 
 TOKEN = os.getenv('DISCORD_TOKEN')
 ROBLOX_COOKIE = os.getenv('ROBLOX_COOKIE')
-LOG_CHANNEL_ID = int(os.getenv('LOG_CHANNEL_ID', '1462534721517916465'))
+LOG_CHANNEL_ID = int(os.getenv('LOG_CHANNEL_ID', '1459426707025952859'))
 WS_HOST = os.getenv('WS_HOST', '127.0.0.1')
 WS_PORT = int(os.getenv('WS_PORT', '8765'))
 
@@ -722,6 +722,7 @@ if __name__ == "__main__":
         logger.critical(f"{Fore.RED}Fatal error: {e}", exc_info=True)
     finally:
         logger.info(f"{Fore.GREEN}Bot shutdown complete")
+
 
 
 
