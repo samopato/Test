@@ -1559,6 +1559,8 @@ end)
 local function onMessageReceived(message)
 	local prefix = string.sub(message.Text, 0, 1)
 
+	warn(message.Text, message.TextSource)
+			
 	if prefix ~= settings.prefix then
 		return
 	end
