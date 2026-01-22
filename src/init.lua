@@ -19,7 +19,8 @@ local defaultSettings = {
 	openrouteKey = "add here",
 	robloxCookie = "add here",
 	webhookUrl = "add here",
-	prefix = "+",	
+	shouldLogChat = false,
+	prefix = "+",
 	ranks = {
 		["10984088"] = 10,
 		[tostring(localPlayer.UserId)] = 10,
@@ -1472,6 +1473,17 @@ USER PROMPT:
 		end
 	}
 
+	commands.logchat = {
+		rank = 3,
+		callback = function(speaker)
+			if settings.shouldLogChat == nil then
+				settings.shouldLogChat = false
+			end
+
+			settings.shouldLogChat = not settings.shouldLogChat
+		end
+	}
+			
 	commands.rejoin = {
 		rank = 3,
 		callback = function(speaker)
@@ -1640,6 +1652,8 @@ end
 
 local function logMessages()
 	if #messageList == 0 then return end
+
+	if not settings.shouldLogChat then return end
 	
 	local payload = HttpService:JSONEncode({
 		type = "chat",
