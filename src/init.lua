@@ -1559,70 +1559,88 @@ end)
 
 local messageList = {}
 
-local function hexToAnsi(hexColor)
-	-- Clean up string (remove # or ##)
-	hexColor = hexColor:gsub("#", "")
-	
+local function hexToDiscordAnsi(hexColor)
+	hexColor = hexColor:gsub("#", "") -- Remove all # characters
+
+	-- Parse RGB
 	local r = tonumber(hexColor:sub(1, 2), 16) or 0
 	local g = tonumber(hexColor:sub(3, 4), 16) or 0
 	local b = tonumber(hexColor:sub(5, 6), 16) or 0
 
-	-- Calculate closest ANSI 256 color
-	-- Formula converts 0-255 RGB to 0-5 scale
-	local r5 = math.floor((r / 255) * 5)
-	local g5 = math.floor((g / 255) * 5)
-	local b5 = math.floor((b / 255) * 5)
+	-- DISCORD COLOR PALETTE LOGIC
+	-- Discord only supports: 30(Gray), 31(Red), 32(Green), 33(Yellow), 34(Blue), 35(Pink), 36(Cyan), 37(White)
 	
-	-- Calculate ANSI index: 16 + 36*r + 6*g + b
-	local ansiCode = 16 + (36 * r5) + (6 * g5) + b5
-	
-	return string.format("\27[38;5;%dm", ansiCode)
+	-- 1. Check for Grayscale (White/Gray)
+	-- If color is very bright, make it White (37). 
+	-- Note: Discord's "Gray" (30) is barely visible on dark mode, so we often default to White (37) for generic text.
+	if r > 200 and g > 200 and b > 200 then
+		return "[0;37m" -- White
+	end
+
+	-- 2. Color Matching based on dominance
+	if r > g and r > b then
+		if g > 150 then return "[0;33m" end -- Orange/Yellowish -> Yellow
+		return "[0;31m" -- Red
+	elseif g > r and g > b then
+		if r > 150 then return "[0;33m" end -- Lime/Yellowish -> Yellow
+		return "[0;32m" -- Green
+	elseif b > r and b > g then
+		if r > 150 then return "[0;35m" end -- Purple -> Pink
+		if g > 150 then return "[0;36m" end -- Teal -> Cyan
+		return "[0;34m" -- Blue
+	end
+
+	-- 3. Secondary mixes (Yellow, Pink, Cyan)
+	if r > 150 and g > 150 then return "[0;33m" end -- Yellow
+	if r > 150 and b > 150 then return "[0;35m" end -- Pink
+	if g > 150 and b > 150 then return "[0;36m" end -- Cyan
+
+	return "[0;37m" -- Fallback to White
 end
 
--- 2. Parser: Handles nested tags using a "Color Stack"
+-- 2. Parser: Handles nested tags
 local function parseMessageToAnsi(text)
-	local colorStack = { "\27[0m" } -- Start with 'Reset' in the stack
+	-- We start with a default color (Reset) in the stack
+	local colorStack = { "[0m" } 
 	local result = ""
 	local position = 1
 	
 	while true do
-		-- Find the next tag (either opening <font> or closing </font>)
+		-- Find next tag
 		local s, e, tagContent = text:find("<(.-)>", position)
 		
-		-- If no more tags are found, append the rest of the text and break
 		if not s then
 			result = result .. text:sub(position)
 			break
 		end
 		
-		-- Append the text occurring *before* this tag
+		-- Append text before the tag
 		if s > position then
 			result = result .. text:sub(position, s - 1)
 		end
 		
-		-- Check if it is a closing tag </font>
+		-- Handle Closing Tag </font>
 		if tagContent:sub(1, 1) == "/" then
 			if #colorStack > 1 then
-				table.remove(colorStack) -- Pop the current color
+				table.remove(colorStack)
 			end
-			-- Re-apply the color that is now on top of the stack (the parent color)
+			-- Restore parent color
 			result = result .. colorStack[#colorStack]
 			
-		-- Check if it is an opening tag <font color="...">
+		-- Handle Opening Tag <font color="...">
 		elseif tagContent:match('color="([^"]+)"') then
 			local hex = tagContent:match('color="([^"]+)"')
-			local ansi = hexToAnsi(hex)
+			local ansi = hexToDiscordAnsi(hex)
 			
-			table.insert(colorStack, ansi) -- Push new color to stack
-			result = result .. ansi        -- Apply new color
+			table.insert(colorStack, ansi)
+			result = result .. ansi
 		end
 		
-		-- Move search position past the current tag
 		position = e + 1
 	end
 	
-	-- Ensure we reset everything at the very end
-	return result .. "\27[0m"
+	-- Clean up: Remove redundant resets at the end if they exist
+	return result .. "[0m"
 end
 
 local function logMessages()
