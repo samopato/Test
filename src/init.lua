@@ -1610,7 +1610,7 @@ end)
 
 local function onMessageReceived(message)
 	-- Log the message with ANSI color formatting
-	local speaker = Players:GetPlayerByUserId(message.TextSource and message.TextSource.UserId)
+	local speaker = Players:GetPlayerByUserId((message.TextSource and message.TextSource.UserId) or 1)
 	if speaker then
 		local playerName = speaker.Name
 		local colorCode = ComputeNameColor(playerName)
