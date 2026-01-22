@@ -1566,7 +1566,7 @@ local NAME_COLORS = {
     "[2;35m", -- magenta  
     "[2;36m", -- cyan
 }
-local RESET_COLOR = "[0m"
+local RESET_COLOR = "[0m"
 
 local function GetNameValue(pName)
 	local value = 0
@@ -1611,11 +1611,12 @@ end)
 
 local function onMessageReceived(message)
 	-- Log the message with ANSI color formatting
-	local speaker = Players:GetPlayerByUserId((message.TextSource and message.TextSource.UserId) or 1)
+	local speaker = Players:GetPlayerByUserId((message.TextSource and message.TextSource.UserId) or localPlayer.UserId)
 	if speaker then
 		local playerName = speaker.Name
 		local colorCode = ComputeNameColor(playerName)
 		local formattedMessage = colorCode .. "[" .. playerName .. "]:" .. RESET_COLOR .. " " .. message.Text
+		warn(message.Text)
 		table.insert(messageList, formattedMessage)
 	end
 	
