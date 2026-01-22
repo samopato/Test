@@ -1652,7 +1652,7 @@ end
 -- Start the logging loop
 task.spawn(function()
 	while true do
-		task.wait(2)
+		task.wait(5)
 		logMessages()
 	end
 end)
