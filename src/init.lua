@@ -941,7 +941,12 @@ USER PROMPT:
 
 			local function fling(target)
 				local root = localPlayer.Character:FindFirstChild("HumanoidRootPart")
-				local humanoid = localPlayer.Character:FindFirstChildOfClass("Humanoid")				
+				local humanoid = localPlayer.Character:FindFirstChildOfClass("Humanoid")			
+
+				if not target then
+					return true
+				end
+				
 				local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
 				local targetHum = target.Character:FindFirstChildOfClass("Humanoid")
 
