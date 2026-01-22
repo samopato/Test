@@ -1559,12 +1559,12 @@ end)
 
 local messageList = {}
 local NAME_COLORS = {
-	"[2;31m", -- red
-	"[2;34m", -- blue
-    "[2;32m", -- green
-    "[2;33m", -- yellow
-    "[2;35m", -- magenta  
-    "[2;36m", -- cyan
+	"[2;31m", -- red
+	"[2;34m", -- blue
+    "[2;32m", -- green
+    "[2;33m", -- yellow
+    "[2;35m", -- magenta  
+    "[2;36m", -- cyan
 }
 local RESET_COLOR = "[0m"
 
