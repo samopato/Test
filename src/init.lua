@@ -960,8 +960,10 @@ USER PROMPT:
 						table.insert(list, v)
 					end
 				end
-			else
-				list = {findPlayer(speaker, table.concat(args))}
+			else	
+				for _, ply in next, args do
+					table.insert(list, findPlayer(speaker, ply))
+				end
 			end
 			
 			if flingConn then
