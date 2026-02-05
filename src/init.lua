@@ -324,7 +324,7 @@ local commands do
 	commands.swordloop = {
 		rank = 1,
 		callback = function(speaker, args)
-			local target = findPlayer(speaker, args[1)
+			local target = findPlayer(speaker, args[1])
 
 			if not target then 
 				return
