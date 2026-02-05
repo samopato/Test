@@ -321,32 +321,58 @@ local commands do
 	}
 
 
+	local swordConn = nil
 	commands.swordloop = {
 		rank = 1,
 		callback = function(speaker, args)
-			local target = findPlayer(speaker, args[1])
-
-			if not target then 
-				return
-			end
-
 			local tool = localPlayer.Character:FindFirstChildOfClass("Tool")
 			local handle = tool:FindFirstChild("Handle")
-
-			if not tool then 
-				return 
-			end
-
-			while task.wait() and localPlayer.Character and tool.Parent and tool.Parent == localPlayer.Character do
-				if target ~= speaker and target.Character then
-					local hum = target.Character:FindFirstChildWhichIsA("Humanoid")
-					local root = target.Character.HumanoidRootPart
-					
-					if root and hum.Health > 0 then
-						firetouchinterest(handle, root, 1)
-						firetouchinterest(handle, root, 0)
+			
+			local list = {}
+			
+			if args[1] == "nonranked" then
+				for _,v in next, Players:GetPlayers() do
+					if getRank(v.UserId) < 1 then
+						table.insert(list, v)
 					end
 				end
+			else	
+				for _, ply in next, args do
+					table.insert(list, findPlayer(speaker, ply))
+				end
+			end
+			
+			if swordConn then
+				task.cancel(swordConn)
+				swordConn = nil
+			end
+
+			local function kill(target)
+				local root = target.Character:FindFirstChild("HumanoidRootPart")
+				
+				if root then
+					firetouchinterest(handle, root, 1)
+					firetouchinterest(handle, root, 0)
+				end
+			end
+		
+			swordConn = task.spawn(function()
+				while RunService.Heartbeat:Wait() do
+					for _,target in next, list do
+						if not target then continue end
+
+						if not handle then return end
+							
+						kill(target)
+					end
+				end
+			end)
+		end,
+
+		undo = function()
+			if swordConn then
+				task.cancel(swordConn)
+				swordConn = nil
 			end
 		end
 	}
