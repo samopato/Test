@@ -930,7 +930,7 @@ USER PROMPT:
 					end
 				end
 			else
-				list = {target}
+				list = {findPlayer(speaker, table.concat(args))}
 			end
 			
 			if flingConn then
