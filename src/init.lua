@@ -347,7 +347,7 @@ local commands do
 			local function kill(target)
 				local root = target.Character:FindFirstChild("HumanoidRootPart")
 
-				local tool = localPlayer.Character:FindFirstChildOfClass("Tool")
+				local tool = localPlayer.Character:FindFirstChildOfClass("Tool") or localPlayer.Backpack:FindFirstChildOfClass("Tool")
 				
 				if tool and tool.Parent ~= localPlayer.Character then
 					tool.Parent = localPlayer.Character
