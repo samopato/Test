@@ -325,9 +325,6 @@ local commands do
 	commands.swordloop = {
 		rank = 1,
 		callback = function(speaker, args)
-			local tool = localPlayer.Character:FindFirstChildOfClass("Tool")
-			local handle = tool:FindFirstChild("Handle")
-			
 			local list = {}
 			
 			if args[1] == "nonranked" then
@@ -350,8 +347,13 @@ local commands do
 			local function kill(target)
 				local root = target.Character:FindFirstChild("HumanoidRootPart")
 
-				if tool then
+				local tool = localPlayer.Character:FindFirstChildOfClass("Tool")
+				local handle = tool:FindFirstChild("Handle")
+				
+				if tool and handle then
 					tool.Parent = localPlayer.Character
+				else
+					return
 				end
 				
 				if root then
@@ -364,8 +366,6 @@ local commands do
 				while RunService.Heartbeat:Wait() do
 					for _,target in next, list do
 						if not target then continue end
-
-						if not handle then return end
 							
 						kill(target)
 					end
