@@ -320,6 +320,36 @@ local commands do
 		end
 	}
 
+
+	commands.swordloop = {
+		rank = 1,
+		callback = function(speaker, args)
+			local target = findPlayer(speaker, args[1)
+
+			if not target then 
+				return
+			end
+
+			local tool = localPlayer.Character:FindFirstChildOfClass("Tool")
+
+			if not tool then 
+				return 
+			end
+			
+			while task.wait() and localPlayer.Character and tool.Parent and tool.Parent == localPlayer.Character do
+				if target ~= speaker and target.Character then
+					local hum = plr.Character:FindFirstChildWhichIsA("Humanoid")
+					local root = plr.Character.HumanoidRootPart
+					
+					if root and hum.Health > 0 then
+						firetouchinterest(handle, root, 1)
+						firetouchinterest(handle, root, 0)
+					end
+				end
+			end
+		end
+	}
+
 	commands.autojoin = {
 		rank = 4,
 		callback = function(speaker)
