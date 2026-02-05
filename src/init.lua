@@ -349,6 +349,10 @@ local commands do
 
 			local function kill(target)
 				local root = target.Character:FindFirstChild("HumanoidRootPart")
+
+				if tool then
+					tool.Parent = localPlayer.Character
+				end
 				
 				if root then
 					firetouchinterest(handle, root, 1)
