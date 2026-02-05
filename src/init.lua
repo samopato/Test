@@ -350,7 +350,7 @@ local commands do
 				local tool = localPlayer.Character:FindFirstChildOfClass("Tool") or localPlayer.Backpack:FindFirstChildOfClass("Tool")
 				local handle
 				
-				if tool and tool.Parent ~= localPlayer.Character then
+				if tool then
 					tool.Parent = localPlayer.Character
 					handle = tool:FindFirstChild("Handle")
 				else
