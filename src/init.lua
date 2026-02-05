@@ -339,8 +339,8 @@ local commands do
 
 			while task.wait() and localPlayer.Character and tool.Parent and tool.Parent == localPlayer.Character do
 				if target ~= speaker and target.Character then
-					local hum = plr.Character:FindFirstChildWhichIsA("Humanoid")
-					local root = plr.Character.HumanoidRootPart
+					local hum = target.Character:FindFirstChildWhichIsA("Humanoid")
+					local root = target.Character.HumanoidRootPart
 					
 					if root and hum.Health > 0 then
 						firetouchinterest(handle, root, 1)
