@@ -348,9 +348,8 @@ local commands do
 				local root = target.Character:FindFirstChild("HumanoidRootPart")
 
 				local tool = localPlayer.Character:FindFirstChildOfClass("Tool")
-				local handle = tool:FindFirstChild("Handle")
 				
-				if tool and handle then
+				if tool and tool.Parent ~= localPlayer.Character then
 					tool.Parent = localPlayer.Character
 				else
 					return
