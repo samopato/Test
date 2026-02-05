@@ -331,11 +331,12 @@ local commands do
 			end
 
 			local tool = localPlayer.Character:FindFirstChildOfClass("Tool")
+			local handle = tool:FindFirstChild("Handle")
 
 			if not tool then 
 				return 
 			end
-			
+
 			while task.wait() and localPlayer.Character and tool.Parent and tool.Parent == localPlayer.Character do
 				if target ~= speaker and target.Character then
 					local hum = plr.Character:FindFirstChildWhichIsA("Humanoid")
