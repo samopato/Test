@@ -348,16 +348,20 @@ local commands do
 				local root = target.Character:FindFirstChild("HumanoidRootPart")
 
 				local tool = localPlayer.Character:FindFirstChildOfClass("Tool") or localPlayer.Backpack:FindFirstChildOfClass("Tool")
+				local handle
 				
 				if tool and tool.Parent ~= localPlayer.Character then
 					tool.Parent = localPlayer.Character
+					handle = tool:FindFirstChild("Handle")
 				else
 					return
 				end
 				
-				if root then
+				if root and handle then
 					firetouchinterest(handle, root, 1)
 					firetouchinterest(handle, root, 0)
+				else
+					return
 				end
 			end
 		
