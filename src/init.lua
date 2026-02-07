@@ -347,18 +347,20 @@ local commands do
 			local function kill(target)
 				local root = target.Character:FindFirstChild("HumanoidRootPart")
 				local hum = localPlayer.Character:FindFirstChildOfClass("Humanoid")
-
 				local tool = localPlayer.Character:FindFirstChildOfClass("Tool") or localPlayer.Backpack:FindFirstChildOfClass("Tool")
 				local handle
 				
 				if tool and hum then
 					handle = tool:FindFirstChild("Handle")
-					hum:EquipTool(tool)
 				else
 					return
 				end
+
+				if tool.Parent ~= localPlayer.Character then
+					hum:EquipTool(tool)
+				end
 				
-				if root and handle and tool.Parent == localPlayer.Character then
+				if root and handle then
 					tool:Activate()
 
 					for _ = 1, 5 do
