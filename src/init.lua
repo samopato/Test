@@ -346,19 +346,19 @@ local commands do
 
 			local function kill(target)
 				local root = target.Character:FindFirstChild("HumanoidRootPart")
+				local hum = localPlayer.Character:FindFirstChildOfClass("Humanoid")
 
 				local tool = localPlayer.Character:FindFirstChildOfClass("Tool") or localPlayer.Backpack:FindFirstChildOfClass("Tool")
 				local handle
 				
 				if tool then
-					tool.Parent = localPlayer.Backpack
-					tool.Parent = localPlayer.Character
 					handle = tool:FindFirstChild("Handle")
 				else
 					return
 				end
 				
-				if root and handle then
+				if root and handle and hum then
+					hum:EquipTool(tool)
 					tool:Activate()
 					
 					firetouchinterest(handle, root, 1)
