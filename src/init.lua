@@ -1050,6 +1050,8 @@ USER PROMPT:
 				tries += 1
 			
 				humanoid:SetStateEnabled(15, false)	
+				root.AssemblyLinearVelocity = Vector3.one
+				root.AssemblyAngularVelocity = Vector3.one
 				root.CFrame = targetRoot.CFrame
 				sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
 				sethiddenproperty(humanoid, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
@@ -1148,16 +1150,6 @@ USER PROMPT:
 			local hum = char.Humanoid
 			local root = char.HumanoidRootPart
 
-			local list = {
-				0,
-				2,
-				3,
-				6,
-				7,
-				8,
-				12
-			}
-
 			if carpetConn then
 				task.cancel(carpetConn)
 				carpetConn = nil
@@ -1170,20 +1162,6 @@ USER PROMPT:
 				end
 			end
 
-			--[[
-			local carpetPart = Instance.new("Part")
-			carpetPart.Size = Vector3.one
-			carpetPart.CFrame = root.CFrame
-			carpetPart.Massless = true
-			
-			local weld = Instance.new("WeldConstraint")
-			weld.Parent = carpetPart
-			weld.Part0 = carpetPart
-			weld.Part1 = root
-
-			carpetPart.Parent = workspace
-			]]--
-
 			local heartbeat = RunService.Heartbeat
 			local targetChar = targetPlayer.Character
 			local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
@@ -1192,7 +1170,6 @@ USER PROMPT:
 				while heartbeat:Wait() do
 					if targetRoot and root then
 						hum.Sit = true
-						hum:ChangeState(list[math.random(1, #list)])
 
 						for _,v in pairs(char:GetChildren()) do
 							if v:IsA("BasePart") then
