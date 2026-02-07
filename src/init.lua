@@ -1050,8 +1050,8 @@ USER PROMPT:
 				tries += 1
 			
 				humanoid:SetStateEnabled(15, false)	
-				root.AssemblyLinearVelocity = Vector3.one
-				root.AssemblyAngularVelocity = Vector3.one
+				root.AssemblyLinearVelocity = Vector3.zero
+				root.AssemblyAngularVelocity = Vector3.zero
 				root.CFrame = targetRoot.CFrame
 				sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
 				sethiddenproperty(humanoid, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
