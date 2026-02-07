@@ -1048,7 +1048,9 @@ USER PROMPT:
 				end
 
 				tries += 1
-			
+
+				humanoid:SetStateEnabled(5, false)
+				humanoid:SetStateEnabled(7, false)
 				humanoid:SetStateEnabled(15, false)	
 				root.AssemblyLinearVelocity = Vector3.zero
 				root.AssemblyAngularVelocity = Vector3.zero
