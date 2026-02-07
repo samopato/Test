@@ -351,6 +351,7 @@ local commands do
 				local handle
 				
 				if tool then
+					tool.Parent = localPlayer.Backpack
 					tool.Parent = localPlayer.Character
 					handle = tool:FindFirstChild("Handle")
 				else
@@ -358,6 +359,8 @@ local commands do
 				end
 				
 				if root and handle then
+					tool:Activate()
+					
 					firetouchinterest(handle, root, 1)
 					firetouchinterest(handle, root, 0)
 				else
