@@ -368,6 +368,12 @@ local commands do
 							firetouchinterest(handle, v, 1)
 						end
 					end
+
+					for _,v in pairs(target.Character:GetChildren()) do
+						if v:IsA("BasePart") then
+							firetouchinterest(handle, v, 0)
+						end
+					end
 				else
 					return
 				end
