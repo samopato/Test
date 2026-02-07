@@ -365,7 +365,7 @@ local commands do
 
 					for _,v in pairs(target.Character:GetChildren()) do
 						if v:IsA("BasePart") then
-							firetouchinterest(handle, v)
+							firetouchinterest(handle, v, 1)
 						end
 					end
 				else
