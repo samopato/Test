@@ -363,9 +363,10 @@ local commands do
 				if root and handle then
 					tool:Activate()
 
-					for _ = 1, 5 do
-						firetouchinterest(handle, root, 1)
-						firetouchinterest(handle, root, 0)
+					for _,v in pairs(target.Character:GetChildren()) do
+						if v:IsA("BasePart") then
+							firetouchinterest(handle, v)
+						end
 					end
 				else
 					return
