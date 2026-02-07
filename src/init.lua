@@ -351,18 +351,20 @@ local commands do
 				local tool = localPlayer.Character:FindFirstChildOfClass("Tool") or localPlayer.Backpack:FindFirstChildOfClass("Tool")
 				local handle
 				
-				if tool then
+				if tool and hum then
 					handle = tool:FindFirstChild("Handle")
+					hum:EquipTool(tool)
 				else
 					return
 				end
 				
-				if root and handle and hum then
-					hum:EquipTool(tool)
+				if root and handle and tool.Parent == localPlayer.Character then
 					tool:Activate()
-					
-					firetouchinterest(handle, root, 1)
-					firetouchinterest(handle, root, 0)
+
+					for _ = 1, 5 do
+						firetouchinterest(handle, root, 1)
+						firetouchinterest(handle, root, 0)
+					end
 				else
 					return
 				end
