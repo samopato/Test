@@ -1,0 +1,13 @@
+# Folders to ignore
+node_modules/
+bin/
+obj/
+dist/
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Private environment variables
+bot/.env
+*.log
