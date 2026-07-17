@@ -1756,7 +1756,7 @@ local function onMessageReceived(message)
 	local formattedMessage = parseMessageToAnsi(message.Text)
 	table.insert(messageList, formattedMessage)
 			
-	local speaker = typeof("TextChatMessage") == "TextChatMessage" and Players:GetPlayerByUserId(message.TextSource.UserId) or localPlayer -- discord messages
+	local speaker = Players:GetPlayerByUserId(message.TextSource.UserId) or localPlayer -- discord messages
 	local prefix = string.sub(message.Text, 1, 1)
 	
 	if prefix ~= settings.prefix then
