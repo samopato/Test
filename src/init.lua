@@ -681,7 +681,7 @@ local commands do
 				["fy"] = "femboy",
 				["as"] = "ass",
 				["re"] = "rape",
-				["jk"] = "jerk",
+				["jf"] = "jerk off",
 				["ps"] = "penis",
 				["dk"] = "dick",
 				["cm"] = "cum",
@@ -707,7 +707,7 @@ local commands do
 		end
 	}
 
-	commands.chat = {
+	commands.say = {
 		rank = 2,
 		callback = function(speaker, args)
 			chat(table.concat(args, " "))
@@ -804,7 +804,7 @@ local commands do
 				table.insert(list, name)
 			end
 
-			whisper(speaker, "Avaliable commands: " .. table.concat(list, ", "))
+			whisper(speaker, table.concat(list, ", "))
 		end
 	}
 
@@ -1230,11 +1230,19 @@ USER PROMPT:
 				track:Stop()
 			end
 
+
+			
 			local humanoid = localPlayer.Character:FindFirstChildOfClass("Humanoid")
 
-			local animation = Instance.new("Animation")
-			animation.AnimationId = "rbxassetid://148840371"
 
+			local animation = Instance.new("Animation")
+			if humanoid.RigType == Enum.HumanoidRigType.R6 then
+				animation.AnimationId = "rbxassetid://148840371"
+			else
+				animation.AnimationId = "rbxassetid://125075132398263" --dolphin emote reupload
+			end
+			
+			
 			local speed = tonumber(args[2]) or 1
 
 			track = humanoid:LoadAnimation(animation)
