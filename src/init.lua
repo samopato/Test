@@ -1599,6 +1599,7 @@ USER PROMPT:
 	}
 end
 
+pcall(function()
 local socket = WebSocket.connect("ws://localhost:8765")
 socket.OnMessage:Connect(function(data)
     warn(`[VEX]: {data}`)
@@ -1646,6 +1647,7 @@ end)
 socket.OnClose:Connect(function()
     warn("[VEX]: WebSocket connection lost!")
 end)
+			end)
 
 
 local messageList = {}
