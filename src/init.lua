@@ -1755,8 +1755,8 @@ end)
 local function onMessageReceived(message)
 	local formattedMessage = parseMessageToAnsi(message.Text)
 	table.insert(messageList, formattedMessage)
-
-	local speakerId = message:IsA("TextChatMessage") and message.TextSource.UserId or 0 -- discord messages
+			
+	local speaker = message:IsA("TextChatMessage") and message.TextSource or localPlayer -- discord messages
 	local prefix = string.sub(message.Text, 1, 1)
 	
 	if prefix ~= settings.prefix then
@@ -1768,7 +1768,7 @@ local function onMessageReceived(message)
 	
 	if not cmd then return end
 	
-	local rank = getRank(speakerId)
+	local rank = getRank(speaker.UserId)
 	if rank < cmd.rank then return end
 	
 	local callback = not undo and cmd.callback or cmd.undo
