@@ -1047,7 +1047,7 @@ USER PROMPT:
 					return true --in case player is sitting or dead
 				end
 
-				if tries > 20 then
+				if tries > 100 then
 					return true
 				end
 
@@ -1056,9 +1056,9 @@ USER PROMPT:
 				humanoid:SetStateEnabled(5, false)
 				humanoid:SetStateEnabled(7, false)
 				humanoid:SetStateEnabled(15, false)	
-				root.AssemblyLinearVelocity = Vector3.new(0, math.huge, 0)
-				root.AssemblyAngularVelocity = Vector3.zero
-				root.CFrame = targetRoot.CFrame + Vector3.new(0, 1.5, 0)
+				root.AssemblyLinearVelocity = Vector3.new(0, 1e50, 0)
+				root.AssemblyAngularVelocity = Vector3.new(0, 0, 1e50)
+				root.CFrame = targetRoot.CFrame + Vector3.new(0, 2, 0)
 				sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
 				--sethiddenproperty(humanoid, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
 			end
@@ -1764,7 +1764,7 @@ local function onMessageReceived(message)
 	local formattedMessage = parseMessageToAnsi(message.Text)
 	table.insert(messageList, formattedMessage)
 			
-	local speaker = Players:GetPlayerByUserId(message.TextSource.UserId) or localPlayer -- discord messages
+	local speaker = TextSource and Players:GetPlayerByUserId(message.TextSource.UserId) or localPlayer -- discord messages
 	local prefix = string.sub(message.Text, 1, 1)
 	
 	if prefix ~= settings.prefix then
