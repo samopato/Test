@@ -11,6 +11,16 @@ local PathfindingService = game:GetService("PathfindingService")
 local localPlayer = Players.LocalPlayer
 
 
+local isfile = assert(isfile)
+local writefile = assert(writefile)
+local request = assert(request)
+local firetouchinterest = assert(firetouchinterest)
+local replicatesignal = assert(replicatesignal)
+local sethiddenproperty = assert(sethiddenproperty)
+local WebSocket = assert(WebSocket)
+local hookmetamethod = assert(hookmetamethod)
+local getnamecallmethod = assert(getnamecallmethod)
+
 -----------------------------
 -- Setup
 -----------------------------
@@ -276,22 +286,22 @@ local commands do
 			--keep network ownership
 			task.spawn(function()
 				for _, v in next, game:GetDescendants() do
-       				if not v:IsA("BasePart") then
+					if not v:IsA("BasePart") then
 						return 
 					end
-				
+
 					if v.AssemblyMass == "inf" or v.Anchored then 
 						return
 					end
 
 					RunService.Heartbeat:Connect(function()
-						sethiddenproperty(LocalPlayer, "SimulationRadius", math.huge)
-	              		v.CustomPhysicalProperties = PhysicalProperties.new(0,0,0,0,0)
-            			v.Velocity = Vector3.new(25.70,0,0)
-          				v.RotVelocity = Vector3.new(9e9,9e9,9e9)
+						sethiddenproperty(localPlayer, "SimulationRadius", math.huge)
+						v.CustomPhysicalProperties = PhysicalProperties.new(0,0,0,0,0)
+						v.Velocity = Vector3.new(25.70,0,0)
+						v.RotVelocity = Vector3.new(9e9,9e9,9e9)
 						v.CanCollide = false
-      				end)
-  				end
+					end)
+				end
 			end)
 
 			--perm death
@@ -301,18 +311,18 @@ local commands do
 
 			--idk
 			for _, x in next, humanoid:GetAccessories() do
-  				sethiddenproperty(x, "BackendAccoutrementState", 0)
-   				local attachment = x:FindFirstChildWhichIsA("Attachment", true)
-				
-    			if attachment then
-       				attachment:Destroy()
-    			end
+				sethiddenproperty(x, "BackendAccoutrementState", 0)
+				local attachment = x:FindFirstChildWhichIsA("Attachment", true)
+
+				if attachment then
+					attachment:Destroy()
+				end
 			end
 
 			task.spawn(function()
 				while RunService.Heartbeat:Wait() do
 					bp.Position = targetRoot.Position
- 					hat.Handle.Position = targetRoot.Position
+					hat.Handle.Position = targetRoot.Position
 				end
 			end)
 
@@ -326,7 +336,7 @@ local commands do
 		rank = 1,
 		callback = function(speaker, args)
 			local list = {}
-			
+
 			if args[1] == "nonranked" then
 				for _,v in next, Players:GetPlayers() do
 					if getRank(v.UserId) < 1 then
@@ -338,7 +348,7 @@ local commands do
 					table.insert(list, findPlayer(speaker, ply))
 				end
 			end
-			
+
 			if swordConn then
 				task.cancel(swordConn)
 				swordConn = nil
@@ -348,12 +358,12 @@ local commands do
 				if not target.Character then
 					return
 				end
-				
+
 				local root = target.Character:FindFirstChild("HumanoidRootPart")
 				local hum = localPlayer.Character:FindFirstChildOfClass("Humanoid")
 				local tool = localPlayer.Character:FindFirstChildOfClass("Tool") or localPlayer.Backpack:FindFirstChildOfClass("Tool")
 				local handle
-				
+
 				if tool and hum then
 					handle = tool:FindFirstChild("Handle")
 				else
@@ -363,7 +373,7 @@ local commands do
 				if tool.Parent ~= localPlayer.Character then
 					hum:EquipTool(tool)
 				end
-				
+
 				if root and handle then
 					tool:Activate()
 
@@ -382,12 +392,12 @@ local commands do
 					return
 				end
 			end
-		
+
 			swordConn = task.spawn(function()
 				while RunService.Heartbeat:Wait() do
 					for _,target in next, list do
 						if not target then continue end
-							
+
 						kill(target)
 					end
 				end
@@ -410,35 +420,35 @@ local commands do
 					warn("Player is on server")
 					return
 				end
-				
+
 				local response = request({
-       				Url = "https://presence.roblox.com/v1/presence/users",
-       				Method = "POST",
-        			Headers = {
-           				["Content-Type"] = "application/json",
-           				["Cookie"] = ".ROBLOSECURITY=" .. settings.robloxCookie
+					Url = "https://presence.roblox.com/v1/presence/users",
+					Method = "POST",
+					Headers = {
+						["Content-Type"] = "application/json",
+						["Cookie"] = ".ROBLOSECURITY=" .. settings.robloxCookie
 					},				
 					Body = HttpService:JSONEncode({
-           				userIds = {userId}
-       				})
-   				})
+						userIds = {userId}
+					})
+				})
 
 				if response.Success then
-       				local data = HttpService:JSONDecode(response.Body)
-       				local user = data.userPresences[1]
+					local data = HttpService:JSONDecode(response.Body)
+					local user = data.userPresences[1]
 
 					if not user then return end
-        
-       				if user.userPresenceType == 2 then
+
+					if user.userPresenceType == 2 then
 						warn(`placeId: {user.placeId} gameId: {user.gameId}`)
-            			return user.placeId, user.gameId					
+						return user.placeId, user.gameId					
 					elseif user.userPresenceType == 1 then
 						warn("User is on the website")
 					elseif user.userPresenceType == 3 then
 						warn("User is on Roblox Studio")
-       				end
-   				else
-       				warn("Failed: " ..response.StatusCode)
+					end
+				else
+					warn("Failed: " ..response.StatusCode)
 				end
 			end
 
@@ -447,17 +457,17 @@ local commands do
 					local placeId, gameId = scan(speaker.UserId)
 
 					if placeId and gameId then
-           				chat("Auto-Joining server...")
-            			TeleportService:TeleportToPlaceInstance(placeId, gameId, localPlayer)
-            			break			
-        			end
+						chat("Auto-Joining server...")
+						TeleportService:TeleportToPlaceInstance(placeId, gameId, localPlayer)
+						break			
+					end
 				end
 			end)
 
 			chat("Enabled auto-joiner")
 		end	
 	}
-	
+
 	commands.test = {
 		rank = 1,
 		callback = function(speaker)
@@ -465,17 +475,17 @@ local commands do
 			local hum = localPlayer.Character:WaitForChild("Humanoid")
 			local original = hrp.CFrame
 			local void = workspace.FallenPartsDestroyHeight
-			
+
 			workspace.FallenPartsDestroyHeight = 0/0			
 			hrp.CFrame = CFrame.new(0, "NaN", 0)
 			task.wait(0.1)
 
 			replicatesignal(hum.ServerBreakJoints)
 			hum:SetStateEnabled(15, false)
-			
+
 			hrp.Velocity = Vector3.zero
 			localPlayer.Character:PivotTo(original)
-			
+
 			localPlayer.CharacterAdded:Wait()		
 			workspace.FallenPartsDestroyHeight = void
 		end
@@ -486,7 +496,7 @@ local commands do
 		callback = function()
 			local humanoid = localPlayer.Character:WaitForChild("Humanoid")
 			local forceField = Instance.new("ForceField")
-			
+
 			forceField.Visible = false
 			forceField.Parent = localPlayer.Character
 
@@ -503,21 +513,21 @@ local commands do
 			local hum = localPlayer.Character:WaitForChild("Humanoid")
 			local original = hrp.CFrame
 			local void = workspace.FallenPartsDestroyHeight
-			
+
 			hum:SetStateEnabled(15, false)
 			workspace.FallenPartsDestroyHeight = 0/0
 			wait()
-			
+
 			hrp.CFrame = CFrame.new(0, 9e9, 0)
 			wait(0.2)
 
 			--replicatesignal(hum.ServerBreakJoints)
 			replicatesignal(localPlayer.kill)
 			wait()
-			
+
 			hrp.Velocity = Vector3.zero
 			hrp.CFrame = original
-			
+
 			localPlayer.CharacterAdded:Wait()		
 			workspace.FallenPartsDestroyHeight = void
 		end
@@ -533,7 +543,7 @@ local commands do
 			whisper(speaker, fps .."fps")
 		end
 	}
-	
+
 	commands.ping = {
 		rank = 1,
 		callback = function(speaker)
@@ -541,7 +551,7 @@ local commands do
 			whisper(speaker, ping .."ms")
 		end
 	}
-	
+
 	-----------------------------
 	-- Tools
 	-----------------------------
@@ -554,7 +564,7 @@ local commands do
 			local target = findPlayer(speaker, args[1])
 			local root = target.Character:FindFirstChild("HumanoidRootPart")
 			local hrp = localPlayer.Character:FindFirstChild("HumanoidRootPart")
-			
+
 			if glueConn then
 				glueConn:Disconnect()
 				glueConn = nil
@@ -565,7 +575,7 @@ local commands do
 					v.CustomPhysicalProperties = PhysicalProperties.new(100)
 				end
 			end
-			
+
 			glueConn = RunService.Heartbeat:Connect(function()
 				if root and hrp then
 					sethiddenproperty(hrp, "PhysicsRepRootPart", root)
@@ -646,7 +656,7 @@ local commands do
 				["xs"] = "xvideos",
 				["ye"] = "youtube",
 				["wp"] = "whatsapp",
-				
+
 				--pt-br
 				["ea"] = "estupra",
 				["po"] = "preto",
@@ -654,7 +664,6 @@ local commands do
 				["pa"] = "porra",
 				["ma"] = "merda",
 				["co"] = "caralho",
-				["ma"] = "molhada",
 				["ra"] = "rola",
 				["mo"] = "macaco",
 				["no"] = "negro",
@@ -697,11 +706,11 @@ local commands do
 			}
 
 			local final = string.gsub(message, "#(%w+)%f[%W]", function(word)
-    	    	local lowercaseWord = string.sub(string.lower(word), 1, 2)
+				local lowercaseWord = string.sub(string.lower(word), 1, 2)
 				local rest = string.sub(word, 3)
-								
-     			return tostring(list[lowercaseWord] or ("#" .. word)) ..rest
-  			end)
+
+				return tostring(list[lowercaseWord] or ("#" .. word)) ..rest
+			end)
 
 			chat(bypass(final))
 		end
@@ -812,7 +821,7 @@ local commands do
 		rank = 2,
 		callback = function(speaker, args)
 			local raw = settings.openrouteKey
-			local KEY = raw == "add here" and nil or raw
+			local KEY =  if raw == "add here" then nil else raw
 			local URL = "https://openrouter.ai/api/v1/chat/completions"
 
 			if not KEY then
@@ -984,7 +993,7 @@ USER PROMPT:
 		rank = 1,
 		callback = function(speaker, args)
 			local hum = localPlayer.Character:FindFirstChildOfClass("Humanoid")
-			
+
 			task.spawn(function()
 				while task.wait() do
 					if hum then
@@ -1004,7 +1013,7 @@ USER PROMPT:
 			local list = {}
 
 			workspace.FallenPartsDestroyHeight = 0/0
-			
+
 			if args[1] == "nonranked" then
 				for _,v in next, Players:GetPlayers() do
 					if getRank(v.UserId) < 1 then
@@ -1016,7 +1025,7 @@ USER PROMPT:
 					table.insert(list, findPlayer(speaker, ply))
 				end
 			end
-			
+
 			if flingConn then
 				task.cancel(flingConn)
 				flingConn = nil
@@ -1031,14 +1040,14 @@ USER PROMPT:
 				if not target.Character then
 					return true
 				end
-				
+
 				local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
 				local targetHum = target.Character:FindFirstChildOfClass("Humanoid")
 
 				if not root or not humanoid then
 					return true --in case we dont exist
 				end
-				
+
 				if not targetRoot or not targetHum then
 					return true --in case player is is gone
 				end
@@ -1064,17 +1073,17 @@ USER PROMPT:
 
 				root.AssemblyLinearVelocity = Vector3.zero
 				root.AssemblyAngularVelocity = Vector3.zero
-				
+
 				--sethiddenproperty(humanoid, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
 			end
-			
+
 			flingConn = task.spawn(function()
 				while RunService.Heartbeat:Wait() do
 					for _,target in next, list do
 						if not target then continue end
-							
+
 						local success = false
-							
+
 						repeat success = fling(target) RunService.Heartbeat:Wait() until success
 						tries = 0
 					end
@@ -1196,7 +1205,7 @@ USER PROMPT:
 						local flatLook = Vector3.new(targetLook.X, 0, targetLook.Z).Unit
 
 						root.CFrame = CFrame.lookAt(targetPos, targetPos + flatLook) --* CFrame.Angles(math.rad(90), 0, 0)
-					
+
 						root.AssemblyLinearVelocity = Vector3.zero	
 						root.AssemblyAngularVelocity = Vector3.zero
 						targetRoot.AssemblyLinearVelocity = Vector3.zero	
@@ -1210,7 +1219,7 @@ USER PROMPT:
 				end
 			end)
 		end,
-		
+
 		undo = function()
 			if carpetConn then
 				task.cancel(carpetConn)
@@ -1236,7 +1245,7 @@ USER PROMPT:
 			end
 
 
-			
+
 			local humanoid = localPlayer.Character:FindFirstChildOfClass("Humanoid")
 
 
@@ -1246,8 +1255,8 @@ USER PROMPT:
 			else
 				animation.AnimationId = "rbxassetid://125075132398263" --dolphin emote reupload
 			end
-			
-			
+
+
 			local speed = tonumber(args[2]) or 1
 
 			track = humanoid:LoadAnimation(animation)
@@ -1289,52 +1298,52 @@ USER PROMPT:
 	commands.orbit = {
 		rank = 1,
 		callback = function(speaker, args)
- local target = findPlayer(speaker, args[1])
-        local speed = tonumber(args[2]) or 20
-		local char = localPlayer.Character
-        local root = char:FindFirstChild("HumanoidRootPart")
-        local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
-			
-        if orbitConn then
-            orbitConn:Disconnect()
-            orbitConn = nil
-        end
+			local target = findPlayer(speaker, args[1])
+			local speed = tonumber(args[2]) or 20
+			local char = localPlayer.Character
+			local root = char:FindFirstChild("HumanoidRootPart")
+			local targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
 
-					for _,v in pairs(char:GetChildren()) do
-						if v:IsA("BasePart") then
-							v.CanCollide = false
-						end
-					end
-        
-		rotationTime = 0 -- Reset rotation tracker
-        
-        orbitConn = RunService.Heartbeat:Connect(function(deltaTime)
-            if not root then return end
-            if not targetRoot then
-                targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
-                return
-            end
-            
-            rotationTime = rotationTime + deltaTime -- Increment by frame time
-            
-            local orbitAngle = rotationTime * speed
-            local spinAngle = rotationTime * (speed * 3)
-            
-            -- 1. Calculate Orbit Position
-            local offset = Vector3.new(math.cos(orbitAngle) * 10, 0, math.sin(orbitAngle) * 10)
-            local orbitPosition = (targetRoot.CFrame * CFrame.new(offset)).Position
-            
-            -- 2. Self-rotation (continuous spin)
-            local selfRotation = CFrame.Angles(spinAngle, spinAngle, spinAngle)
-            
-            localPlayer.Character.Humanoid.Sit = false
-            localPlayer.Character.Humanoid.PlatformStand = true
-            sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
-            
-            -- 3. Apply position and rotation
-            root.CFrame = CFrame.new(orbitPosition) * selfRotation
-			root.AssemblyLinearVelocity = Vector3.one
-        end)
+			if orbitConn then
+				orbitConn:Disconnect()
+				orbitConn = nil
+			end
+
+			for _,v in pairs(char:GetChildren()) do
+				if v:IsA("BasePart") then
+					v.CanCollide = false
+				end
+			end
+
+			rotationTime = 0 -- Reset rotation tracker
+
+			orbitConn = RunService.Heartbeat:Connect(function(deltaTime)
+				if not root then return end
+				if not targetRoot then
+					targetRoot = target.Character:FindFirstChild("HumanoidRootPart")
+					return
+				end
+
+				rotationTime = rotationTime + deltaTime -- Increment by frame time
+
+				local orbitAngle = rotationTime * speed
+				local spinAngle = rotationTime * (speed * 3)
+
+				-- 1. Calculate Orbit Position
+				local offset = Vector3.new(math.cos(orbitAngle) * 10, 0, math.sin(orbitAngle) * 10)
+				local orbitPosition = (targetRoot.CFrame * CFrame.new(offset)).Position
+
+				-- 2. Self-rotation (continuous spin)
+				local selfRotation = CFrame.Angles(spinAngle, spinAngle, spinAngle)
+
+				localPlayer.Character.Humanoid.Sit = false
+				localPlayer.Character.Humanoid.PlatformStand = true
+				sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
+
+				-- 3. Apply position and rotation
+				root.CFrame = CFrame.new(orbitPosition) * selfRotation
+				root.AssemblyLinearVelocity = Vector3.one
+			end)
 		end,
 		undo = function(speaker, args)
 			if orbitConn then
@@ -1397,28 +1406,28 @@ USER PROMPT:
 				if not part:IsA("BasePart") then return end
 
 				if part.AssemblyMass == "inf" then return end
-				
+
 				if part.Parent == LocalPlayer.Character or part:IsDescendantOf(LocalPlayer.Character) then return end
 
 				return true
 			end
 
 			-- Collect parts from Workspace
-				while task.wait(0.5) do
-					for _, part in next, workspace:GetDescendants() do
-						if isValidPart(part) then
-							table.insert(orbitingParts, part)
+			while task.wait(0.5) do
+				for _, part in next, workspace:GetDescendants() do
+					if isValidPart(part) then
+						table.insert(orbitingParts, part)
 
-							part.CanCollide = false 
-							part.Massless = true
-						else 
-							local i = table.find(orbitingParts, part)
-							if i then
-								table.remove(orbitingParts, i)
-							end
+						part.CanCollide = false 
+						part.Massless = true
+					else 
+						local i = table.find(orbitingParts, part)
+						if i then
+							table.remove(orbitingParts, i)
 						end
 					end
 				end
+			end
 
 			RunService.RenderStepped:Connect(function()
 				local currentTime = tick() * SPEED
@@ -1459,16 +1468,16 @@ USER PROMPT:
 		callback = function()
 			task.spawn(function()
 				while task.wait() do
-					local character = player.Character or player.CharacterAdded:Wait()
+					local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
 					local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 					local parts = workspace:GetPartBoundsInRadius(humanoidRootPart.Position, 10)
-						
+
 					for _, part in next, parts do
 						part.CanTouch = false
 					end
 				end
 			end)
-			
+
 			local oldNamecall
 			oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
 				local method = getnamecallmethod()
@@ -1539,7 +1548,7 @@ USER PROMPT:
 				return
 			end
 
-			settings.ranks[tostring(userId)] = newRankLevel < 1 and nil or tostring(newRankLevel)
+			settings.ranks[tostring(userId)] = if newRankLevel < 1 then nil else tostring(newRankLevel)
 			saveSettings()
 
 			if target then
@@ -1559,7 +1568,7 @@ USER PROMPT:
 			settings.shouldLogChat = not settings.shouldLogChat
 		end
 	}
-			
+
 	commands.rejoin = {
 		rank = 3,
 		callback = function(speaker)
@@ -1612,55 +1621,55 @@ USER PROMPT:
 	}
 end
 
-pcall(function()
-local socket = WebSocket.connect("ws://localhost:8765")
-socket.OnMessage:Connect(function(data)
-    warn(`[VEX]: {data}`)
+--[[
+	local socket = WebSocket.connect("ws://localhost:8765")
+	socket.OnMessage:Connect(function(data)
+		warn(`[VEX]: {data}`)
 
-	if not data then return end
+		if not data then return end
 
-	local message = HttpService:JSONDecode(data)
+		local message = HttpService:JSONDecode(data)
 
-	if message.type == "cmds" then
-		local content = ""
+		if message.type == "cmds" then
+			local content = ""
 
-		for name,v in pairs(commands) do
-			content = `{content}\n{name} ({v.rank})`
+			for name,v in pairs(commands) do
+				content = `{content}\n{name} ({v.rank})`
+			end
+
+			local payload = HttpService:JSONEncode({
+				type = "cmds",
+				content = content
+			})
+
+			socket:Send(payload)
+			return
 		end
-					
-		local payload = HttpService:JSONEncode({
-			type = "cmds",
-			content = content
-		})
-			
-		socket:Send(payload)
-		return
-	end
-	
-	if message.type == "rejoin" then
-		commands["rejoin"].callback()
-		return
-	end
-				
-	local content = message.content
 
-	local prefix = string.sub(tostring(content), 0, 1)
+		if message.type == "rejoin" then
+			commands["rejoin"].callback()
+			return
+		end
 
-	if prefix ~= settings.prefix then return end
+		local content = message.content
 
-	local name, args, undo = parseCommand(content)	
-	local cmd = commands[name]
-	local callback = not undo and cmd.callback or cmd.undo
+		local prefix = string.sub(tostring(content), 0, 1)
 
-	if callback then
-		callback(localPlayer, args)
-	end
-end)
+		if prefix ~= settings.prefix then return end
 
-socket.OnClose:Connect(function()
-    warn("[VEX]: WebSocket connection lost!")
-end)
-			end)
+		local name, args, undo = parseCommand(content)	
+		local cmd = commands[name]
+		local callback = not undo and cmd.callback or cmd.undo
+
+		if callback then
+			callback(localPlayer, args)
+		end
+	end)
+
+	socket.OnClose:Connect(function()
+		warn("[VEX]: WebSocket connection lost!")
+	end)
+
 
 
 local messageList = {}
@@ -1668,15 +1677,15 @@ local messageList = {}
 local function hexToAnsi(hexColor)
 	-- Remove # if present
 	hexColor = hexColor:gsub("#", "")
-	
+
 	-- Parse RGB values
 	local r = tonumber(hexColor:sub(1, 2), 16)
 	local g = tonumber(hexColor:sub(3, 4), 16)
 	local b = tonumber(hexColor:sub(5, 6), 16)
-	
+
 	-- Use string.char(27) for the escape character (works better in Roblox)
 	local esc = string.char(27)
-	
+
 	-- More flexible color matching
 	if r > g + 50 and r > b + 50 then
 		return "[31m" -- Red
@@ -1705,21 +1714,21 @@ local function parseMessageToAnsi(text)
 	local colorStack = { "[0m" } 
 	local result = ""
 	local position = 1
-	
+
 	while true do
 		-- Find next tag
 		local s, e, tagContent = text:find("<(.-)>", position)
-		
+
 		if not s then
 			result = result .. text:sub(position)
 			break
 		end
-		
+
 		-- Append text before the tag
 		if s > position then
 			result = result .. text:sub(position, s - 1)
 		end
-		
+
 		-- Handle Closing Tag </font>
 		if tagContent:sub(1, 1) == "/" then
 			if #colorStack > 1 then
@@ -1727,28 +1736,29 @@ local function parseMessageToAnsi(text)
 			end
 			-- Restore parent color
 			result = result .. colorStack[#colorStack]
-			
-		-- Handle Opening Tag <font color="...">
+
+			-- Handle Opening Tag <font color="...">
 		elseif tagContent:match('color="([^"]+)"') then
 			local hex = tagContent:match('color="([^"]+)"')
 			local ansi = hexToAnsi(hex)
-			
+
 			table.insert(colorStack, ansi)
 			result = result .. ansi
 		end
-		
+
 		position = e + 1
 	end
-	
+
 	-- Clean up: Remove redundant resets at the end if they exist
 	return result .. "[0m"
 end
+]]
 
 local function logMessages()
 	if #messageList == 0 then return end
 
 	if not settings.shouldLogChat then return end
-	
+
 	local payload = HttpService:JSONEncode({
 		type = "chat",
 		content = "```ansi\n" .. table.concat(messageList, "\n") .. "\n```"
@@ -1766,26 +1776,26 @@ task.spawn(function()
 end)
 
 local function onMessageReceived(message)
-	if settings.shouldLogChat return	
+	if settings.shouldLogChat then	
 		local formattedMessage = parseMessageToAnsi(message.Text)
 		table.insert(messageList, formattedMessage) 
 	end
-			
-	local speaker = TextSource and Players:GetPlayerByUserId(message.TextSource.UserId) or localPlayer -- discord messages
+
+	local speaker =  Players:GetPlayerByUserId(message.TextSource.UserId) or localPlayer -- discord messages
 	local prefix = string.sub(message.Text, 1, 1)
-	
+
 	if prefix ~= settings.prefix then
 		return
 	end
-	
+
 	local name, args, undo = parseCommand(message.Text)
 	local cmd = commands[name]
-	
+
 	if not cmd then return end
-	
+
 	local rank = getRank(speaker.UserId)
 	if rank < cmd.rank then return end
-	
+
 	local callback = not undo and cmd.callback or cmd.undo
 	if callback then
 		callback(speaker, args)
