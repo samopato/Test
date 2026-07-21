@@ -1056,10 +1056,15 @@ USER PROMPT:
 				humanoid:SetStateEnabled(5, false)
 				humanoid:SetStateEnabled(7, false)
 				humanoid:SetStateEnabled(15, false)	
+				root.CFrame = targetRoot.CFrame + Vector3.new(0, 2.5, 0)
+				sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
+
 				root.AssemblyLinearVelocity = Vector3.new(0, 1e50, 0)
 				root.AssemblyAngularVelocity = Vector3.new(0, 0, 1e50)
-				root.CFrame = targetRoot.CFrame + Vector3.new(0, 2, 0)
-				sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
+
+				root.AssemblyLinearVelocity = Vector3.zero
+				root.AssemblyAngularVelocity = Vector3.zero
+				
 				--sethiddenproperty(humanoid, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
 			end
 			
