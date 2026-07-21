@@ -976,7 +976,7 @@ USER PROMPT:
 			replicatesignal(localPlayer.Kill)
 			replicatesignal(localPlayer.ConnectDiedSignalBackend)
 			task.wait(Players.RespawnTime - 0.1)
-			replicatesignal(localPlayer.Kill)	
+			replicatesignal(localPlayer.Kill)
 		end
 	}
 
@@ -1056,11 +1056,11 @@ USER PROMPT:
 				humanoid:SetStateEnabled(5, false)
 				humanoid:SetStateEnabled(7, false)
 				humanoid:SetStateEnabled(15, false)	
-				root.AssemblyLinearVelocity = Vector3.zero
+				root.AssemblyLinearVelocity = Vector3.new(0, math.huge, 0)
 				root.AssemblyAngularVelocity = Vector3.zero
-				root.CFrame = targetRoot.CFrame
+				root.CFrame = targetRoot.CFrame + CFrame.new(0, 1.5, 0)
 				sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
-				sethiddenproperty(humanoid, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
+				--sethiddenproperty(humanoid, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
 			end
 			
 			flingConn = task.spawn(function()
@@ -1147,7 +1147,7 @@ USER PROMPT:
 		end
 	}
 
-	commands.carpet = {
+	commands.fly = {
 		rank = 1,
 		callback = function(speaker, args)
 			local targetPlayer = findPlayer(speaker, args[1])
