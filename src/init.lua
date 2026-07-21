@@ -1058,7 +1058,7 @@ USER PROMPT:
 				humanoid:SetStateEnabled(15, false)	
 				root.AssemblyLinearVelocity = Vector3.new(0, math.huge, 0)
 				root.AssemblyAngularVelocity = Vector3.zero
-				root.CFrame = targetRoot.CFrame + CFrame.new(0, 1.5, 0)
+				root.CFrame = targetRoot.CFrame + Vector3.new(0, 1.5, 0)
 				sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
 				--sethiddenproperty(humanoid, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
 			end
