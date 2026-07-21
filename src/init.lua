@@ -1766,8 +1766,10 @@ task.spawn(function()
 end)
 
 local function onMessageReceived(message)
-	local formattedMessage = parseMessageToAnsi(message.Text)
-	table.insert(messageList, formattedMessage)
+	if settings.shouldLogChat return	
+		local formattedMessage = parseMessageToAnsi(message.Text)
+		table.insert(messageList, formattedMessage) 
+	end
 			
 	local speaker = TextSource and Players:GetPlayerByUserId(message.TextSource.UserId) or localPlayer -- discord messages
 	local prefix = string.sub(message.Text, 1, 1)
