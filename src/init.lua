@@ -1265,12 +1265,12 @@ USER PROMPT:
 							end
 						end
 
-						local targetPos = targetRoot.Position + Vector3.new(0, -0.1, offset)
+						local targetPos = targetRoot.CFrame * CFrame.new(0, -0.1, offset)
 
 						local targetLook = targetRoot.CFrame.LookVector
 						local flatLook = Vector3.new(targetLook.X, 0, targetLook.Z).Unit
 
-						root.CFrame = CFrame.lookAt(targetPos, targetPos + flatLook) --* CFrame.Angles(math.rad(90), 0, 0)
+						root.CFrame = CFrame.lookAt(targetPos, targetPos + flatLook)
 
 						root.AssemblyLinearVelocity = Vector3.zero	
 						root.AssemblyAngularVelocity = Vector3.zero
