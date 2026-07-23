@@ -1068,13 +1068,13 @@ USER PROMPT:
 				root.CFrame = targetRoot.CFrame + Vector3.new(0, 2.5, 0)
 				sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
 
-				root.AssemblyLinearVelocity = Vector3.new(0, 1e50, 0)
-				root.AssemblyAngularVelocity = Vector3.new(0, 0, 1e50)
-
-				root.AssemblyLinearVelocity = Vector3.zero
-				root.AssemblyAngularVelocity = Vector3.zero
-
-				--sethiddenproperty(humanoid, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
+				RunService.Heartbeat:Wait()
+            	local vel = Root.Velocity
+           		Root.Velocity = vel * 99999999 + Vector3.new(0, 0/0, 0)
+            	RunService.RenderStepped:Wait()
+            	Root.Velocity = vel
+            	RunService.Stepped:Wait()
+            	Root.Velocity = vel + Vector3.new(0, 0.1, 0)
 			end
 
 			flingConn = task.spawn(function()
@@ -1189,8 +1189,6 @@ USER PROMPT:
 			carpetConn = task.spawn(function()
 				while heartbeat:Wait() do
 					if targetRoot and root then
-						hum.Sit = true
-
 						for _,v in pairs(char:GetChildren()) do
 							if v:IsA("BasePart") then
 								v.CanCollide = false
@@ -1210,6 +1208,7 @@ USER PROMPT:
 						root.AssemblyAngularVelocity = Vector3.zero
 						targetRoot.AssemblyLinearVelocity = Vector3.zero	
 						targetRoot.AssemblyAngularVelocity = Vector3.zero
+								
 						sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
 					else
 						task.cancel(carpetConn)
@@ -1228,7 +1227,6 @@ USER PROMPT:
 
 			localPlayer.Character.PrimaryPart.CanCollide = true
 			localPlayer.Character.Humanoid.PlatformStand = false
-			localPlayer.Character.Humanoid.Sit = false
 		end
 	}
 
