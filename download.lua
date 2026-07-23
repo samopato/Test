@@ -27,7 +27,9 @@ for _, path in ipairs(CONFIG.PATHS) do
 end
 
 local function log(message: string)
-	TextChatService.TextChannels.RBXGeneral:SendAsync(message)
+	if logging then
+		TextChatService.TextChannels.RBXGeneral:SendAsync(message)
+	end
 end
 
 -----------------------------------
