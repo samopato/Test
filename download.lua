@@ -2,6 +2,8 @@ local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local TextChatService = game:GetService("TextChatService")
 
+local logging = false
+
 local CONFIG = {
 	PATHS = {"vex", "vex/plugins", "vex/src", "vex/saved", "vex/data"},
 	COMMITS_URL = "https://api.github.com/repos/samopato/Test/commits/main",
@@ -22,6 +24,10 @@ end
 
 for _, path in ipairs(CONFIG.PATHS) do
 	if not isfolder(path) then makefolder(path) end
+end
+
+local function log(message: string)
+	TextChatService.TextChannels.RBXGeneral:SendAsync(message)
 end
 
 -----------------------------------
@@ -55,7 +61,7 @@ local function updateApp(forced)
 	local localSHA = isfile(CONFIG.SHA_LOG_PATH) and readfile(CONFIG.SHA_LOG_PATH) or ""
 
 	if localSHA == remoteSHA and not forced then
-		TextChatService.TextChannels.RBXGeneral:SendAsync("VEX: Already up to date.")
+		log("Already up to date.")
 		return false
 	end
 
@@ -69,7 +75,7 @@ local function updateApp(forced)
 	end)
 
 	if downloadSuccess then
-		TextChatService.TextChannels.RBXGeneral:SendAsync("VEX: Successfully updated!")
+		log("Successfully updated!")
 		writefile(CONFIG.SHA_LOG_PATH, remoteSHA)
 		return true
 	end
@@ -104,9 +110,9 @@ local function run(forced)
 	end
 
 	if forced then
-		TextChatService.TextChannels.RBXGeneral:SendAsync("VEX: Forcing Update...")
+		log("Forcing Update...")
 	else
-		TextChatService.TextChannels.RBXGeneral:SendAsync("VEX: Loading...")
+		log("Loading...")
 	end
 	
 	updateRobloxData()
@@ -116,6 +122,7 @@ local function run(forced)
 	if isfile(initPath) then
 		thread = task.spawn(loadstring(readfile(initPath)), isUpdated)
 	else
+		log("Error during download")
 		error("VEX Critical Error: 'init.lua' not found.")
 	end
 end
