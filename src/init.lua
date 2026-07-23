@@ -983,7 +983,6 @@ USER PROMPT:
 		rank = 1,
 		callback = function()
 			replicatesignal(localPlayer.Kill)
-			replicatesignal(localPlayer.ConnectDiedSignalBackend)
 			task.wait(Players.RespawnTime - 0.1)
 			replicatesignal(localPlayer.Kill)
 		end
@@ -1065,12 +1064,11 @@ USER PROMPT:
 				humanoid:SetStateEnabled(5, false)
 				humanoid:SetStateEnabled(7, false)
 				humanoid:SetStateEnabled(15, false)	
-				root.CFrame = targetRoot.CFrame + Vector3.new(0, 2.5, 0)
+				root.CFrame = targetRoot.CFrame + Vector3.new(0, 2.5, 0.5)
 				sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
 
-				RunService.Heartbeat:Wait()
             	local vel = root.Velocity
-           		root.Velocity = vel * 99999999 + Vector3.new(0, 0/0, 0)
+           		root.Velocity = vel * 9999999999 + Vector3.new(0, 999999999999, 0)
             	RunService.RenderStepped:Wait()
             	root.Velocity = vel
             	RunService.Stepped:Wait()
@@ -1198,6 +1196,76 @@ USER PROMPT:
 						end
 
 						local targetPos = targetRoot.Position + Vector3.new(0, offset, 0)
+
+						local targetLook = targetRoot.CFrame.LookVector
+						local flatLook = Vector3.new(targetLook.X, 0, targetLook.Z).Unit
+
+						root.CFrame = CFrame.lookAt(targetPos, targetPos + flatLook) --* CFrame.Angles(math.rad(90), 0, 0)
+
+						root.AssemblyLinearVelocity = Vector3.zero	
+						root.AssemblyAngularVelocity = Vector3.zero
+						targetRoot.AssemblyLinearVelocity = Vector3.zero	
+						targetRoot.AssemblyAngularVelocity = Vector3.zero
+								
+						sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
+					else
+						task.cancel(carpetConn)
+						carpetConn = nil
+						break
+					end
+				end
+			end)
+		end,
+
+		undo = function()
+			if carpetConn then
+				task.cancel(carpetConn)
+				carpetConn = nil
+			end
+
+			localPlayer.Character.PrimaryPart.CanCollide = true
+			localPlayer.Character.Humanoid.PlatformStand = false
+		end
+	}
+
+
+	commands.fly2 = {
+		rank = 1,
+		callback = function(speaker, args)
+			local targetPlayer = findPlayer(speaker, args[1])
+			local offset = tonumber(args[2]) or -2
+			local char = localPlayer.Character
+			local hum = char.Humanoid
+			local root = char.HumanoidRootPart
+
+			if carpetConn then
+				task.cancel(carpetConn)
+				carpetConn = nil
+			end
+
+			for _,v in pairs(char:GetChildren()) do
+				if v:IsA("BasePart") then
+					v.CanCollide = false
+					v.Massless = true
+				end
+			end
+
+			local heartbeat = RunService.Heartbeat
+			local targetChar = targetPlayer.Character
+			local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
+
+			carpetConn = task.spawn(function()
+				while heartbeat:Wait() do
+					if targetRoot and root then
+						for _,v in pairs(char:GetChildren()) do
+							if v:IsA("BasePart") then
+								v.CanCollide = false
+								v.CanTouch = false
+								v.CanQuery = false
+							end
+						end
+
+						local targetPos = targetRoot.Position + Vector3.new(0, -0.1, offset)
 
 						local targetLook = targetRoot.CFrame.LookVector
 						local flatLook = Vector3.new(targetLook.X, 0, targetLook.Z).Unit
