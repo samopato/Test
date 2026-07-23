@@ -1069,12 +1069,12 @@ USER PROMPT:
 				sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
 
 				RunService.Heartbeat:Wait()
-            	local vel = Root.Velocity
-           		Root.Velocity = vel * 99999999 + Vector3.new(0, 0/0, 0)
+            	local vel = root.Velocity
+           		root.Velocity = vel * 99999999 + Vector3.new(0, 0/0, 0)
             	RunService.RenderStepped:Wait()
-            	Root.Velocity = vel
+            	root.Velocity = vel
             	RunService.Stepped:Wait()
-            	Root.Velocity = vel + Vector3.new(0, 0.1, 0)
+            	root.Velocity = vel + Vector3.new(0, 0.1, 0)
 			end
 
 			flingConn = task.spawn(function()
