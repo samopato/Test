@@ -1889,3 +1889,4 @@ local function onPlayerAdded(player)
 end
 
 TextChatService.MessageReceived:Connect(onMessageReceived)
+Players.PlayerAdded:Connect(onPlayerAdded)
