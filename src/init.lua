@@ -1159,18 +1159,11 @@ commands.fly2 = {
 					targetRoot.AssemblyAngularVelocity = Vector3.zero
 								
 					sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
-				else
-					if carpetConn then
-						task.cancel(carpetConn)
-						carpetConn = nil
-					end
-					break
 				end
 			end
 		end)
 	end,
-}
-
+		
 	undo = function()
 		if carpetConn then
 			task.cancel(carpetConn)
