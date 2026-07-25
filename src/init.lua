@@ -271,66 +271,6 @@ local commands do
 	-----------------------------
 	-- Test
 	-----------------------------
-
-	commands.hatfling = {
-		rank = 4,
-		callback = function(speaker, args)
-			local targetRoot = findPlayer(speaker, args[1]).Character.HumanoidRootPart
-			local char = localPlayer.Character
-			local humanoid = char:FindFirstChildOfClass("Humanoid")
-			local hat = char:FindFirstChildOfClass("Accessory")			
-			local bp = Instance.new("BodyPosition")
-			bp.Parent = hat.Handle
-			bp.Position = hat.Handle.Position
-
-			--keep network ownership
-			task.spawn(function()
-				for _, v in next, game:GetDescendants() do
-					if not v:IsA("BasePart") then
-						return 
-					end
-
-					if v.AssemblyMass == "inf" or v.Anchored then 
-						return
-					end
-
-					RunService.Heartbeat:Connect(function()
-						sethiddenproperty(localPlayer, "SimulationRadius", math.huge)
-						v.CustomPhysicalProperties = PhysicalProperties.new(0,0,0,0,0)
-						v.Velocity = Vector3.new(25.70,0,0)
-						v.RotVelocity = Vector3.new(9e9,9e9,9e9)
-						v.CanCollide = false
-					end)
-				end
-			end)
-
-			--perm death
-			replicatesignal(localPlayer.ConnectDiedSignalBackend)
-			task.wait(Players.RespawnTime + 0.20)
-			replicatesignal(localPlayer.Kill)
-
-			--idk
-			for _, x in next, humanoid:GetAccessories() do
-				sethiddenproperty(x, "BackendAccoutrementState", 0)
-				local attachment = x:FindFirstChildWhichIsA("Attachment", true)
-
-				if attachment then
-					attachment:Destroy()
-				end
-			end
-
-			task.spawn(function()
-				while RunService.Heartbeat:Wait() do
-					bp.Position = targetRoot.Position
-					hat.Handle.Position = targetRoot.Position
-				end
-			end)
-
-			workspace.Camera.CameraSubject = hat.Handle
-		end
-	}
-
-
 	local swordConn = nil
 	commands.swordloop = {
 		rank = 1,
@@ -468,83 +408,9 @@ local commands do
 		end	
 	}
 
-	commands.test = {
-		rank = 1,
-		callback = function(speaker)
-			local hrp = localPlayer.Character:WaitForChild("HumanoidRootPart")
-			local hum = localPlayer.Character:WaitForChild("Humanoid")
-			local original = hrp.CFrame
-			local void = workspace.FallenPartsDestroyHeight
-
-			workspace.FallenPartsDestroyHeight = 0/0			
-			hrp.CFrame = CFrame.new(0, "NaN", 0)
-			task.wait(0.1)
-
-			replicatesignal(hum.ServerBreakJoints)
-			hum:SetStateEnabled(15, false)
-
-			hrp.Velocity = Vector3.zero
-			localPlayer.Character:PivotTo(original)
-
-			localPlayer.CharacterAdded:Wait()		
-			workspace.FallenPartsDestroyHeight = void
-		end
-	}
-
-	commands.god3 = {
-		rank = 1,
-		callback = function()
-			local humanoid = localPlayer.Character:WaitForChild("Humanoid")
-			local forceField = Instance.new("ForceField")
-
-			forceField.Visible = false
-			forceField.Parent = localPlayer.Character
-
-			humanoid:SetStateEnabled(15, false)
-			humanoid.BreakJointsOnDeath = false
-			replicatesignal(localPlayer.kill)
-		end
-	}
-
-	commands.god2 = {
-		rank = 1,
-		callback = function()
-			local hrp = localPlayer.Character:WaitForChild("HumanoidRootPart")
-			local hum = localPlayer.Character:WaitForChild("Humanoid")
-			local original = hrp.CFrame
-			local void = workspace.FallenPartsDestroyHeight
-
-			hum:SetStateEnabled(15, false)
-			workspace.FallenPartsDestroyHeight = 0/0
-			wait()
-
-			hrp.CFrame = CFrame.new(0, 9e9, 0)
-			wait(0.2)
-
-			--replicatesignal(hum.ServerBreakJoints)
-			replicatesignal(localPlayer.kill)
-			wait()
-
-			hrp.Velocity = Vector3.zero
-			hrp.CFrame = original
-
-			localPlayer.CharacterAdded:Wait()		
-			workspace.FallenPartsDestroyHeight = void
-		end
-	}
-
 	-----------------------------
 	-- BOT
 	-----------------------------
-	commands.fps = {
-		rank = 1,
-		callback = function(speaker)
-			local fps = math.round(1 / Stats.FrameTime)
-			whisper(speaker, fps .."fps")
-		end
-	}
-
-
 	commands.sit = {
 		rank = 1, 
 		callback = function(speaker)
@@ -556,14 +422,6 @@ local commands do
 		rank = 1,
 		callback = function(speaker)
 			localPlayer.Character.Humanoid.Jump = true
-		end
-	}
-
-	commands.ping = {
-		rank = 1,
-		callback = function(speaker)
-			local ping = math.round(Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
-			whisper(speaker, ping .."ms")
 		end
 	}
 
@@ -803,7 +661,6 @@ local commands do
 		end
 	}
 
-
 	commands.whisper = {
 		rank = 2,
 		callback = function(speaker, args)
@@ -985,38 +842,10 @@ USER PROMPT:
 	-----------------------------
 	-- Character
 	-----------------------------
-	commands.die = {
-		rank = 2,
-		callback = function()
-			replicatesignal(localPlayer.ConnectDiedSignalBackend)
-			task.wait(Players.RespawnTime + 0.20)
-			replicatesignal(localPlayer.Kill)
-		end
-	}
-
 	commands.re = {
 		rank = 1,
 		callback = function()
 			replicatesignal(localPlayer.Kill)
-			task.wait(Players.RespawnTime - 0.1)
-			replicatesignal(localPlayer.Kill)
-		end
-	}
-
-	commands.antifling = {
-		rank = 1,
-		callback = function(speaker, args)
-			local hum = localPlayer.Character:FindFirstChildOfClass("Humanoid")
-
-			task.spawn(function()
-				while task.wait() do
-					if hum then
-						sethiddenproperty(hum, "MoveDirectionInternal", Vector3.new(0/0, 0/0, 0/0))
-					else
-						break
-					end
-				end
-			end)
 		end
 	}
 
@@ -1082,12 +911,12 @@ USER PROMPT:
 				root.CFrame = targetRoot.CFrame + Vector3.new(0, 2.5, 0.5)
 				sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
 
-            	local vel = root.Velocity
-           		root.Velocity = vel * 9999999999 + Vector3.new(0, 999999999999, 0)
-            	RunService.RenderStepped:Wait()
-            	root.Velocity = vel
-            	RunService.Stepped:Wait()
-            	root.Velocity = vel + Vector3.new(0, 0.1, 0)
+				local vel = root.Velocity
+				root.Velocity = vel * 9999999999 + Vector3.new(0, 999999999999, 0)
+				RunService.RenderStepped:Wait()
+				root.Velocity = vel
+				RunService.Stepped:Wait()
+				root.Velocity = vel + Vector3.new(0, 0.1, 0)
 			end
 
 			flingConn = task.spawn(function()
@@ -1221,7 +1050,7 @@ USER PROMPT:
 						root.AssemblyAngularVelocity = Vector3.zero
 						targetRoot.AssemblyLinearVelocity = Vector3.zero	
 						targetRoot.AssemblyAngularVelocity = Vector3.zero
-								
+
 						sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
 					else
 						task.cancel(carpetConn)
@@ -1242,7 +1071,6 @@ USER PROMPT:
 			localPlayer.Character.Humanoid.PlatformStand = false
 		end
 	}
-
 
 	commands.fly2 = {
 		rank = 1,
@@ -1291,7 +1119,7 @@ USER PROMPT:
 						root.AssemblyAngularVelocity = Vector3.zero
 						targetRoot.AssemblyLinearVelocity = Vector3.zero	
 						targetRoot.AssemblyAngularVelocity = Vector3.zero
-								
+
 						sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
 					else
 						task.cancel(carpetConn)
@@ -1313,7 +1141,7 @@ USER PROMPT:
 		end
 	}
 
-	commands.b = {
+	commands.behind = {
 		rank = 1,
 		callback = function(speaker, args)
 			if conn then
@@ -1650,24 +1478,9 @@ USER PROMPT:
 	commands.rejoin = {
 		rank = 3,
 		callback = function(speaker)
-			chat("Rejoining...")
 			TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, localPlayer)
 		end
 	}	
-
-	commands.dex = {
-		rank = 4,
-		callback = function(speaker)
-			loadstring(game:HttpGet("https://raw.githubusercontent.com/raelhubfunctions/Save-scripts/refs/heads/main/DexMobile.lua"))()	
-		end
-	}
-
-	commands.rspy = {
-		rank = 4,
-		callback = 	function(speaker)
-			loadstring(game:HttpGet("https://github.com/exxtremestuffs/SimpleSpySource/raw/master/SimpleSpy.lua"))()
-		end
-	}
 
 	commands.exec = {
 		rank = 3,
@@ -1859,7 +1672,7 @@ local function onMessageReceived(message)
 		table.insert(messageList, formattedMessage) 
 	end
 
-	local speaker =  Players:GetPlayerByUserId(message.TextSource.UserId) or localPlayer -- discord messages
+	local speaker = message and Players:GetPlayerByUserId(message.TextSource.UserId) or localPlayer -- discord messages
 	local prefix = string.sub(message.Text, 1, 1)
 
 	if prefix ~= settings.prefix then
@@ -1882,7 +1695,7 @@ end
 
 local function onPlayerAdded(player)
 	local rank = getRank(player.UserId)
-					
+
 	if rank > 1 then
 		chat(`The admin {player.DisplayName} has joined the experience.`)
 	end
