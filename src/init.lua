@@ -1697,7 +1697,7 @@ local function onPlayerAdded(player)
 	local rank = getRank(player.UserId)
 
 	if rank > 1 then
-		chat(`The admin {player.DisplayName} has joined the experience.`)
+		task.delay(1, chat, `The admin {player.DisplayName} has joined the experience.`)
 	end
 end
 
