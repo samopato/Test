@@ -178,9 +178,29 @@ local function bypass(text)
 	return bypassText(text)
 end
 
-local function chat(text)	
+local function chat(text)
+	local maxLength = 187
+
 	task.spawn(function()
-		TextChatService.TextChannels.RBXGeneral:SendAsync(text)
+		local words = string.split(text, " ")
+		local currentMessage = ""
+
+		for _, word in ipairs(words) do
+			if #currentMessage + #word + 1 > maxLength then
+				TextChatService.TextChannels.RBXGeneral:SendAsync(currentMessage)
+				currentMessage = word
+			else
+				if currentMessage == "" then
+					currentMessage = word
+				else
+					currentMessage = currentMessage .. " " .. word
+				end
+			end
+		end
+
+		if currentMessage ~= "" then
+			TextChatService.TextChannels.RBXGeneral:SendAsync(currentMessage)
+		end
 	end)
 end
 
