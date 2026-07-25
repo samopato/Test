@@ -10,7 +10,6 @@ local TeleportService = game:GetService("TeleportService")
 local PathfindingService = game:GetService("PathfindingService")
 local localPlayer = Players.LocalPlayer
 
-
 local isfile = assert(isfile)
 local writefile = assert(writefile)
 local request = assert(request)
@@ -1105,10 +1104,17 @@ commands.fly2 = {
 	rank = 1,
 	callback = function(speaker, args)
 		local targetPlayer = findPlayer(speaker, args[1])
-		local offset = tonumber(args[2]) or -2
+		if not targetPlayer then return end -- Prevents error if player isn't found
+		
+		-- Use args[2] if provided, otherwise default to 1.5 studs forward
+		local offset = tonumber(args[2]) or 1.5
+		
 		local char = localPlayer.Character
-		local hum = char.Humanoid
-		local root = char.HumanoidRootPart
+		if not char then return end
+		
+		local hum = char:FindFirstChild("Humanoid")
+		local root = char:FindFirstChild("HumanoidRootPart")
+		if not root then return end
 
 		if carpetConn then
 			task.cancel(carpetConn)
@@ -1123,11 +1129,13 @@ commands.fly2 = {
 		end
 
 		local heartbeat = RunService.Heartbeat
-		local targetChar = targetPlayer.Character
-		local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
-
+		
 		carpetConn = task.spawn(function()
 			while heartbeat:Wait() do
+				-- Continuously grab the target's character in case they respawn
+				local targetChar = targetPlayer.Character
+				local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
+				
 				if targetRoot and root then
 					for _,v in pairs(char:GetChildren()) do
 						if v:IsA("BasePart") then
@@ -1137,36 +1145,31 @@ commands.fly2 = {
 						end
 					end
 
-					local targetPos = targetRoot.CFrame * CFrame.new(0, -0.1, offset)
+					-- Base CFrame is the target's CFrame
+					-- CFrame.new(0, 0, -offset) moves it forward (negative Z is forward in Roblox)
+					-- CFrame.Angles(math.rad(90), 0, 0) pitches the character forward to lay down
+					root.CFrame = targetRoot.CFrame 
+						* CFrame.new(0, 0, -offset) 
+						* CFrame.Angles(math.rad(90), 0, 0)
 
-					local targetLook = targetRoot.CFrame.LookVector
-					local flatLook = Vector3.new(targetLook.X, 0, targetLook.Z)
-					if flatLook.Magnitude == 0 then
-						flatLook = Vector3.zAxis
-					else
-						flatLook = flatLook.Unit
-					end
-
-					-- base facing
-					local baseCFrame = CFrame.lookAt(targetPos, targetPos + flatLook)
-
-					-- lay down (adjust 90 or -90 if you want flipped)
-					root.CFrame = baseCFrame * CFrame.Angles(math.rad(90), 0, 0)
-
+					-- Stop physics from spazzing out
 					root.AssemblyLinearVelocity = Vector3.zero	
 					root.AssemblyAngularVelocity = Vector3.zero
 					targetRoot.AssemblyLinearVelocity = Vector3.zero	
 					targetRoot.AssemblyAngularVelocity = Vector3.zero
-
+								
 					sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
 				else
-					task.cancel(carpetConn)
-					carpetConn = nil
+					if carpetConn then
+						task.cancel(carpetConn)
+						carpetConn = nil
+					end
 					break
 				end
 			end
 		end)
 	end,
+}
 
 	undo = function()
 		if carpetConn then
