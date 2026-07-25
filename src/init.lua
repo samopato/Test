@@ -189,6 +189,11 @@ local function chat(text)
 			if #currentMessage + #word + 1 > maxLength then
 				TextChatService.TextChannels.RBXGeneral:SendAsync(currentMessage)
 				currentMessage = word
+
+				warn("===============================================")
+				warn(#currentMessage, #text)
+				warn("Current:", word)
+				
 			else
 				if currentMessage == "" then
 					currentMessage = word
