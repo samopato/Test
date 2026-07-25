@@ -1101,74 +1101,83 @@ USER PROMPT:
 		end
 	}
 
-	commands.fly2 = {
-		rank = 1,
-		callback = function(speaker, args)
-			local targetPlayer = findPlayer(speaker, args[1])
-			local offset = tonumber(args[2]) or -2
-			local char = localPlayer.Character
-			local hum = char.Humanoid
-			local root = char.HumanoidRootPart
+commands.fly2 = {
+	rank = 1,
+	callback = function(speaker, args)
+		local targetPlayer = findPlayer(speaker, args[1])
+		local offset = tonumber(args[2]) or -2
+		local char = localPlayer.Character
+		local hum = char.Humanoid
+		local root = char.HumanoidRootPart
 
-			if carpetConn then
-				task.cancel(carpetConn)
-				carpetConn = nil
-			end
-
-			for _,v in pairs(char:GetChildren()) do
-				if v:IsA("BasePart") then
-					v.CanCollide = false
-					v.Massless = true
-				end
-			end
-
-			local heartbeat = RunService.Heartbeat
-			local targetChar = targetPlayer.Character
-			local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
-
-			carpetConn = task.spawn(function()
-				while heartbeat:Wait() do
-					if targetRoot and root then
-						for _,v in pairs(char:GetChildren()) do
-							if v:IsA("BasePart") then
-								v.CanCollide = false
-								v.CanTouch = false
-								v.CanQuery = false
-							end
-						end
-
-						local targetPos = targetRoot.CFrame * CFrame.new(0, -0.1, offset)
-
-						local targetLook = targetRoot.CFrame.LookVector
-						local flatLook = Vector3.new(targetLook.X, 0, targetLook.Z).Unit
-
-						root.CFrame = CFrame.lookAt(targetPos, targetPos + flatLook)
-
-						root.AssemblyLinearVelocity = Vector3.zero	
-						root.AssemblyAngularVelocity = Vector3.zero
-						targetRoot.AssemblyLinearVelocity = Vector3.zero	
-						targetRoot.AssemblyAngularVelocity = Vector3.zero
-
-						sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
-					else
-						task.cancel(carpetConn)
-						carpetConn = nil
-						break
-					end
-				end
-			end)
-		end,
-
-		undo = function()
-			if carpetConn then
-				task.cancel(carpetConn)
-				carpetConn = nil
-			end
-
-			localPlayer.Character.PrimaryPart.CanCollide = true
-			localPlayer.Character.Humanoid.PlatformStand = false
+		if carpetConn then
+			task.cancel(carpetConn)
+			carpetConn = nil
 		end
-	}
+
+		for _,v in pairs(char:GetChildren()) do
+			if v:IsA("BasePart") then
+				v.CanCollide = false
+				v.Massless = true
+			end
+		end
+
+		local heartbeat = RunService.Heartbeat
+		local targetChar = targetPlayer.Character
+		local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
+
+		carpetConn = task.spawn(function()
+			while heartbeat:Wait() do
+				if targetRoot and root then
+					for _,v in pairs(char:GetChildren()) do
+						if v:IsA("BasePart") then
+							v.CanCollide = false
+							v.CanTouch = false
+							v.CanQuery = false
+						end
+					end
+
+					local targetPos = targetRoot.CFrame * CFrame.new(0, -0.1, offset)
+
+					local targetLook = targetRoot.CFrame.LookVector
+					local flatLook = Vector3.new(targetLook.X, 0, targetLook.Z)
+					if flatLook.Magnitude == 0 then
+						flatLook = Vector3.zAxis
+					else
+						flatLook = flatLook.Unit
+					end
+
+					-- base facing
+					local baseCFrame = CFrame.lookAt(targetPos, targetPos + flatLook)
+
+					-- lay down (adjust 90 or -90 if you want flipped)
+					root.CFrame = baseCFrame * CFrame.Angles(math.rad(90), 0, 0)
+
+					root.AssemblyLinearVelocity = Vector3.zero	
+					root.AssemblyAngularVelocity = Vector3.zero
+					targetRoot.AssemblyLinearVelocity = Vector3.zero	
+					targetRoot.AssemblyAngularVelocity = Vector3.zero
+
+					sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
+				else
+					task.cancel(carpetConn)
+					carpetConn = nil
+					break
+				end
+			end
+		end)
+	end,
+
+	undo = function()
+		if carpetConn then
+			task.cancel(carpetConn)
+			carpetConn = nil
+		end
+
+		localPlayer.Character.PrimaryPart.CanCollide = true
+		localPlayer.Character.Humanoid.PlatformStand = false
+	end
+}
 
 	commands.behind = {
 		rank = 1,
@@ -1198,6 +1207,8 @@ USER PROMPT:
 
 			local targetPlayer = findPlayer(speaker, args[1])
 
+			local root = localPlayer.Character.HumanoidRootPart
+
 			if targetPlayer and targetPlayer.Character then
 				track:Play()
 
@@ -1211,7 +1222,8 @@ USER PROMPT:
 					if targetRoot then
 						track:AdjustSpeed(speed)
 						humanoid.Sit = false
-						localPlayer.Character.HumanoidRootPart.CFrame = targetRoot.CFrame * CFrame.new(0, 0, 1)
+						root.CFrame = targetRoot.CFrame * CFrame.new(0, 0, 1.1)
+						sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
 					end
 				end)
 			end
