@@ -32,7 +32,7 @@ local defaultSettings = {
 	shouldLogChat = false,
 	prefix = "+",
 	ranks = {
-		["10984088"] = 10,
+		["10984088"] = 2,
 		[tostring(localPlayer.UserId)] = 10,
 	},
 	rankList = {
@@ -1496,7 +1496,7 @@ USER PROMPT:
 	}
 
 	commands.rejoin = {
-		rank = 3,
+		rank = 2,
 		callback = function(speaker)
 			TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId, localPlayer)
 		end
