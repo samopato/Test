@@ -179,7 +179,7 @@ local function bypass(text)
 end
 
 local function chat(text)
-	local maxLength = 187
+	local maxLength = 200
 
 	task.spawn(function()
 		local words = string.split(text, " ")
@@ -202,6 +202,9 @@ local function chat(text)
 				end
 			end
 		end
+
+				warn("===============================================")
+				warn(#currentMessage, #text)
 
 		if currentMessage ~= "" then
 			TextChatService.TextChannels.RBXGeneral:SendAsync(currentMessage)
