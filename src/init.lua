@@ -544,6 +544,21 @@ local commands do
 		end
 	}
 
+
+	commands.sit = {
+		rank = 1, 
+		callback = function(speaker)
+			localPlayer.Character.Humanoid.Sit = not localPlayer.Character.Humanoid.Sit
+		end
+	}
+
+	commands.jump = {
+		rank = 1,
+		callback = function(speaker)
+			localPlayer.Character.Humanoid.Jump = true
+		end
+	}
+
 	commands.ping = {
 		rank = 1,
 		callback = function(speaker)
