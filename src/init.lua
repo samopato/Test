@@ -1135,7 +1135,7 @@ USER PROMPT:
 		end
 	}
 
-	commands.tp = {
+	commands.bring = {
 		rank = 1,
 		callback = function(speaker, args) 
 			local character = localPlayer.Character
@@ -1313,7 +1313,7 @@ USER PROMPT:
 		end
 	}
 
-	commands.bang = {
+	commands.b = {
 		rank = 1,
 		callback = function(speaker, args)
 			if conn then
@@ -1325,10 +1325,7 @@ USER PROMPT:
 				track:Stop()
 			end
 
-
-
 			local humanoid = localPlayer.Character:FindFirstChildOfClass("Humanoid")
-
 
 			local animation = Instance.new("Animation")
 			if humanoid.RigType == Enum.HumanoidRigType.R6 then
@@ -1880,6 +1877,14 @@ local function onMessageReceived(message)
 	local callback = not undo and cmd.callback or cmd.undo
 	if callback then
 		callback(speaker, args)
+	end
+end
+
+local function onPlayerAdded(player)
+	local rank = getRank(player.UserId)
+					
+	if rank > 1 then
+		chat(`The admin {player.DisplayName} has joined the experience.`)
 	end
 end
 
