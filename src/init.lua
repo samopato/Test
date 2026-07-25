@@ -178,8 +178,9 @@ local function bypass(text)
 	return bypassText(text)
 end
 
-local function chat(text)
+local function chat(text, channel)
 	local maxLength = 200
+	local channel = channel or TextChatService.TextChannels.RBXGeneral
 
 	task.spawn(function()
 		local words = string.split(text, " ")
@@ -187,7 +188,7 @@ local function chat(text)
 
 		for _, word in ipairs(words) do
 			if #currentMessage + #word + 1 > maxLength then
-				TextChatService.TextChannels.RBXGeneral:SendAsync(currentMessage)
+				channel:SendAsync(currentMessage)
 				currentMessage = word
 
 				warn("===============================================")
@@ -203,11 +204,11 @@ local function chat(text)
 			end
 		end
 
-				warn("===============================================")
-				warn(#currentMessage, #text)
+		warn("===============================================")
+		warn(#currentMessage, #text)
 
 		if currentMessage ~= "" then
-			TextChatService.TextChannels.RBXGeneral:SendAsync(currentMessage)
+			channel:SendAsync(currentMessage)
 		end
 	end)
 end
@@ -220,7 +221,7 @@ local function whisper(target, text)
 	local whisperChannel = TextChatService.TextChannels:FindFirstChild(channelName)
 
 	if whisperChannel then
-		whisperChannel:SendAsync(text)
+		chat(text, whisperChannel)
 	else
 		chat("/whisper @" .. target.Name)
 
