@@ -1176,7 +1176,7 @@ commands.fly2 = {
 }
 
 
-		commands.fly3 = {
+		commands.noclip = {
 	rank = 1,
 	callback = function(speaker, args)
 		local targetPlayer = findPlayer(speaker, args[1])
@@ -1214,8 +1214,13 @@ commands.fly2 = {
 					root.AssemblyAngularVelocity = Vector3.zero
 					targetRoot.AssemblyLinearVelocity = Vector3.zero	
 					targetRoot.AssemblyAngularVelocity = Vector3.zero
-								
-					sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
+
+
+					for _,v in char:GetChildren() 
+						if v:IsA(BasePart) then
+							sethiddenproperty(root, "PhysicsRepRootPart", v)
+						end
+					end
 				end
 			end
 		end)
@@ -1227,7 +1232,6 @@ commands.fly2 = {
 			carpetConn = nil
 		end
 
-		localPlayer.Character.PrimaryPart.CanCollide = true
 		localPlayer.Character.Humanoid.PlatformStand = false
 	end
 }
