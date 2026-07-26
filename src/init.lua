@@ -1216,7 +1216,7 @@ commands.fly2 = {
 					targetRoot.AssemblyAngularVelocity = Vector3.zero
 
 
-					for _,v in char:GetChildren() 
+					for _,v in char:GetChildren() do
 						if v:IsA(BasePart) then
 							sethiddenproperty(root, "PhysicsRepRootPart", v)
 						end
