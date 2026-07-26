@@ -1206,8 +1206,6 @@ commands.fly2 = {
 				local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
 				
 				if targetRoot and root then
-					for _,v in pairs(char:GetChildren()) do
-
 					root.CFrame = targetRoot.CFrame 
 						* CFrame.new(0, 0, -offset) 
 						* CFrame.Angles(math.rad(90), 0, 0)
