@@ -193,7 +193,7 @@ local function chat(text, channel)
 				warn("===============================================")
 				warn(#currentMessage, #text)
 				warn("Current:", word)
-				
+
 			else
 				if currentMessage == "" then
 					currentMessage = word
@@ -1100,141 +1100,141 @@ USER PROMPT:
 		end
 	}
 
-commands.fly2 = {
-	rank = 1,
-	callback = function(speaker, args)
-		local targetPlayer = findPlayer(speaker, args[1])
-		if not targetPlayer then return end -- Prevents error if player isn't found
-		
-		-- Use args[2] if provided, otherwise default to 1.5 studs forward
-		local offset = tonumber(args[2]) or 1.5
-		
-		local char = localPlayer.Character
-		if not char then return end
-		
-		local hum = char:FindFirstChild("Humanoid")
-		local root = char:FindFirstChild("HumanoidRootPart")
-		if not root then return end
+	commands.fly2 = {
+		rank = 1,
+		callback = function(speaker, args)
+			local targetPlayer = findPlayer(speaker, args[1])
+			if not targetPlayer then return end -- Prevents error if player isn't found
 
-		if carpetConn then
-			task.cancel(carpetConn)
-			carpetConn = nil
-		end
+			-- Use args[2] if provided, otherwise default to 1.5 studs forward
+			local offset = tonumber(args[2]) or 1.5
 
-		for _,v in pairs(char:GetChildren()) do
-			if v:IsA("BasePart") then
-				v.CanCollide = false
-				v.Massless = true
+			local char = localPlayer.Character
+			if not char then return end
+
+			local hum = char:FindFirstChild("Humanoid")
+			local root = char:FindFirstChild("HumanoidRootPart")
+			if not root then return end
+
+			if carpetConn then
+				task.cancel(carpetConn)
+				carpetConn = nil
 			end
-		end
 
-		local heartbeat = RunService.Heartbeat
-		
-		carpetConn = task.spawn(function()
-			while heartbeat:Wait() do
-				-- Continuously grab the target's character in case they respawn
-				local targetChar = targetPlayer.Character
-				local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
-				
-				if targetRoot and root then
-					for _,v in pairs(char:GetChildren()) do
-						if v:IsA("BasePart") then
-							v.CanCollide = false
-							v.CanTouch = false
-							v.CanQuery = false
-						end
-					end
-
-					-- Base CFrame is the target's CFrame
-					-- CFrame.new(0, 0, -offset) moves it forward (negative Z is forward in Roblox)
-					-- CFrame.Angles(math.rad(90), 0, 0) pitches the character forward to lay down
-					root.CFrame = targetRoot.CFrame 
-						* CFrame.new(0, 0, -offset) 
-						* CFrame.Angles(math.rad(90), 0, 0)
-
-					-- Stop physics from spazzing out
-					root.AssemblyLinearVelocity = Vector3.zero	
-					root.AssemblyAngularVelocity = Vector3.zero
-					targetRoot.AssemblyLinearVelocity = Vector3.zero	
-					targetRoot.AssemblyAngularVelocity = Vector3.zero
-								
-					sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
+			for _,v in pairs(char:GetChildren()) do
+				if v:IsA("BasePart") then
+					v.CanCollide = false
+					v.Massless = true
 				end
 			end
-		end)
-	end,
-		
-	undo = function()
-		if carpetConn then
-			task.cancel(carpetConn)
-			carpetConn = nil
+
+			local heartbeat = RunService.Heartbeat
+
+			carpetConn = task.spawn(function()
+				while heartbeat:Wait() do
+					-- Continuously grab the target's character in case they respawn
+					local targetChar = targetPlayer.Character
+					local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
+
+					if targetRoot and root then
+						for _,v in pairs(char:GetChildren()) do
+							if v:IsA("BasePart") then
+								v.CanCollide = false
+								v.CanTouch = false
+								v.CanQuery = false
+							end
+						end
+
+						-- Base CFrame is the target's CFrame
+						-- CFrame.new(0, 0, -offset) moves it forward (negative Z is forward in Roblox)
+						-- CFrame.Angles(math.rad(90), 0, 0) pitches the character forward to lay down
+						root.CFrame = targetRoot.CFrame 
+							* CFrame.new(0, 0, -offset) 
+							* CFrame.Angles(math.rad(90), 0, 0)
+
+						-- Stop physics from spazzing out
+						root.AssemblyLinearVelocity = Vector3.zero	
+						root.AssemblyAngularVelocity = Vector3.zero
+						targetRoot.AssemblyLinearVelocity = Vector3.zero	
+						targetRoot.AssemblyAngularVelocity = Vector3.zero
+
+						sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
+					end
+				end
+			end)
+		end,
+
+		undo = function()
+			if carpetConn then
+				task.cancel(carpetConn)
+				carpetConn = nil
+			end
+
+			localPlayer.Character.PrimaryPart.CanCollide = true
+			localPlayer.Character.Humanoid.PlatformStand = false
 		end
-
-		localPlayer.Character.PrimaryPart.CanCollide = true
-		localPlayer.Character.Humanoid.PlatformStand = false
-	end
-}
+	}
 
 
-		commands.noclip = {
-	rank = 1,
-	callback = function(speaker, args)
-		local targetPlayer = findPlayer(speaker, args[1])
-		if not targetPlayer then return end -- Prevents error if player isn't found
-		
-		-- Use args[2] if provided, otherwise default to 1.5 studs forward
-		local offset = tonumber(args[2]) or 1.5
-		
-		local char = localPlayer.Character
-		if not char then return end
-		
-		local hum = char:FindFirstChild("Humanoid")
-		local root = char:FindFirstChild("HumanoidRootPart")
-		if not root then return end
+	commands.noclip = {
+		rank = 1,
+		callback = function(speaker, args)
+			local targetPlayer = findPlayer(speaker, args[1])
+			if not targetPlayer then return end -- Prevents error if player isn't found
 
-		if carpetConn then
-			task.cancel(carpetConn)
-			carpetConn = nil
-		end
+			-- Use args[2] if provided, otherwise default to 1.5 studs forward
+			local offset = tonumber(args[2]) or 1.5
 
-		local heartbeat = RunService.Heartbeat
-		
-		carpetConn = task.spawn(function()
-			while heartbeat:Wait() do
-				-- Continuously grab the target's character in case they respawn
-				local targetChar = targetPlayer.Character
-				local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
-				
-				if targetRoot and root then
-					root.CFrame = targetRoot.CFrame 
-						* CFrame.new(0, 0, -offset) 
-						* CFrame.Angles(math.rad(90), 0, 0)
+			local char = localPlayer.Character
+			if not char then return end
 
-					root.AssemblyLinearVelocity = Vector3.zero	
-					root.AssemblyAngularVelocity = Vector3.zero
-					targetRoot.AssemblyLinearVelocity = Vector3.zero	
-					targetRoot.AssemblyAngularVelocity = Vector3.zero
+			local hum = char:FindFirstChild("Humanoid")
+			local root = char:FindFirstChild("HumanoidRootPart")
+			if not root then return end
+
+			if carpetConn then
+				task.cancel(carpetConn)
+				carpetConn = nil
+			end
+
+			local heartbeat = RunService.Heartbeat
+
+			carpetConn = task.spawn(function()
+				while heartbeat:Wait() do
+					-- Continuously grab the target's character in case they respawn
+					local targetChar = targetPlayer.Character
+					local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
+
+					if targetRoot and root then
+						root.CFrame = targetRoot.CFrame 
+							* CFrame.new(0, 0, -offset) 
+							* CFrame.Angles(math.rad(90), 0, 0)
+
+						root.AssemblyLinearVelocity = Vector3.zero	
+						root.AssemblyAngularVelocity = Vector3.zero
+						targetRoot.AssemblyLinearVelocity = Vector3.zero	
+						targetRoot.AssemblyAngularVelocity = Vector3.zero
 
 
-					for _,v in char:GetChildren() do
-						if v:IsA(BasePart) then
-							sethiddenproperty(root, "PhysicsRepRootPart", v)
+						for _,v in char:GetChildren() do
+							if v:IsA("BasePart") then
+								sethiddenproperty(root, "PhysicsRepRootPart", v)
+							end
 						end
 					end
 				end
-			end
-		end)
-	end,
-		
-	undo = function()
-		if carpetConn then
-			task.cancel(carpetConn)
-			carpetConn = nil
-		end
+			end)
+		end,
 
-		localPlayer.Character.Humanoid.PlatformStand = false
-	end
-}
+		undo = function()
+			if carpetConn then
+				task.cancel(carpetConn)
+				carpetConn = nil
+			end
+
+			localPlayer.Character.Humanoid.PlatformStand = false
+		end
+	}
 
 	commands.behind = {
 		rank = 1,
