@@ -1175,6 +1175,65 @@ commands.fly2 = {
 	end
 }
 
+
+		commands.fly3 = {
+	rank = 1,
+	callback = function(speaker, args)
+		local targetPlayer = findPlayer(speaker, args[1])
+		if not targetPlayer then return end -- Prevents error if player isn't found
+		
+		-- Use args[2] if provided, otherwise default to 1.5 studs forward
+		local offset = tonumber(args[2]) or 1.5
+		
+		local char = localPlayer.Character
+		if not char then return end
+		
+		local hum = char:FindFirstChild("Humanoid")
+		local root = char:FindFirstChild("HumanoidRootPart")
+		if not root then return end
+
+		if carpetConn then
+			task.cancel(carpetConn)
+			carpetConn = nil
+		end
+
+		local heartbeat = RunService.Heartbeat
+		
+		carpetConn = task.spawn(function()
+			while heartbeat:Wait() do
+				-- Continuously grab the target's character in case they respawn
+				local targetChar = targetPlayer.Character
+				local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
+				
+				if targetRoot and root then
+					for _,v in pairs(char:GetChildren()) do
+
+					root.CFrame = targetRoot.CFrame 
+						* CFrame.new(0, 0, -offset) 
+						* CFrame.Angles(math.rad(90), 0, 0)
+
+					root.AssemblyLinearVelocity = Vector3.zero	
+					root.AssemblyAngularVelocity = Vector3.zero
+					targetRoot.AssemblyLinearVelocity = Vector3.zero	
+					targetRoot.AssemblyAngularVelocity = Vector3.zero
+								
+					sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
+				end
+			end
+		end)
+	end,
+		
+	undo = function()
+		if carpetConn then
+			task.cancel(carpetConn)
+			carpetConn = nil
+		end
+
+		localPlayer.Character.PrimaryPart.CanCollide = true
+		localPlayer.Character.Humanoid.PlatformStand = false
+	end
+}
+
 	commands.behind = {
 		rank = 1,
 		callback = function(speaker, args)
