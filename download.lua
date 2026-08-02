@@ -1,10 +1,10 @@
+warn("[VEX]: start")
+
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local TextChatService = game:GetService("TextChatService")
 
 local logging = false
-
-local request = assert(request)
 
 local CONFIG = {
 	PATHS = {"vex", "vex/plugins", "vex/src", "vex/saved", "vex/data"},
@@ -21,6 +21,11 @@ local function request(url)
 
 	local freshUrl = url .. sep .. "nocache=" .. os.time()
 	local success, result = pcall(game.HttpGet, game, freshUrl)
+	
+	if not success then
+		warn(result, freshUrl)
+	end
+	
 	return success and result or nil
 end
 
@@ -59,7 +64,17 @@ local function downloadFolder(url, localPath)
 end
 
 local function updateApp(forced)
-	local data = HttpService:JSONDecode(request(CONFIG.COMMITS_URL))
+	warn("ggg")
+	
+	local content = request(CONFIG.COMMITS_URL)
+	local data
+
+	if content then
+		data = HttpService:JSONDecode(content)
+	else
+		data = {sha = ""}
+	end
+	
 	local remoteSHA = data.sha
 
 	local localSHA = isfile(CONFIG.SHA_LOG_PATH) and readfile(CONFIG.SHA_LOG_PATH) or ""
@@ -70,7 +85,7 @@ local function updateApp(forced)
 	end
 
 	local downloadUrl = CONFIG.APP_URL .. "?ref=" .. remoteSHA
-	
+
 	delfolder(CONFIG.ASSET_ROOT)
 	makefolder(CONFIG.ASSET_ROOT)
 
@@ -92,10 +107,10 @@ end
 local function updateRobloxData()
 	local success, verData = pcall(function() return game:HttpGet(CONFIG.VER_URL) end)
 	if not success then return end
-	
+
 	local remoteRbxVer = verData:match("(version%-[%w]+)")
 	local rbxVerFile = `{CONFIG.ASSET_ROOT}/rbx_cli.dat`
-	
+
 	if not isfile(rbxVerFile) or readfile(rbxVerFile) ~= remoteRbxVer then
 		writefile(rbxVerFile, remoteRbxVer)
 		writefile(`{CONFIG.ASSET_ROOT}/rbx_api.dat`, game:HttpGet(`http://setup.roblox.com/{remoteRbxVer}-API-Dump.json`))
@@ -118,10 +133,10 @@ local function run(forced)
 	else
 		log("Loading...")
 	end
-	
+
 	updateRobloxData()
 	local isUpdated = updateApp(forced)
-	
+
 	local initPath = `{CONFIG.ASSET_ROOT}/init.lua`
 	if isfile(initPath) then
 		thread = task.spawn(loadstring(readfile(initPath)), isUpdated)
