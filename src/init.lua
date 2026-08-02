@@ -6,7 +6,7 @@ local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
 local TextService = game:GetService("TextService")
 local TextChatService = game:GetService("TextChatService")
-local TeleportService = game:GetService("TeleportService")
+local ExperienceService = game:GetService("ExperienceService")
 local PathfindingService = game:GetService("PathfindingService")
 local localPlayer = Players.LocalPlayer
 
@@ -408,15 +408,8 @@ local commands do
 					if not user then return end
 
 					if user.userPresenceType == 2 then
-						warn(`placeId: {user.placeId} gameId: {user.gameId}`)
 						return user.placeId, user.gameId					
-					elseif user.userPresenceType == 1 then
-						warn("User is on the website")
-					elseif user.userPresenceType == 3 then
-						warn("User is on Roblox Studio")
 					end
-				else
-					warn("Failed: " ..response.StatusCode)
 				end
 			end
 
@@ -425,8 +418,11 @@ local commands do
 					local placeId, gameId = scan(speaker.UserId)
 
 					if placeId and gameId then
-						chat("Auto-Joining server...")
-						TeleportService:TeleportToPlaceInstance(placeId, gameId, localPlayer)
+						ExperienceService:LaunchExperience({
+							placeId = placeId,
+							gameInstanceId = gameId
+						})
+						
 						break			
 					end
 				end
@@ -1770,7 +1766,7 @@ local function onMessageReceived(message)
 		table.insert(messageList, formattedMessage) 
 	end
 
-	local speaker = message and Players:GetPlayerByUserId(message.TextSource.UserId) or localPlayer -- discord messages
+	local speaker = message and message.TextSource and Players:GetPlayerByUserId(message.TextSource.UserId) or localPlayer -- discord messages
 	local prefix = string.sub(message.Text, 1, 1)
 
 	if prefix ~= settings.prefix then
