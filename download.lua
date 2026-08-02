@@ -4,6 +4,8 @@ local TextChatService = game:GetService("TextChatService")
 
 local logging = false
 
+local request = assert(request)
+
 local CONFIG = {
 	PATHS = {"vex", "vex/plugins", "vex/src", "vex/saved", "vex/data"},
 	COMMITS_URL = "https://api.github.com/repos/samopato/Test/commits/main",
