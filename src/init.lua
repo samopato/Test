@@ -1036,6 +1036,10 @@ USER PROMPT:
 			local hum = char.Humanoid
 			local root = char.HumanoidRootPart
 
+			if hum.Sit then
+				root = humanoid.SeatPart
+			end
+
 			if carpetConn then
 				task.cancel(carpetConn)
 				carpetConn = nil
