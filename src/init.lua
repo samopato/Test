@@ -1037,7 +1037,7 @@ USER PROMPT:
 			local root = char.HumanoidRootPart
 
 			if hum.Sit then
-				root = humanoid.SeatPart
+				root = hum.SeatPart
 			end
 
 			if carpetConn then
