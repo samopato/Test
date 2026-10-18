@@ -20,6 +20,8 @@ local WebSocket = assert(WebSocket)
 local hookmetamethod = assert(hookmetamethod)
 local getnamecallmethod = assert(getnamecallmethod)
 
+local newHandle = InstanceHandle.new
+
 -----------------------------
 -- Setup
 -----------------------------
@@ -422,7 +424,7 @@ local commands do
 							placeId = placeId,
 							gameInstanceId = gameId
 						})
-						
+
 						break			
 					end
 				end
@@ -475,7 +477,7 @@ local commands do
 
 			glueConn = RunService.Heartbeat:Connect(function()
 				if root and hrp then
-					sethiddenproperty(hrp, "PhysicsRepRootPart", root)
+					sethiddenproperty(hrp, "PhysicsRepRootRef", newHandle(root))
 				end
 			end)
 		end,
@@ -933,7 +935,7 @@ USER PROMPT:
 				humanoid:SetStateEnabled(7, false)
 				humanoid:SetStateEnabled(15, false)	
 				root.CFrame = targetRoot.CFrame + Vector3.new(0, 2.5, 0.5)
-				sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
+				sethiddenproperty(root, "PhysicsRepRootRef", newHandle(targetRoot))
 
 				local vel = root.Velocity
 				root.Velocity = vel * 9999999999 + Vector3.new(0, 999999999999, 0)
@@ -1079,7 +1081,7 @@ USER PROMPT:
 						targetRoot.AssemblyLinearVelocity = Vector3.zero	
 						targetRoot.AssemblyAngularVelocity = Vector3.zero
 
-						sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
+						sethiddenproperty(root, "PhysicsRepRootRef", newHandle(targetRoot))
 					else
 						task.cancel(carpetConn)
 						carpetConn = nil
@@ -1158,7 +1160,7 @@ USER PROMPT:
 						targetRoot.AssemblyLinearVelocity = Vector3.zero	
 						targetRoot.AssemblyAngularVelocity = Vector3.zero
 
-						sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
+						sethiddenproperty(root, "PhysicsRepRootRef", newHandle(targetRoot))
 					end
 				end
 			end)
@@ -1218,7 +1220,7 @@ USER PROMPT:
 
 						for _,v in char:GetChildren() do
 							if v:IsA("BasePart") then
-								sethiddenproperty(root, "PhysicsRepRootPart", v)
+								sethiddenproperty(root, "PhysicsRepRootRef", newHandle(v))
 							end
 						end
 					end
@@ -1280,7 +1282,7 @@ USER PROMPT:
 						track:AdjustSpeed(speed)
 						humanoid.Sit = false
 						root.CFrame = targetRoot.CFrame * CFrame.new(0, 0, 1.1)
-						sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
+						sethiddenproperty(root, "PhysicsRepRootRef", newHandle(targetRoot))
 					end
 				end)
 			end
@@ -1342,7 +1344,7 @@ USER PROMPT:
 
 				localPlayer.Character.Humanoid.Sit = false
 				localPlayer.Character.Humanoid.PlatformStand = true
-				sethiddenproperty(root, "PhysicsRepRootPart", targetRoot)
+				sethiddenproperty(root, "PhysicsRepRootRef", newHandle(targetRoot))
 
 				-- 3. Apply position and rotation
 				root.CFrame = CFrame.new(orbitPosition) * selfRotation
