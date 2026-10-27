@@ -2,6 +2,7 @@ warn("[VEX]: init")
 
 local Stats = game:GetService("Stats")
 local Players = game:GetService("Players")
+local GuiService = game:GetService("GuiService")
 local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
 local TextService = game:GetService("TextService")
@@ -22,6 +23,7 @@ local getnamecallmethod = assert(getnamecallmethod)
 
 local newHandle = InstanceHandle.new
 
+GuiService:SetGameplayPausedNotificationEnabled(false)
 RunService:Set3dRenderingEnabled(false)
 
 -----------------------------
