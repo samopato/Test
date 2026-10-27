@@ -640,7 +640,7 @@ local commands do
 
 			local path = PathfindingService:CreatePath({
 				AgentRadius = 2,
-				AgentHeight = 5,
+				AgentHeight = 4,
 				AgentCanJump = true,
 				AgentCanClimb = true,
 				WaypointSpacing = math.huge,
