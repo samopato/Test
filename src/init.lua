@@ -7,6 +7,7 @@ local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
 local TextService = game:GetService("TextService")
 local TextChatService = game:GetService("TextChatService")
+local TeleportService = game:GetService("TeleportService")
 local ExperienceService = game:GetService("ExperienceService")
 local PathfindingService = game:GetService("PathfindingService")
 local localPlayer = Players.LocalPlayer
@@ -635,10 +636,27 @@ local commands do
 			end
 
 			local targetPlayer = findPlayer(speaker, args[1])
-
 			if not targetPlayer then return end
 
-			_G.FollowLoop = RunService.Heartbeat:Connect(function()
+			local path = PathfindingService:CreatePath({
+				AgentRadius = 2,
+				AgentHeight = 5,
+				AgentCanJump = true,
+				AgentCanClimb = true,
+				WaypointSpacing = math.huge,
+				Costs = {
+					Water = 20
+				}
+			})
+
+			local waypoints = {}
+			local currentWaypointIndex = 1
+			local lastComputeTick = 0
+			local lastTargetPos = Vector3.new()
+			local computeInterval = 1      -- Throttle recomputations to once per second to prevent lag
+			local distanceThreshold = 4    -- Recompute early if target moves more than 4 studs
+
+			_G.FollowLoop = RunService.Heartbeat:Connect(function(dt)
 				local localChar = localPlayer.Character
 				local localRoot = localChar and localChar:FindFirstChild("HumanoidRootPart")
 				local localHumanoid = localChar and localChar:FindFirstChild("Humanoid")
@@ -646,40 +664,60 @@ local commands do
 				local targetChar = targetPlayer.Character
 				local targetRoot = targetChar and targetChar:FindFirstChild("HumanoidRootPart")
 
-				if localRoot and localHumanoid and targetRoot then
-					local distance = (localRoot.Position - targetRoot.Position).Magnitude
+				if not (localRoot and localHumanoid and targetRoot) then return end
 
-					localHumanoid.Sit = false
+				localHumanoid.Sit = false
 
-					local path = PathfindingService:CreatePath({
-						AgentRadius = 2,
-						AgentHeight = 5,
-						AgentCanJump = true,
-						AgentCanClimb = true,
-						WaypointSpacing = math.huge,
-						Costs = {
-							Water = 20
-						}
-					})
+				local distanceToTarget = (localRoot.Position - targetRoot.Position).Magnitude
 
-					local success, errorMessage = pcall(function()
+				if distanceToTarget <= 8 then
+					localHumanoid:MoveTo(targetRoot.Position)
+					return
+				end
+
+				local currentTime = tick()
+				local targetMovedDistance = (targetRoot.Position - lastTargetPos).Magnitude
+
+				if (currentTime - lastComputeTick >= computeInterval) or (targetMovedDistance >= distanceThreshold) or (#waypoints == 0) then
+					lastComputeTick = currentTime
+					lastTargetPos = targetRoot.Position
+
+					local success = pcall(function()
 						path:ComputeAsync(localRoot.Position, targetRoot.Position)
 					end)
 
-					if success  then
-						local waypoints = path:GetWaypoints()
+					if success then
+						waypoints = path:GetWaypoints()
+						currentWaypointIndex = 2
 
-						if waypoints[3] then
-							localHumanoid:MoveTo(waypoints[3].Position)
-						elseif waypoints[2] then
-							localHumanoid:MoveTo(waypoints[2].Position)
+						if waypoints[currentWaypointIndex] and waypoints[currentWaypointIndex].Action == Enum.PathWaypointAction.Jump then
+							localHumanoid.Jump = true
 						end
 					else
 						localHumanoid:MoveTo(targetRoot.Position)
+						return
 					end
 				end
 
-				task.wait(0.05) 			
+				local currentWaypoint = waypoints[currentWaypointIndex]
+				if currentWaypoint then
+					local waypointPos = currentWaypoint.Position
+					local distToWaypoint = (localRoot.Position - waypointPos).Magnitude
+
+					if distToWaypoint < 4 then
+						currentWaypointIndex += 1
+						if waypoints[currentWaypointIndex] then
+							if waypoints[currentWaypointIndex].Action == Enum.PathWaypointAction.Jump then
+								localHumanoid.Jump = true
+							end
+							localHumanoid:MoveTo(waypoints[currentWaypointIndex].Position)
+						end
+					else
+						localHumanoid:MoveTo(waypointPos)
+					end
+				else
+					localHumanoid:MoveTo(targetRoot.Position)
+				end
 			end)
 		end,
 
