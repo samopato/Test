@@ -639,7 +639,7 @@ local commands do
 			if not targetPlayer then return end
 
 			local path = PathfindingService:CreatePath({
-				AgentRadius = 1,
+				AgentRadius = 3,
 				AgentHeight = 4,
 				AgentCanJump = true,
 				AgentCanClimb = true,
