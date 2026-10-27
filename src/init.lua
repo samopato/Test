@@ -22,6 +22,8 @@ local getnamecallmethod = assert(getnamecallmethod)
 
 local newHandle = InstanceHandle.new
 
+RunService:Set3dRenderingEnabled(false)
+
 -----------------------------
 -- Setup
 -----------------------------
