@@ -1133,7 +1133,7 @@ USER PROMPT:
 			end)
 		end,
 
-		undo = function()
+		undo = function(speaker)
 			if carpetConn then
 				task.cancel(carpetConn)
 				carpetConn = nil
@@ -1141,6 +1141,7 @@ USER PROMPT:
 
 			localPlayer.Character.PrimaryPart.CanCollide = true
 			localPlayer.Character.Humanoid.PlatformStand = false
+			localPlayer.Character.HumanoidRootPart.CFrame = speaker.Character:GetPivot() * CFrame.new(0, 0, 2)
 		end
 	}
 
