@@ -1141,7 +1141,7 @@ USER PROMPT:
 
 			localPlayer.Character.PrimaryPart.CanCollide = true
 			localPlayer.Character.Humanoid.PlatformStand = false
-			localPlayer.Character.HumanoidRootPart.CFrame = speaker.Character:GetPivot() * CFrame.new(0, 0, 2)
+			localPlayer.Character.HumanoidRootPart.CFrame = speaker.Character:GetPivot() * CFrame.new(0, 0, -2)
 		end
 	}
 
