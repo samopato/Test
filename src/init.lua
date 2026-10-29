@@ -1846,3 +1846,55 @@ end
 
 TextChatService.MessageReceived:Connect(onMessageReceived)
 Players.PlayerAdded:Connect(onPlayerAdded)
+
+-----------------TERMINAL--------------------
+
+local HttpService = game:GetService("HttpService")
+local LogService = game:GetService("LogService")
+
+local SOCKET_URL = "ws://localhost:5000/ws"
+
+local function connect()
+	local success, socket = pcall(function()
+		return WebSocket.connect(SOCKET_URL)
+	end)
+
+	if not success or not socket then
+		task.wait(5)
+		connect()
+		return
+	end
+					
+	local logConn = LogService.MessageOut:Connect(function(message, messageType)
+		local typeStr = "print"
+		
+		if messageType == Enum.MessageType.MessageWarning then
+			typeStr = "warn"
+		elseif messageType == Enum.MessageType.MessageError then
+			typeStr = "error"
+		elseif messageType == Enum.MessageType.MessageInformation then
+			typeStr = "info"
+		end
+
+		local payload = HttpService:JSONEncode({
+			type = typeStr,
+			message = message
+		})
+
+		pcall(function()
+			socket:Send(payload)
+		end)
+	end)
+
+	socket.OnMessage:Connect(function(code)
+		loadstring(code)()
+	end)
+
+	socket.OnClose:Connect(function()
+		logConn:Disconnect()
+		task.wait(5)
+		connect()
+	end)
+end
+
+connect()
