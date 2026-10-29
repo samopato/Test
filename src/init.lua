@@ -1852,7 +1852,7 @@ Players.PlayerAdded:Connect(onPlayerAdded)
 local HttpService = game:GetService("HttpService")
 local LogService = game:GetService("LogService")
 
-local SOCKET_URL = "ws://localhost:5000/ws"
+local SOCKET_URL = "ws://10.0.2.2:5000/ws"
 
 local function connect()
 	local success, socket = pcall(function()
