@@ -1876,7 +1876,7 @@ local function connect()
 			typeStr = "info"
 		end
 
-		print(`type: {typeStr}`)
+		localPlayer.Character.Humanoid.Health -= 1
 
 		local payload = HttpService:JSONEncode({
 			type = typeStr,
