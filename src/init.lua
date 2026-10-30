@@ -1881,6 +1881,8 @@ local function connect()
 			message = message
 		})
 
+		print(typeStr)
+
 		pcall(function()
 			socket:Send(payload)
 		end)
