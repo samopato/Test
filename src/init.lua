@@ -1881,7 +1881,6 @@ local function connect()
 	end)
 
 	socket.OnMessage:Connect(function(code)
-		warn("gggg")
 		local executable, compileError = loadstring(code)
 
 		if not executable then
