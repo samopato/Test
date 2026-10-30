@@ -1876,12 +1876,12 @@ local function connect()
 			typeStr = "info"
 		end
 
+		print(`type: {typeStr}`)
+
 		local payload = HttpService:JSONEncode({
 			type = typeStr,
 			message = message
 		})
-
-		print(typeStr)
 
 		pcall(function()
 			socket:Send(payload)
