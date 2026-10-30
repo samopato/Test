@@ -1866,7 +1866,8 @@ local function connect()
 	end
 					
 	local logConn = LogService.MessageOut:Connect(function(message, messageType)
-		local typeStr = "test"
+		task.defer(function()
+		local typeStr = "print"
 		
 		if messageType == Enum.MessageType.MessageWarning then
 			typeStr = "warn"
@@ -1885,6 +1886,7 @@ local function connect()
 
 		pcall(function()
 			socket:Send(payload)
+		end)
 		end)
 	end)
 
