@@ -196,11 +196,6 @@ local function chat(text, channel)
 			if #currentMessage + #word + 1 > maxLength then
 				channel:SendAsync(currentMessage)
 				currentMessage = word
-
-				warn("===============================================")
-				warn(#currentMessage, #text)
-				warn("Current:", word)
-
 			else
 				if currentMessage == "" then
 					currentMessage = word
@@ -209,9 +204,6 @@ local function chat(text, channel)
 				end
 			end
 		end
-
-		warn("===============================================")
-		warn(#currentMessage, #text)
 
 		if currentMessage ~= "" then
 			channel:SendAsync(currentMessage)
