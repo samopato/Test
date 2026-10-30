@@ -1865,7 +1865,7 @@ local function connect()
 			typeStr = "warn"
 		elseif messageType == Enum.MessageType.MessageError then
 			typeStr = "error"
-		elseif messageType == Enum.MessageType.MessageInformation then
+		elseif messageType == Enum.MessageType.MessageInfo then
 			typeStr = "info"
 		end
 
