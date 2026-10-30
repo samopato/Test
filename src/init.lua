@@ -1908,7 +1908,7 @@ local function connect()
 
 	socket.OnClose:Connect(function()
 		logConn:Disconnect()
-		task.wait(5)
+		task.wait(1)
 		connect()
 	end)
 end
