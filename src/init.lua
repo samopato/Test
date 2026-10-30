@@ -1881,7 +1881,29 @@ local function connect()
 	end)
 
 	socket.OnMessage:Connect(function(code)
-		loadstring(code)()
+		warn("gggg")
+		local executable, compileError = loadstring(code)
+
+		if not executable then
+			warn("Script Error:", compileError)
+			return
+		end
+
+		local customEnv = {
+			localPlayer = localPlayer,
+			chat = chat,
+			bypass = bypass,
+			whisper = whisper,
+			speaker = speaker,
+			script = script 
+		}
+
+		setmetatable(customEnv, {
+			__index = getfenv() 
+		})
+
+		setfenv(executable, customEnv)
+		executable() 
 	end)
 
 	socket.OnClose:Connect(function()
