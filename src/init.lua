@@ -1876,7 +1876,7 @@ local function connect()
 			typeStr = "info"
 		end
 
-		localPlayer.Character.Humanoid.Health -= 1
+		chat(typeStr)
 
 		local payload = HttpService:JSONEncode({
 			type = typeStr,
