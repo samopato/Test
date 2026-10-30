@@ -1866,7 +1866,7 @@ local function connect()
 	end
 					
 	local logConn = LogService.MessageOut:Connect(function(message, messageType)
-		local typeStr = "print"
+		local typeStr = "test"
 		
 		if messageType == Enum.MessageType.MessageWarning then
 			typeStr = "warn"
