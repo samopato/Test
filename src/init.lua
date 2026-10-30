@@ -1868,9 +1868,7 @@ local function connect()
 		elseif messageType == Enum.MessageType.MessageInfo then
 			typeStr = "info"
 		end
-
-		chat(typeStr)
-
+									
 		local payload = HttpService:JSONEncode({
 			type = typeStr,
 			message = message
