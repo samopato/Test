@@ -1839,6 +1839,14 @@ end
 TextChatService.MessageReceived:Connect(onMessageReceived)
 Players.PlayerAdded:Connect(onPlayerAdded)
 
+local VirtualUser = game:GetService("VirtualUser")
+				
+localPlayer.Idled:Connect(function()
+    VirtualUser:Button2Down(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+    task.wait(0.1)
+	VirtualUserVU:Button2Up(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+end)
+
 -----------------TERMINAL--------------------
 
 local HttpService = game:GetService("HttpService")
