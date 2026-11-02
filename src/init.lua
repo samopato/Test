@@ -1,3 +1,9 @@
+if _G.vexInit then
+	return
+end
+
+_G.vexInit = true
+
 warn("[VEX]: init")
 
 local Stats = game:GetService("Stats")
