@@ -1,5 +1,3 @@
-warn("[VEX]: start")
-
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local TextChatService = game:GetService("TextChatService")
@@ -64,8 +62,6 @@ local function downloadFolder(url, localPath)
 end
 
 local function updateApp(forced)
-	warn("ggg")
-	
 	local content = request(CONFIG.COMMITS_URL)
 	local data
 
