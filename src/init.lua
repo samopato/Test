@@ -8,6 +8,7 @@ warn("[VEX]: init")
 
 local Stats = game:GetService("Stats")
 local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
 local GuiService = game:GetService("GuiService")
 local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
@@ -30,6 +31,7 @@ local getnamecallmethod = assert(getnamecallmethod)
 
 local newHandle = InstanceHandle.new
 
+CoreGui:SetUserGuiRendering(true, nil, Enum.NormalId.Front)
 GuiService:SetGameplayPausedNotificationEnabled(false)
 RunService:Set3dRenderingEnabled(false)
 
